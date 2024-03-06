@@ -5,7 +5,6 @@ namespace BookstoreAPI.Controllers
 {
 
     [ApiController]
-    [Authorize]
     public class AuthController : ControllerBase
     {
         public IActionResult Index()
