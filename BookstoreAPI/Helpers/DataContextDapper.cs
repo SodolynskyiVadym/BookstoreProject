@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using Npgsql;
 
 namespace BookstoreAPI.Helpers
 {
@@ -11,7 +12,7 @@ namespace BookstoreAPI.Helpers
         public DataContextDapper(IConfiguration config)
         {
             _config = config;
-            _dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+            _dbConnection = new NpgsqlConnection(_config.GetConnectionString("DefaultConnection"));
         }
 
         public IEnumerable<T> LoadData<T>(string sql)

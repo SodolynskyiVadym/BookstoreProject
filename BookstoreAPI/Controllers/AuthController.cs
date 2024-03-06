@@ -7,6 +7,8 @@ namespace BookstoreAPI.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+
+        [HttpGet("test")]
         public IActionResult Index()
         {
             return Ok();
