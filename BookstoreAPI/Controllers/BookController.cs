@@ -134,6 +134,16 @@ public class BookController : ControllerBase
     }
 
 
+    [HttpDelete("deleteBook/{id}")]
+    public IActionResult DeleteBook(int id)
+    {
+        string sqlDeleteBook = $@"DELETE FROM book_schema.BookDetailInfo WHERE bookId={id};
+            DELETE FROM book_schema.BookGenerallyInfo WHERE id={id};";
+        if (_dapper.ExecuteSql(sqlDeleteBook)) return Ok();
+        else return StatusCode(400, "Book not fount for deleting");
+    }
+
+
 
     [HttpGet("getAllAuthors")]
     public IEnumerable<Author> getAllAuthors()
@@ -193,6 +203,15 @@ public class BookController : ControllerBase
     }
 
 
+    [HttpDelete("deleteAuthor/{id}")]
+    public IActionResult DeleteAuthor(int id)
+    {
+        string sqlDeleteAuthor = $@"DELETE FROM book_schema.Authors WHERE id={id}";
+        if (_dapper.ExecuteSql(sqlDeleteAuthor)) return Ok();
+        else return StatusCode(400, "Author not fount for deleting");
+    }
+
+
 
     [HttpGet("getAllPublishers")]
     public IEnumerable<Publisher> GetAllPublishers()
@@ -233,5 +252,14 @@ public class BookController : ControllerBase
 
         if (_dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters)) return Ok();
         else throw new Exception("Failed to update publisher");
+    }
+
+
+    [HttpDelete("deletePublisher/{id}")]
+    public IActionResult DeletePublisher(int id)
+    {
+        string sqlDeletePublisher = $@"DELETE FROM book_schema.Publishers WHERE id={id}";
+        if (_dapper.ExecuteSql(sqlDeletePublisher)) return Ok();
+        else return StatusCode(400, "Publisher not fount for deleting");
     }
 }
