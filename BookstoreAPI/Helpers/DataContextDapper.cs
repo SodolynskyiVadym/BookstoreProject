@@ -20,9 +20,9 @@ namespace BookstoreAPI.Helpers
             return _dbConnection.Query<T>(sql);
         }
 
-        public T LoadDataSingle<T>(string sql)
+        public T? LoadDataSingle<T>(string sql)
         {
-            return _dbConnection.QuerySingle<T>(sql);
+            return _dbConnection.QuerySingleOrDefault<T>(sql);
         }
 
         public bool ExecuteSql(string sql)

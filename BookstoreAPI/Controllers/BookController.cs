@@ -25,7 +25,25 @@ public class BookController : ControllerBase
     [HttpGet("getBook/{id}")]
     public BookGenerallyInfo? GetBook(int id)
     {
-        return _dapper.LoadDataSingle<BookGenerallyInfo>($"SELECT * FROM book_schema.GenerallyBookInfo WHERE GenerallyBookInfo.Id={id}");
+        return _dapper.LoadDataSingle<BookGenerallyInfo>($"SELECT * FROM book_schema.BookGenerallyInfo WHERE BookGenerallyInfo.Id={id}");
+    }
+
+    [HttpGet("getInfoBook/{id}")]
+    public BookDTO? GetBookInfo(int id)
+    {
+        string sqlGetInfoBook = $@"SELECT
+                BookGenerallyInfo.*,
+                BookDetailInfo.booklanguage,
+                BookDetailInfo.numberpages,
+                BookDetailInfo.publisherid,
+                BookDetailInfo.yearpublication,
+                BookDetailInfo.description
+            FROM book_schema.BookGenerallyInfo
+            INNER JOIN book_schema.BookDetailInfo ON book_schema.BookGenerallyInfo.id = book_schema.BookDetailInfo.BookId
+            WHERE book_schema.BookGenerallyInfo.id = {id.ToString() ?? "NULL"};";
+
+        BookDTO? book = _dapper.LoadDataSingle<BookDTO>(sqlGetInfoBook);
+        return book;
     }
 
 
@@ -59,7 +77,7 @@ public class BookController : ControllerBase
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@NumberPages", book.NumberPages, System.Data.DbType.Int64);
-        parameters.Add("@Language", book.Language, System.Data.DbType.String);
+        parameters.Add("@Language", book.BookLanguage, System.Data.DbType.String);
         parameters.Add("@YearPublication", book.YearPublication, System.Data.DbType.Date);
         parameters.Add("@Description", book.Description, System.Data.DbType.String);
         parameters.Add("@PublisherId", book.PublisherId, System.Data.DbType.Int64);
@@ -71,13 +89,20 @@ public class BookController : ControllerBase
         parameters.Add("@PhotoUrl", book.PhotoUrl, System.Data.DbType.String);
 
         if (_dapper.ExecuteSqlWithParameters(sqlCreateBook, parameters)) return Ok();
-        else return StatusCode(500, "Failed to insert book into DB");
+        else throw new Exception("Failed to insert book into DB");
     }
 
 
 
+    [HttpGet("getAllAuthors")]
+    public IEnumerable<Author> getAllAuthors()
+    {
+        return _dapper.LoadData<Author>("SELECT * FROM book_schema.Authors");
+    }
+
+
     [HttpGet("getAuthor/{id}")]
-    public Author GetAuthor(int id)
+    public Author? GetAuthor(int id)
     {
         return _dapper.LoadDataSingle<Author>($"SELECT * FROM book_schema.Authors WHERE Authors.Id={id}");
     }
@@ -101,6 +126,35 @@ public class BookController : ControllerBase
 
    
         if (_dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters)) return Ok();
-        else return StatusCode(500, "Failed to insert author into DB");
+        else throw new Exception("Failed to insert author into DB");
+    }
+
+
+
+    [HttpGet("getAllPublishers")]
+    public IEnumerable<Publisher> GetAllPublishers()
+    {
+        return _dapper.LoadData<Publisher>("SELECT * FROM book_schema.Publishers");
+    }
+
+
+    [HttpGet("getPublisher/{id}")]
+    public Publisher? GetPublisher(int id)
+    {
+        return _dapper.LoadDataSingle<Publisher>($@"SELECT * FROM book_schema.Publishers WHERE Publishers.Id={id}");
+    }
+
+
+    [HttpPost("createPublisher")]
+    public IActionResult CreatePublisher([FromBody] Publisher publisher) 
+    {
+        string sqlCreatePublisher = @"INSERT INTO book_schema.Publishers(Name, PhotoUrl) VALUES (@Name, @PhotoUrl)";
+
+        DynamicParameters dynamic = new DynamicParameters();
+        dynamic.Add("@Name", publisher.Name, System.Data.DbType.String);
+        dynamic.Add("@PhotoUrl", publisher.PhotoUrl, System.Data.DbType.String);
+
+       if (_dapper.ExecuteSqlWithParameters(sqlCreatePublisher, dynamic)) return Ok();
+       else throw new Exception("Failed to insert publisher into DB");
     }
 }

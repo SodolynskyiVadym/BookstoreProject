@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using BookstoreAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookstoreAPI.Controllers
@@ -8,10 +9,5 @@ namespace BookstoreAPI.Controllers
     public class AuthController : ControllerBase
     {
 
-        [HttpGet("test")]
-        public IActionResult Index()
-        {
-            return Ok();
-        }
     }
 }

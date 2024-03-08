@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public int NumberPages { get; set; }
-        public string Language { get; set; }
+        public string BookLanguage { get; set; }
         public DateTime YearPublication { get; set; }
         public string Description { get; set; }
         public int PublisherId { get; set; }
@@ -24,7 +24,7 @@
 
         public override string ToString()
         {
-            return @$"{nameof(Id)}: {Id}, {nameof(NumberPages)}: {NumberPages}, {nameof(Language)}: {Language}, 
+            return @$"{nameof(Id)}: {Id}, {nameof(NumberPages)}: {NumberPages}, {nameof(BookLanguage)}: {BookLanguage}, 
                 {nameof(YearPublication)}: {YearPublication}, {nameof(Description)}: {Description}, 
                 {nameof(PublisherId)}: {PublisherId}, {nameof(Name)}: {Name}, {nameof(AuthorId)}: {AuthorId}, 
                 {nameof(AvailableQuantity)}: {AvailableQuantity}, {nameof(Price)}: {Price}, {nameof(Discount)}: {Discount}, 
