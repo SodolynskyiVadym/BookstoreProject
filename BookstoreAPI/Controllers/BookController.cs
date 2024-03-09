@@ -2,6 +2,7 @@
 using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
 using Dapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookstoreAPI.Controllers;
@@ -9,6 +10,7 @@ namespace BookstoreAPI.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class BookController : ControllerBase
 {
     private readonly IConfiguration _config;
@@ -23,12 +25,16 @@ public class BookController : ControllerBase
 
 
 
+    [AllowAnonymous]
     [HttpGet("getBook/{id}")]
     public BookGenerallyInfo? GetBook(int id)
     {
         return _dapper.LoadDataSingle<BookGenerallyInfo>($"SELECT * FROM book_schema.BookGenerallyInfo WHERE BookGenerallyInfo.Id={id}");
     }
 
+
+
+    [AllowAnonymous]
     [HttpGet("getInfoBook/{id}")]
     public BookDTO? GetBookInfo(int id)
     {
@@ -49,6 +55,8 @@ public class BookController : ControllerBase
 
 
 
+
+    [AllowAnonymous]
     [HttpGet("getAllBooks")]
     public IEnumerable<BookGenerallyInfo> GetAllBooks()
     {
@@ -146,6 +154,7 @@ public class BookController : ControllerBase
 
 
 
+    [AllowAnonymous]
     [HttpGet("getAllAuthors")]
     public IEnumerable<Author> getAllAuthors()
     {
@@ -153,6 +162,8 @@ public class BookController : ControllerBase
     }
 
 
+
+    [AllowAnonymous]
     [HttpGet("getAuthor/{id}")]
     public Author? GetAuthor(int id)
     {
@@ -185,8 +196,7 @@ public class BookController : ControllerBase
     [HttpPatch("updateAuthor")]
     public IActionResult UpdateAuthor([FromBody] Author author)
     {
-        string sqlCreateAuthor = @"
-            UPDATE book_schema.Authors SET FirstName=@FirstName, LastName=@LastName, Biography=@Biography, BirthYear=@BirthYear, 
+        string sqlCreateAuthor = @"UPDATE book_schema.Authors SET FirstName=@FirstName, LastName=@LastName, Biography=@Biography, BirthYear=@BirthYear, 
                 DeathYear=@DeathYear, PhotoUrl=@PhotoUrl WHERE Id=@Id";
 
         DynamicParameters parameters = new DynamicParameters();
@@ -214,6 +224,7 @@ public class BookController : ControllerBase
 
 
 
+    [AllowAnonymous]
     [HttpGet("getAllPublishers")]
     public IEnumerable<Publisher> GetAllPublishers()
     {
@@ -221,6 +232,9 @@ public class BookController : ControllerBase
     }
 
 
+
+
+    [AllowAnonymous]
     [HttpGet("getPublisher/{id}")]
     public Publisher? GetPublisher(int id)
     {

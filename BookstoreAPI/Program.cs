@@ -40,9 +40,9 @@ var app = builder.Build();
 
 app.UseCors("DevCors");
 
-//app.UseAuthentication();
+app.UseAuthentication();
 
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapControllers();
 

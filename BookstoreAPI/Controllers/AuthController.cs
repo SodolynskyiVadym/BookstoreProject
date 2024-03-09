@@ -1,14 +1,18 @@
 ﻿using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
+using Dapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace BookstoreAPI.Controllers
 {
 
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _config;
@@ -24,20 +28,7 @@ namespace BookstoreAPI.Controllers
         }
 
 
-        [HttpGet("getAllUsers")]
-        public IEnumerable<User> GetAllUsers()
-        {
-            return _dapper.LoadData<User>("SELECT * FROM book_schema.Users");
-        }
-
-
-        [HttpGet("getUser")]
-        public User? GetUser(int id)
-        {
-            return _dapper.LoadDataSingle<User>($"SELECT * FROM book_schema.Users WHERE id={id}");
-        }
-
-
+        [AllowAnonymous]
         [HttpPost("registerUser")]
         public IActionResult RegisterUser([FromBody]UserRegisterDTO userRegister)
         {
@@ -52,6 +43,7 @@ namespace BookstoreAPI.Controllers
         }
 
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDTO userLogin)
         {
@@ -71,6 +63,19 @@ namespace BookstoreAPI.Controllers
                 return Ok(new Dictionary<string, string> { { "token", _authHelper.CreateToken(user.Id, user.Role) } });
             }
             else return StatusCode(400, "User donesn't exist");
+        }
+
+
+        [HttpPatch("updateUser")]
+        public IActionResult UpdateUser(UserUpdateDTO userUpdate)
+        {
+            int userId;
+            if (Int32.TryParse(this.User.FindFirst("userId")?.Value, out userId))
+            {
+                if (_authHelper.UpdateUser(userId, userUpdate)) return Ok();
+                else return StatusCode(500, "User was not updated");
+            }
+            else return StatusCode(400, "User was not updated");
         }
     }
 }
