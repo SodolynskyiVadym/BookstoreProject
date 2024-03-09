@@ -1,4 +1,4 @@
-﻿namespace BookstoreAPI
+﻿namespace BookstoreAPI.DTO
 {
     public class BookDTO
     {
