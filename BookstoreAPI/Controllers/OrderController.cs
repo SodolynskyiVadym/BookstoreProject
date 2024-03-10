@@ -45,5 +45,17 @@ namespace BookstoreAPI.Controllers
             return Ok();
         }
 
+
+        [HttpDelete("deleteOrder/{id}")]
+        public IActionResult DeleteOrders(int id)
+        {
+            string sqlDeleteOrder = @"CALL book_schema.spOrder_Delete(@OrderId);";
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@OrderId", id, DbType.Int32);
+
+            _dapper.ExecuteSqlWithParameters(sqlDeleteOrder, parameters);
+            return Ok();
+        }
+
     }
 }
