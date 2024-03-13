@@ -48,9 +48,9 @@ namespace BookstoreAPI.Helpers
             return _dbConnection.Query<T>(sql, parameters);
         }
 
-        public T LoadDataSingleWithParameters<T>(string sql, DynamicParameters parameters)
+        public T? LoadDataSingleWithParameters<T>(string sql, DynamicParameters parameters)
         {
-            return _dbConnection.QuerySingle<T>(sql, parameters);
+            return _dbConnection.QuerySingleOrDefault<T>(sql, parameters);
         }
     }
 }

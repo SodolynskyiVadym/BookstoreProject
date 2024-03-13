@@ -10,25 +10,15 @@
         public int PublisherId { get; set; }
         public string Name { get; set; }
         public int AuthorId { get; set; }
+        public string AuthorName { get; set; }
         public int AvailableQuantity { get; set; }
         public int Price { get; set; }
         public int Discount { get; set; }
-        public int Likes { get; set; }
-        public string? PhotoUrl { get; set; }
 
 
 
         public BookDTO()
         {
-        }
-
-        public override string ToString()
-        {
-            return @$"{nameof(Id)}: {Id}, {nameof(NumberPages)}: {NumberPages}, {nameof(BookLanguage)}: {BookLanguage}, 
-                {nameof(YearPublication)}: {YearPublication}, {nameof(Description)}: {Description}, 
-                {nameof(PublisherId)}: {PublisherId}, {nameof(Name)}: {Name}, {nameof(AuthorId)}: {AuthorId}, 
-                {nameof(AvailableQuantity)}: {AvailableQuantity}, {nameof(Price)}: {Price}, {nameof(Discount)}: {Discount}, 
-                {nameof(Likes)}: {Likes}, {nameof(PhotoUrl)}: {PhotoUrl}";
         }
     }
 }

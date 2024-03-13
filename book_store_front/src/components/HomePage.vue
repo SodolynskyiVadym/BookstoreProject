@@ -1,14 +1,14 @@
 <template>
     <div class="book-section">
       <div v-for="book in books" :key="book.id" class="book">
-            <img class="img-book" :src="require(`@/assets/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
-            <div class="book-name">{{ book.name }}</div>
-            <p>
-                <span class="full-price">{{ book.price }} UAH</span>
-                <sup>-{{ book.discount }}%</sup>
-            </p>
-            <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
-            <button class="button-buy">Buy</button>
+        <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
+        <div class="book-name">{{ book.name }}</div>
+         <p>
+            <span class="full-price">{{ book.price }} UAH</span>
+            <sup>-{{ book.discount }}%</sup>
+        </p>
+        <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
+        <button class="button-buy">Buy</button>
       </div>
     </div>
 </template>
@@ -20,9 +20,7 @@ import * as listURL from "@/js/listUrl";
 export default {
   data() {
     return {
-      books: [],
-      userID: "",
-      userGroupsID: []
+      books: []
     };
   },
 

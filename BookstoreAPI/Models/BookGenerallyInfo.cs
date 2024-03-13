@@ -9,7 +9,6 @@ public class BookGenerallyInfo
     public int Price { get; set; }
     public int Discount { get; set; }
     public int Likes { get; set; }
-    public string PhotoUrl { get; set; }
 
     public BookGenerallyInfo()
     {

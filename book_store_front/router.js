@@ -8,7 +8,7 @@ const routes = [
         component: () => import('./src/components/HomePage.vue')
     },
     {
-        path: '/bookView',
+        path: '/bookView/:id',
         name: 'BookView',
         component: () => import('./src/components/BookView.vue')
     }

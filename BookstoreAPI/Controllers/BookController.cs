@@ -44,12 +44,17 @@ public class BookController : ControllerBase
                 BookDetailInfo.numberpages,
                 BookDetailInfo.publisherid,
                 BookDetailInfo.yearpublication,
-                BookDetailInfo.description
+                BookDetailInfo.description,
+                Authors.Name AS authorName 
             FROM book_schema.BookGenerallyInfo
             INNER JOIN book_schema.BookDetailInfo ON book_schema.BookGenerallyInfo.id = book_schema.BookDetailInfo.BookId
-            WHERE book_schema.BookGenerallyInfo.id = {id.ToString() ?? "NULL"};";
+            INNER JOIN book_schema.Authors ON book_schema.BookGenerallyInfo.authorId = book_schema.Authors.Id
+            WHERE book_schema.BookGenerallyInfo.id =@Id;";
 
-        BookDTO? book = _dapper.LoadDataSingle<BookDTO>(sqlGetInfoBook);
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@Id", id, System.Data.DbType.Int64);
+
+        BookDTO? book = _dapper.LoadDataSingleWithParameters<BookDTO>(sqlGetInfoBook, parameters);
         return book;
     }
 
@@ -58,9 +63,11 @@ public class BookController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("getAllBooks")]
-    public IEnumerable<BookGenerallyInfo> GetAllBooks()
+    public IEnumerable<BookGenerallyInfoDTO> GetAllBooks()
     {
-        return _dapper.LoadData<BookGenerallyInfo>("SELECT * FROM book_schema.BookGenerallyInfo");
+        return _dapper.LoadData<BookGenerallyInfoDTO>(@"SELECT BookGenerallyInfo.*, Authors.Name AS authorName 
+            FROM book_schema.BookGenerallyInfo 
+            LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId;");
     }
 
 
@@ -78,9 +85,7 @@ public class BookController : ControllerBase
             @AuthorId::INTEGER,               
             @AvailableQuantity::INTEGER,      
             @Price::INTEGER,                  
-            @Discount::INTEGER,               
-            0,                           
-            @PhotoUrl::VARCHAR
+            @Discount::INTEGER                                        
             );";
 
 
@@ -95,7 +100,6 @@ public class BookController : ControllerBase
         parameters.Add("@AvailableQuantity", book.AvailableQuantity, System.Data.DbType.Int64);
         parameters.Add("@Price", book.Price, System.Data.DbType.Int64);
         parameters.Add("@Discount", book.Discount, System.Data.DbType.Int64);
-        parameters.Add("@PhotoUrl", book.PhotoUrl, System.Data.DbType.String);
 
         _dapper.ExecuteSqlWithParameters(sqlCreateBook, parameters);
         return Ok();
@@ -116,8 +120,6 @@ public class BookController : ControllerBase
             @AvailableQuantity::INTEGER,      
             @Price::INTEGER,                  
             @Discount::INTEGER,               
-            @Likes::INTEGER,                           
-            @PhotoUrl::VARCHAR,
             @Id::INTEGER
             );";
 
@@ -134,8 +136,6 @@ public class BookController : ControllerBase
         parameters.Add("@AvailableQuantity", book.AvailableQuantity, System.Data.DbType.Int64);
         parameters.Add("@Price", book.Price, System.Data.DbType.Int64);
         parameters.Add("@Discount", book.Discount, System.Data.DbType.Int64);
-        parameters.Add("@PhotoUrl", book.PhotoUrl, System.Data.DbType.String);
-        parameters.Add("@Likes", book.Likes, System.Data.DbType.Int64);
         parameters.Add("@Id", book.Id, System.Data.DbType.Int64);
 
         _dapper.ExecuteSqlWithParameters(sqlUpdateBook, parameters);
@@ -176,16 +176,14 @@ public class BookController : ControllerBase
     public IActionResult CreateAuthor([FromBody] Author author)
     {
         string sqlCreateAuthor = @"
-            INSERT INTO book_schema.Authors(FirstName, LastName, Biography, BirthYear, DeathYear, PhotoUrl) 
-            VALUES (@FirstName, @LastName, @Biography, @BirthYear, @DeathYear, @PhotoUrl)";
+            INSERT INTO book_schema.Authors(Name, Biography, BirthYear, DeathYear) 
+            VALUES (@Name, @Biography, @BirthYear, @DeathYear)";
 
         DynamicParameters parameters = new DynamicParameters();
-        parameters.Add("@FirstName", author.FirstName, System.Data.DbType.String);
-        parameters.Add("@LastName", author.LastName, System.Data.DbType.String);
+        parameters.Add("@Name", author.Name, System.Data.DbType.String);
         parameters.Add("@Biography", author.Biography, System.Data.DbType.String);
         parameters.Add("@BirthYear", author.BirthYear, System.Data.DbType.Date);
         parameters.Add("@DeathYear", author.DeathYear, System.Data.DbType.Date);
-        parameters.Add("@PhotoUrl", author.PhotoUrl, System.Data.DbType.String);
 
    
         if (_dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters)) return Ok();
@@ -196,16 +194,14 @@ public class BookController : ControllerBase
     [HttpPatch("updateAuthor")]
     public IActionResult UpdateAuthor([FromBody] Author author)
     {
-        string sqlCreateAuthor = @"UPDATE book_schema.Authors SET FirstName=@FirstName, LastName=@LastName, Biography=@Biography, BirthYear=@BirthYear, 
-                DeathYear=@DeathYear, PhotoUrl=@PhotoUrl WHERE Id=@Id";
+        string sqlCreateAuthor = @"UPDATE book_schema.Authors SET Name=@Name, Biography=@Biography, BirthYear=@BirthYear, 
+                DeathYear=@DeathYear WHERE Id=@Id";
 
         DynamicParameters parameters = new DynamicParameters();
-        parameters.Add("@FirstName", author.FirstName, System.Data.DbType.String);
-        parameters.Add("@LastName", author.LastName, System.Data.DbType.String);
+        parameters.Add("@Name", author.Name, System.Data.DbType.String);
         parameters.Add("@Biography", author.Biography, System.Data.DbType.String);
         parameters.Add("@BirthYear", author.BirthYear, System.Data.DbType.Date);
         parameters.Add("@DeathYear", author.DeathYear, System.Data.DbType.Date);
-        parameters.Add("@PhotoUrl", author.PhotoUrl, System.Data.DbType.String);
         parameters.Add("@Id", author.Id, System.Data.DbType.Int64);
 
 
@@ -245,11 +241,10 @@ public class BookController : ControllerBase
     [HttpPost("createPublisher")]
     public IActionResult CreatePublisher([FromBody] Publisher publisher) 
     {
-        string sqlCreatePublisher = @"INSERT INTO book_schema.Publishers(Name, PhotoUrl) VALUES (@Name, @PhotoUrl)";
+        string sqlCreatePublisher = @"INSERT INTO book_schema.Publishers(Name) VALUES (@Name)";
 
         DynamicParameters dynamic = new DynamicParameters();
         dynamic.Add("@Name", publisher.Name, System.Data.DbType.String);
-        dynamic.Add("@PhotoUrl", publisher.PhotoUrl, System.Data.DbType.String);
 
        if (_dapper.ExecuteSqlWithParameters(sqlCreatePublisher, dynamic)) return Ok();
        else throw new Exception("Failed to insert publisher into DB");
@@ -259,10 +254,9 @@ public class BookController : ControllerBase
     [HttpPatch("updatePublisher")]
     public IActionResult UpdatePublisher([FromBody] Publisher publisher)
     {
-        string sqlUpdatePublisher = $@"UPDATE book_schema.Publishers SET Name=@Name, PhotoUrl=@PhotoUrl WHERE Publishers.Id=@Id";
+        string sqlUpdatePublisher = $@"UPDATE book_schema.Publishers SET Name=@Name WHERE Publishers.Id=@Id";
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@Name", publisher.Name, System.Data.DbType.String);
-        parameters.Add("@PhotoUrl", publisher.PhotoUrl, System.Data.DbType.String);
         parameters.Add("@Id", publisher.Id, System.Data.DbType.Int64);
 
         if (_dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters)) return Ok();

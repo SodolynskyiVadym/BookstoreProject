@@ -1,11 +1,9 @@
 CREATE TABLE book_schema.Authors (
     Id SERIAL PRIMARY KEY,
-    FirstName VARCHAR(255) NOT NULL,
-    LastName VARCHAR(255) NOT NULL,
+    Name VARCHAR(255) NOT NULL,
     Biography TEXT,
     BirthYear DATE,
-    DeathYear DATE,
-    PhotoUrl VARCHAR(255)
+    DeathYear DATE
 );
 
 
@@ -26,16 +24,13 @@ CREATE TABLE book_schema.BookGenerallyInfo (
     AuthorId INTEGER,
     AvailableQuantity INTEGER NOT NULL,
     Price INTEGER NOT NULL,
-    Discount INTEGER NOT NULL,
-    Likes INTEGER NOT NULL,
-    PhotoUrl VARCHAR(255)
+    Discount INTEGER NOT NULL
 );
 
 
 CREATE TABLE book_schema.Publishers (
     Id SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    PhotoUrl VARCHAR(255)
+    Name VARCHAR(255) NOT NULL
 );
 
 

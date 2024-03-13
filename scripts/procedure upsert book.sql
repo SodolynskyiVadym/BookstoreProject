@@ -9,8 +9,6 @@ CREATE OR REPLACE PROCEDURE book_schema.spBook_Upsert(
     IN InputAvailableQuantity INTEGER,
     IN InputPrice INTEGER,
     IN InputDiscount INTEGER,
-    IN InputLikes INTEGER,
-    IN InputPhotoUrl VARCHAR(255) = NULL,
     IN InputBookId INTEGER = -1
 )
 LANGUAGE plpgsql
@@ -25,17 +23,13 @@ BEGIN
             AuthorId,
             AvailableQuantity,
             Price,
-            Discount,
-            Likes,
-            PhotoUrl
+            Discount
         ) VALUES (
             InputName,
             InputAuthorId,
             InputAvailableQuantity,
             InputPrice,
-            InputDiscount,
-            InputLikes,
-            InputPhotoUrl
+            InputDiscount
         )
         RETURNING LASTVAL() INTO OutputBookId;
 
@@ -62,9 +56,7 @@ BEGIN
                 AuthorId = InputAuthorId,
                 AvailableQuantity = InputAvailableQuantity,
                 Price = InputPrice,
-                Discount = InputDiscount,
-                Likes = InputLikes,
-                PhotoUrl = InputPhotoUrl
+                Discount = InputDiscount
             WHERE Id = InputBookId;
 
             UPDATE book_schema.BookDetailInfo
@@ -81,3 +73,6 @@ BEGIN
     END IF;
 END;
 $$;
+
+
+DROP PROCEDURE book_schema.spBook_Upsert
