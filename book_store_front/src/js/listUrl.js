@@ -9,5 +9,5 @@ export async function requestGetBooks(){
 
 
 export async function requestGetBook(id){
-    return await axios.get(mainUrl + "/book/getInfoBook/" + id).then(res => res.data);
+    return await axios.get(mainUrl + "/book/getBook/" + id).then(res => res.data);
 }

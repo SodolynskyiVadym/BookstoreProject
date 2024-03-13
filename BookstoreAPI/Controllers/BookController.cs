@@ -27,15 +27,6 @@ public class BookController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("getBook/{id}")]
-    public BookGenerallyInfo? GetBook(int id)
-    {
-        return _dapper.LoadDataSingle<BookGenerallyInfo>($"SELECT * FROM book_schema.BookGenerallyInfo WHERE BookGenerallyInfo.Id={id}");
-    }
-
-
-
-    [AllowAnonymous]
-    [HttpGet("getInfoBook/{id}")]
     public BookDTO? GetBookInfo(int id)
     {
         string sqlGetInfoBook = $@"SELECT

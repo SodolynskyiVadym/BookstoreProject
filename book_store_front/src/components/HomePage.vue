@@ -1,13 +1,15 @@
 <template>
     <div class="book-section">
       <div v-for="book in books" :key="book.id" class="book">
-        <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
-        <div class="book-name">{{ book.name }}</div>
-         <p>
-            <span class="full-price">{{ book.price }} UAH</span>
-            <sup>-{{ book.discount }}%</sup>
-        </p>
-        <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
+        <a @click="enterBookPage(book.id)">
+          <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
+          <div class="book-name">{{ book.name }}</div>
+          <p>
+              <span class="full-price">{{ book.price }} UAH</span>
+              <sup>-{{ book.discount }}%</sup>
+          </p>
+          <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
+        </a>
         <button class="button-buy">Buy</button>
       </div>
     </div>
@@ -22,6 +24,12 @@ export default {
     return {
       books: []
     };
+  },
+
+  methods: {
+    enterBookPage(bookId){
+      this.$router.push(`/bookView/${bookId}`)
+    }
   },
 
   async mounted() {
@@ -42,7 +50,7 @@ export default {
 
 .book {
     margin: 30px;    
-    width: 300px; /* Займати 1/3 ширини контейнера */
+    width: 300px;
     padding: 10px;
     text-align: center;
 }
