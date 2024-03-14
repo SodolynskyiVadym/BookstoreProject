@@ -4,6 +4,7 @@ using BookstoreAPI.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace BookstoreAPI.Controllers;
 
@@ -50,13 +51,31 @@ public class BookController : ControllerBase
     }
 
 
+    [AllowAnonymous]
+    [HttpPost("getSomeBooks")]
+    public IEnumerable<BookOrderDTO> getOrderedBooks([FromBody] Dictionary<int, int> idAndQuantity)
+    {
+        string sqlGetOrderedBooks = @"SELECT BookGenerallyInfo.*, Authors.Name AS authorName
+            FROM book_schema.BookGenerallyInfo 
+            LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId
+            WHERE BookGenerallyInfo.id = ANY (@BooksId)";
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@BooksId", idAndQuantity.Keys.ToArray(), System.Data.DbType.Object);
+
+        return _dapper.LoadDataWithParameters<BookOrderDTO>(sqlGetOrderedBooks, parameters);
+
+
+    }
+
+
 
 
     [AllowAnonymous]
     [HttpGet("getAllBooks")]
-    public IEnumerable<BookGenerallyInfoDTO> GetAllBooks()
+    public IEnumerable<BookDTO> GetAllBooks()
     {
-        return _dapper.LoadData<BookGenerallyInfoDTO>(@"SELECT BookGenerallyInfo.*, Authors.Name AS authorName 
+        return _dapper.LoadData<BookDTO>(@"SELECT BookGenerallyInfo.*, Authors.Name AS authorName 
             FROM book_schema.BookGenerallyInfo 
             LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId;");
     }

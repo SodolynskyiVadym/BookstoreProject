@@ -1,18 +1,18 @@
 <template>
-    <div class="book-section">
-      <div v-for="book in books" :key="book.id" class="book">
-        <a @click="enterBookPage(book.id)">
-          <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
-          <div class="book-name">{{ book.name }}</div>
-          <p>
-              <span class="full-price">{{ book.price }} UAH</span>
-              <sup>-{{ book.discount }}%</sup>
-          </p>
-          <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
-        </a>
-        <button class="button-buy">Buy</button>
-      </div>
+  <div class="book-section">
+    <div v-for="book in books" :key="book.id" class="book">
+      <a @click="enterBookPage(book.id)">
+        <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
+        <div class="book-name">{{ book.name }}</div>
+        <p>
+            <span class="full-price">{{ book.price }} UAH</span>
+            <sup>-{{ book.discount }}%</sup>
+        </p>
+        <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
+      </a>
+      <button class="button-buy" @click="clickButton">Buy</button>
     </div>
+  </div>
 </template>
   
 
@@ -22,7 +22,8 @@ import * as listURL from "@/js/listUrl";
 export default {
   data() {
     return {
-      books: []
+      books: [],
+      showModal: false
     };
   },
 
@@ -42,6 +43,7 @@ export default {
 
 <style>
 .book-section {
+  z-index: 1;
   margin-left: 100px;
   margin-right: 100px;
   display: flex;

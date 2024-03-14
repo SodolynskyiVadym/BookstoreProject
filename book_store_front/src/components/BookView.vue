@@ -37,10 +37,15 @@
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-          <input type="number" style="margin-left: 30px; font-size: large;" min="0" :max="book.availableQuantity" value="1">
+          <input type="number" style="margin-left: 30px; font-size: large;" min="1" :max="book.availableQuantity" value="1">
           <button class="button-buy">Buy</button>
         </div>
       </div>
+    </div>
+    <div class="description">
+      <text>
+      {{ book.description }}
+      </text>
     </div>
   </div>
 </template>
@@ -48,7 +53,6 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
-// import * as moment from "moment";
 
 export default {
   data() {
@@ -126,6 +130,16 @@ export default {
 
 .button-buy:hover {
     background-color: brown;
+}
+
+.description {
+  height: auto;
+  margin-top: 50px;
+  margin-left: 420px;
+  margin-right: 420px;
+  border: 2px solid black;
+  font-size:x-large;
+  border-radius: 13px;
 }
 
 </style>

@@ -11,3 +11,7 @@ export async function requestGetBooks(){
 export async function requestGetBook(id){
     return await axios.get(mainUrl + "/book/getBook/" + id).then(res => res.data);
 }
+
+export async function requestGetSomeBook(arrayBooks){
+    return await axios.post(mainUrl + "/book/getSomeBooks/", arrayBooks).then(res => res.data);
+}
