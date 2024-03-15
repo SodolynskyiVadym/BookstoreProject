@@ -15,12 +15,14 @@
           <div style="padding-bottom: 20px;">{{ book.name }}</div>
           <div style="align-self: self-end;">{{ book.authorName }}</div>
         </div>
-        <div style="margin-left: 350px; margin-top: 40px; width: 120px;">{{ (book.price - book.price * book.discount / 100).toFixed() }} UAH</div>
+        <div style="margin-left: 300px; margin-top: 60px; width: 120px;">{{ (book.price - book.price * book.discount / 100).toFixed() }} UAH</div>
         <div style="margin-left: 50px; margin-top: 40px;">
           <div>Quantity: </div>
-          <input type="number" min="1" v-model="book.quantityOrdered">
+          <input type="number" min="1" @change="changeBookQuantity(book)" v-model="book.quantityOrdered" style="width: 80px;">
         </div>
+        <button class="button-delete-order" @click="deleteOrderBook(book.id)">Delete</button>
       </div>
+      <div class="generally-price">Price: {{ generallyPrice }}</div>
     </div>
     <router-view style="z-index: 1;"></router-view>
 </template>
@@ -28,34 +30,51 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import * as orderMaker from "@/js/orderMaker"
 
 export default {
   data() {
     return {
       isShowOrder: false,
-      orderedBook : []
+      orderedBook : [],
+      generallyPrice : 0
     };
   },
 
   methods: {
-    orderStringToArray(array) {
-        const result = {};
-        for (let i = 0; i < array.length - 2; i += 2) {
-            result[array[i]] = array[i + 1];
-            }
-        return result;
-        },
-
+    async calculateGenerallyPrice(){
+      this.generallyPrice = 0;
+      for(var book of this.orderedBook){
+          this.generallyPrice += (book.price - book.price*book.discount/100) * book.quantityOrdered;
+      }
+      this.generallyPrice = this.generallyPrice.toFixed();
+    },
 
     async showOrder(){
-      
-      const array = this.orderStringToArray(localStorage.getItem("order").split(" "));
-      this.orderedBook = await listURL.requestGetSomeBook(array);
-      for(var book of this.orderedBook){
-        book.quantityOrdered = array[book.id];
+      if(!this.isShowOrder){
+        const orderedBooksId = await orderMaker.getOrderedBooksArray();
+        const arrayBookQuantity = await orderMaker.getOrderBookQuantity();
+        this.orderedBook = await listURL.requestGetSomeBook(orderedBooksId);
+        for(var book of this.orderedBook){
+          book.quantityOrdered = arrayBookQuantity[book.id];
+        }
+        await this.calculateGenerallyPrice();
       }
-
       this.isShowOrder = !this.isShowOrder;
+    },
+
+    async deleteOrderBook(id){
+      this.orderedBook = this.orderedBook.filter(book => book.id != id);
+      localStorage.setItem("order", await orderMaker.removeBookFromOrder(id));
+      await this.calculateGenerallyPrice();
+    },
+
+
+    async changeBookQuantity(book){
+      console.log(book);
+      const strOrder = await orderMaker.changeQuantity(book.id, book.quantityOrdered);
+      localStorage.setItem("order", strOrder); 
+      await this.calculateGenerallyPrice();
     }
   },
 
@@ -97,9 +116,10 @@ export default {
 }
 
 .order-inscription {
-  font-size: x-large;
-  color: rgb(34, 177, 41);
-  background-color: rgb(105, 105, 105);
+  font-size: xx-large;
+  color: red;
+  border-bottom: solid 2px;
+  border-color: black;
 }
 
 .orderBook {
@@ -119,6 +139,36 @@ export default {
 .image-order {
   height: 160px;
   width: 90px;
+}
+
+
+.button-delete-order {
+  margin-top: 60px;
+  margin-left: 30px;
+  background-color: red;
+  color: white;
+  width: 100px;
+  height: 50px;
+  text-align: center;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: blod;
+  font-size: 1.2em;
+  border: none;
+}
+
+.button-delete-order:hover{
+  background-color: brown;
+}
+
+
+.generally-price {
+  margin-top: 30px;
+  margin-left: 45%;
+  height: 60px;
+  width: 150px;
+  font-size: x-large;
+  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
 
 </style>

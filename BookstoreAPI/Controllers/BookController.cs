@@ -54,7 +54,7 @@ public class BookController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("getSomeBooks")]
-    public IEnumerable<BookOrderDTO> getOrderedBooks([FromBody] Dictionary<int, int> idAndQuantity)
+    public IEnumerable<BookOrderDTO> getOrderedBooks([FromBody] List<int> booksId)
     {
         string sqlGetOrderedBooks = @"SELECT BookGenerallyInfo.*, Authors.Name AS authorName
             FROM book_schema.BookGenerallyInfo 
@@ -62,7 +62,7 @@ public class BookController : ControllerBase
             WHERE BookGenerallyInfo.id = ANY (@BooksId)";
 
         DynamicParameters parameters = new DynamicParameters();
-        parameters.Add("@BooksId", idAndQuantity.Keys.ToArray(), System.Data.DbType.Object);
+        parameters.Add("@BooksId", booksId.ToArray(), System.Data.DbType.Object);
 
         return _dapper.LoadDataWithParameters<BookOrderDTO>(sqlGetOrderedBooks, parameters);
 
