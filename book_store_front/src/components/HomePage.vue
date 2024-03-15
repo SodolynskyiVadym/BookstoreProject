@@ -10,7 +10,7 @@
         </p>
         <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
       </a>
-      <button class="button-buy" @click="clickButton">Buy</button>
+      <button class="button-buy" @click="buyBook(book.id)">Buy</button>
     </div>
   </div>
 </template>
@@ -30,6 +30,12 @@ export default {
   methods: {
     enterBookPage(bookId){
       this.$router.push(`/bookView/${bookId}`)
+    },
+
+
+    buyBook(bookId){
+      console.log(bookId);
+      localStorage.setItem("order", localStorage.getItem("order") + `${bookId} 1 `)
     }
   },
 
@@ -44,6 +50,7 @@ export default {
 <style>
 .book-section {
   z-index: 1;
+  padding-top: 80px;
   margin-left: 100px;
   margin-right: 100px;
   display: flex;
