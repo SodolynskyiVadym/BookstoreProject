@@ -38,7 +38,7 @@ export default {
   },
 
   methods: {
-    arrayToKeyValue(array) {
+    orderStringToArray(array) {
         const result = {};
         for (let i = 0; i < array.length - 2; i += 2) {
             result[array[i]] = array[i + 1];
@@ -49,7 +49,7 @@ export default {
 
     async showOrder(){
       
-      const array = this.arrayToKeyValue(localStorage.getItem("order").split(" "));
+      const array = this.orderStringToArray(localStorage.getItem("order").split(" "));
       this.orderedBook = await listURL.requestGetSomeBook(array);
       for(var book of this.orderedBook){
         book.quantityOrdered = array[book.id];
@@ -59,10 +59,6 @@ export default {
     }
   },
 
-
-  async mounted(){
-    if(localStorage.getItem("order")) localStorage.setItem("order", "");
-  }
 };
 </script>
 

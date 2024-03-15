@@ -10,7 +10,8 @@
         </p>
         <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
       </a>
-      <button class="button-buy" @click="buyBook(book.id)">Buy</button>
+      <button class="button-buy" v-if="!book.isOrdered" @click="buyBook(book)">Buy</button>
+      <button style="background-color: gray; width: auto; cursor: auto;" class="button-buy" v-else >Already in your backet</button>
     </div>
   </div>
 </template>
@@ -32,15 +33,34 @@ export default {
       this.$router.push(`/bookView/${bookId}`)
     },
 
+    async orderStringToIntArray() {
+      const result = [];
+      if(localStorage.getItem("order")){
+        const array = localStorage.getItem("order").split(" ");
+        for (let i = 0; i < array.length - 2; i += 2) {
+          result.push(parseInt(array[i]));
+        }
+      }
+      return result;
+    },
 
-    buyBook(bookId){
-      console.log(bookId);
-      localStorage.setItem("order", localStorage.getItem("order") + `${bookId} 1 `)
+
+    buyBook(book){
+      if(localStorage.getItem("order")) localStorage.setItem("order", localStorage.getItem("order") + `${book.id} 1 `);
+      else localStorage.setItem("order", `${book.id} 1 `);
+      book.isOrdered = true;
     }
   },
 
   async mounted() {
     this.books = await listURL.requestGetBooks();
+    var indexesOrderedBooks = await this.orderStringToIntArray();
+    
+    for(var book of this.books){
+      if(indexesOrderedBooks.includes(book.id)) {
+        book.isOrdered = true;
+      }
+    }
   }
 };
 </script>
