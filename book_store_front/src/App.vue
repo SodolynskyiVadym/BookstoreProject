@@ -18,11 +18,11 @@
         <div style="margin-left: 300px; margin-top: 60px; width: 120px;">{{ (book.price - book.price * book.discount / 100).toFixed() }} UAH</div>
         <div style="margin-left: 50px; margin-top: 40px;">
           <div>Quantity: </div>
-          <input type="number" min="1" @change="changeBookQuantity(book)" v-model="book.quantityOrdered" style="width: 80px;">
+          <input type="number" min="1" @change="changeBookQuantity(book)" :max="book.availableQuantity" v-model="book.quantityOrdered" style="width: 80px;">
         </div>
         <button class="button-delete-order" @click="deleteOrderBook(book.id)">Delete</button>
       </div>
-      <div class="generally-price">Price: {{ generallyPrice }}</div>
+      <div class="generally-price">Price: {{ generallyPrice }} UAH</div>
     </div>
     <router-view style="z-index: 1;"></router-view>
 </template>
@@ -166,7 +166,7 @@ export default {
   margin-top: 30px;
   margin-left: 45%;
   height: 60px;
-  width: 150px;
+  width: 250px;
   font-size: x-large;
   font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }

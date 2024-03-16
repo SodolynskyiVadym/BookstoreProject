@@ -20,7 +20,7 @@
       <div class="book-info-section" style="margin-left: 0px; border-bottom-right-radius: 15px; border-top-right-radius: 15px;">
         <div class="isBookStyle">THE BOOK IS IN STOCK</div>
         <div>{{ book.name }}</div>
-        <div>{{ book.authorName }}</div>
+        <a @click="enterAuthorPage"><div>{{ book.authorName }}</div></a>
         <div>{{ book.yearPublication}}</div>
         <div>{{ book.numberPages }}</div>
         <div>{{ book.bookLanguage }}</div>
@@ -60,6 +60,12 @@ export default {
       book: null,
       loaded: false
     };
+  },
+
+  methods: {
+    async enterAuthorPage(){
+      this.$router.push(`/author/${this.book.authorId}`);
+    }
   },
 
   async mounted() {

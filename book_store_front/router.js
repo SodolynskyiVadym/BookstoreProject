@@ -11,6 +11,11 @@ const routes = [
         path: '/bookView/:id',
         name: 'BookView',
         component: () => import('./src/components/BookView.vue')
+    },
+    {
+        path: '/author/:id',
+        name: 'AuthorPage',
+        component: () => import('./src/components/AuthorPage.vue')
     }
 ];
 

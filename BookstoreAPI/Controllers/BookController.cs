@@ -178,7 +178,31 @@ public class BookController : ControllerBase
     [HttpGet("getAuthor/{id}")]
     public Author? GetAuthor(int id)
     {
-        return _dapper.LoadDataSingle<Author>($"SELECT * FROM book_schema.Authors WHERE Authors.Id={id}");
+        string sqlGetAuthor = @"SELECT * FROM book_schema.Authors WHERE Authors.Id=@Id";
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("id", id, System.Data.DbType.Int64);
+        return _dapper.LoadDataSingleWithParameters<Author>(sqlGetAuthor, parameters);
+    }
+
+
+    [AllowAnonymous]
+    [HttpGet("getAuthorBooks/{id}")]
+    public IActionResult GetAuthorBooks(int id)
+    {
+        string sqlGetAuthor = @"SELECT * FROM book_schema.Authors WHERE id=@Id";
+        string sqlGetBooks = @"SELECT
+                BookGenerallyInfo.*,
+                BookDetailInfo.*
+            FROM book_schema.BookGenerallyInfo
+            INNER JOIN book_schema.BookDetailInfo ON book_schema.BookGenerallyInfo.id = book_schema.BookDetailInfo.BookId
+            WHERE book_schema.BookGenerallyInfo.authorId =@Id;";
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@Id", id, System.Data.DbType.Int64);
+
+        IEnumerable<BookDTO> books = _dapper.LoadDataWithParameters<BookDTO>(sqlGetBooks, parameters);
+        Author? author = _dapper.LoadDataSingleWithParameters<Author>(sqlGetAuthor, parameters);
+
+        return Ok(new { Author = author, Books = books });
     }
 
 
