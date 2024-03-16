@@ -20,11 +20,11 @@
       <div class="book-info-section" style="margin-left: 0px; border-bottom-right-radius: 15px; border-top-right-radius: 15px;">
         <div class="isBookStyle">THE BOOK IS IN STOCK</div>
         <div>{{ book.name }}</div>
-        <a @click="enterAuthorPage"><div>{{ book.authorName }}</div></a>
+        <a @click="enterAuthorPage" style="color: red; cursor: pointer;"><div>{{ book.authorName }}</div></a>
         <div>{{ book.yearPublication}}</div>
         <div>{{ book.numberPages }}</div>
         <div>{{ book.bookLanguage }}</div>
-        <div>{{ book.publisherId }}</div>
+        <div style="color: red; cursor: pointer;">{{ book.publisherName }}</div>
         <div>{{ book.price }}</div>
         <div>{{ book.discount }}</div>
       </div>

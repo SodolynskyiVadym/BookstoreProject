@@ -37,10 +37,12 @@ public class BookController : ControllerBase
                 BookDetailInfo.publisherid,
                 BookDetailInfo.yearpublication,
                 BookDetailInfo.description,
-                Authors.Name AS authorName 
+                Authors.Name AS authorName,
+                Publishers.Name AS PublisherName
             FROM book_schema.BookGenerallyInfo
             INNER JOIN book_schema.BookDetailInfo ON book_schema.BookGenerallyInfo.id = book_schema.BookDetailInfo.BookId
             INNER JOIN book_schema.Authors ON book_schema.BookGenerallyInfo.authorId = book_schema.Authors.Id
+            INNER JOIN book_schema.Publishers ON BookDetailInfo.publisherId = book_schema.Publishers.Id
             WHERE book_schema.BookGenerallyInfo.id =@Id;";
 
         DynamicParameters parameters = new DynamicParameters();
