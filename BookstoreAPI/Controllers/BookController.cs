@@ -193,15 +193,13 @@ public class BookController : ControllerBase
     {
         string sqlGetAuthor = @"SELECT * FROM book_schema.Authors WHERE id=@Id";
         string sqlGetBooks = @"SELECT
-                BookGenerallyInfo.*,
-                BookDetailInfo.*
+                BookGenerallyInfo.*
             FROM book_schema.BookGenerallyInfo
-            INNER JOIN book_schema.BookDetailInfo ON book_schema.BookGenerallyInfo.id = book_schema.BookDetailInfo.BookId
             WHERE book_schema.BookGenerallyInfo.authorId =@Id;";
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@Id", id, System.Data.DbType.Int64);
 
-        IEnumerable<BookDTO> books = _dapper.LoadDataWithParameters<BookDTO>(sqlGetBooks, parameters);
+        IEnumerable<BookGenerallyInfo> books = _dapper.LoadDataWithParameters<BookGenerallyInfo>(sqlGetBooks, parameters);
         Author? author = _dapper.LoadDataSingleWithParameters<Author>(sqlGetAuthor, parameters);
 
         return Ok(new { Author = author, Books = books });

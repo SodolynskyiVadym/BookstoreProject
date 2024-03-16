@@ -19,6 +19,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import * as orderMaker from "@/js/orderMaker"
 
 export default {
   data() {
@@ -30,31 +31,18 @@ export default {
 
   methods: {
     enterBookPage(bookId){
-      this.$router.push(`/bookView/${bookId}`)
+      this.$router.push(`/bookView/${bookId}`);
     },
 
-    async orderStringToIntArray() {
-      const result = [];
-      if(localStorage.getItem("order")){
-        const array = localStorage.getItem("order").split(" ");
-        for (let i = 0; i < array.length - 2; i += 2) {
-          result.push(parseInt(array[i]));
-        }
-      }
-      return result;
-    },
-
-
-    buyBook(book){
-      if(localStorage.getItem("order")) localStorage.setItem("order", localStorage.getItem("order") + `${book.id} 1 `);
-      else localStorage.setItem("order", `${book.id} 1 `);
+    async buyBook(book){
+      await orderMaker.addBookToOrder(book.id, 1);
       book.isOrdered = true;
     }
   },
 
   async mounted() {
     this.books = await listURL.requestGetBooks();
-    var indexesOrderedBooks = await this.orderStringToIntArray();
+    var indexesOrderedBooks = await orderMaker.getOrderedBooksArray();
     
     for(var book of this.books){
       if(indexesOrderedBooks.includes(book.id)) {

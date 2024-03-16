@@ -72,8 +72,7 @@ export default {
 
     async changeBookQuantity(book){
       console.log(book);
-      const strOrder = await orderMaker.changeQuantity(book.id, book.quantityOrdered);
-      localStorage.setItem("order", strOrder); 
+      await orderMaker.changeQuantity(book.id, book.quantityOrdered);
       await this.calculateGenerallyPrice();
     }
   },

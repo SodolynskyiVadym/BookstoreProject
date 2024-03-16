@@ -29,6 +29,8 @@ export async function removeBookFromOrder(id){
         for (let i = 0; i < array.length - 2; i += 2) {
             if(array[i] != id) strOrder = strOrder + `${array[i]} ${array[i+1]} `
         }
+
+        localStorage.setItem("order", strOrder);
     }
     return strOrder;
 }
@@ -37,10 +39,15 @@ export async function removeBookFromOrder(id){
 export async function changeQuantity(id, quantity){
     var strOrder = "";
     const array = localStorage.getItem("order").split(" ");
-    console.log(array);
     for (let i = 0; i < array.length - 2; i += 2) {
         if(array[i] != id) strOrder = strOrder + `${array[i]} ${array[i+1]} `;
         else strOrder = strOrder + `${array[i]} ${quantity} `;
     }
-    return strOrder;
+    localStorage.setItem("order", strOrder);
+}
+
+
+export async function addBookToOrder(id, quantity){
+    if(localStorage.getItem("order")) localStorage.setItem("order", localStorage.getItem("order") + `${id} ${quantity} `);
+    else localStorage.setItem("order", `${id} ${quantity} `);
 }

@@ -37,8 +37,9 @@
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-          <input type="number" style="margin-left: 30px; font-size: large;" min="1" :max="book.availableQuantity" value="1">
-          <button class="button-buy">Buy</button>
+          <input type="number" style="margin-left: 30px; font-size: large;" min="1" :max="book.availableQuantity" v-model="orderedQuantity" :value="orderedQuantity" @change="changeQuantityOrder()">
+          <button v-if="isNoOrdered" @click="changeOrCreateOrder(book.id)" class="button-buy">Buy</button>
+          <button v-else class="button-buy" @click="cancelOrder(book.id)">Cancel</button>
         </div>
       </div>
     </div>
@@ -53,23 +54,61 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import * as orderMaker from "@/js/orderMaker"
 
 export default {
   data() {
     return {
       book: null,
-      loaded: false
+      loaded: false,
+      firstOrderedQuantity: 0,
+      orderedQuantity: 0,
+      isNoOrdered: false
     };
   },
 
   methods: {
     async enterAuthorPage(){
       this.$router.push(`/author/${this.book.authorId}`);
+    },
+
+
+    async cancelOrder(id){
+      await orderMaker.removeBookFromOrder(id);
+      this.firstOrderedQuantity = -1;
+      this.isNoOrdered = true;
+    },
+
+    async changeOrCreateOrder(id){
+      const arrayOrderedBooks = await orderMaker.getOrderedBooksArray();
+      if(arrayOrderedBooks.includes(id)){
+        await orderMaker.changeQuantity(id, this.orderedQuantity);
+      }
+      else await orderMaker.addBookToOrder(id, this.orderedQuantity);
+
+      this.firstOrderedQuantity = this.orderedQuantity;
+      this.isNoOrdered = false;
+
+    },
+
+    async changeQuantityOrder(){
+      if(this.firstOrderedQuantity != this.orderedQuantity) this.isNoOrdered = true;
+      else this.isNoOrdered = false;
+      console.log(`First - ${this.firstOrderedQuantity}  Second - ${this.orderedQuantity}`)
+      console.log(this.isNoOrdered)
     }
   },
 
   async mounted() {
     this.book = await listURL.requestGetBook(this.$route.params.id);
+    const orderBookQuantity = await orderMaker.getOrderBookQuantity();
+    const orderedBooks = await orderMaker.getOrderedBooksArray();
+
+    const orderedQuantity = orderBookQuantity[this.book.id] ?? 1;
+    this.orderedQuantity = orderedQuantity;
+    this.firstOrderedQuantity = orderBookQuantity[this.book.id] ?? -1;
+
+    this.isNoOrdered = !orderedBooks.includes(this.book.id);
     this.loaded = true;
   }
 }
