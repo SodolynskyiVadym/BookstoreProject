@@ -27,6 +27,26 @@ public class BookController : ControllerBase
 
 
     [AllowAnonymous]
+    [HttpPost("test")]
+    public async Task<IActionResult> Upload([FromForm] Microsoft.AspNetCore.Http.IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest("File is empty");
+
+        var path = Path.Combine(
+            Directory.GetCurrentDirectory(), "uploads",
+            file.FileName);
+
+        using (var stream = new FileStream(path, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        return Ok("File uploaded successfully");
+    }
+
+
+    [AllowAnonymous]
     [HttpGet("getBook/{id}")]
     public BookDTO? GetBookInfo(int id)
     {

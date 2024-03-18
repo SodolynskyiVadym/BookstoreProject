@@ -16,6 +16,11 @@ const routes = [
         path: '/author/:id',
         name: 'AuthorPage',
         component: () => import('./src/components/AuthorPage.vue')
+    },
+    {
+        path: '/createBook',
+        name: "CreateBook",
+        component: () => import('./src/components/CreateBookPage.vue')
     }
 ];
 
@@ -25,6 +30,8 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 });
+
+
 
 // router.beforeEach(async (to, from, next) => {
 //     if (to.meta.requiresAuth) {

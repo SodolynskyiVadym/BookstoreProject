@@ -19,3 +19,13 @@ export async function requestGetSomeBook(arrayBooks){
 export async function requestGetAuthorBooks(id){
     return await axios.get(mainUrl + "/book/getAuthorBooks/" + id).then(res => res.data);
 }
+
+
+export async function requestGetAllAuthors(){
+    return await axios.get(mainUrl + "/book/getAllAuthors").then(res => res.data);
+}
+
+
+export async function requestGetAllPublishers(){
+    return await axios.get(mainUrl + "/book/getAllPublishers").then(res => res.data);
+}

@@ -16,4 +16,8 @@
     <PackageReference Include="System.Text.Json" Version="8.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\uploads\" />
+  </ItemGroup>
+
 </Project>
