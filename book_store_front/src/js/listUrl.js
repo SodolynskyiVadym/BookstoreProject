@@ -34,3 +34,8 @@ export async function requestGetAllPublishers(){
 export async function requestPostCreateBook(data){
     return await axios.post(mainUrl + "/book/createBook", data).then(res => res.data)
 }
+
+
+export async function requestPostCreateAuthor(data){
+    return await axios.post(mainUrl + "/book/createAuthor", data).then(res => res.data)
+}

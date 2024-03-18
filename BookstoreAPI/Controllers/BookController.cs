@@ -205,7 +205,7 @@ public class BookController : ControllerBase
     }
 
 
-
+    [AllowAnonymous]
     [HttpPost("createAuthor")]
     public IActionResult CreateAuthor([FromBody] Author author)
     {

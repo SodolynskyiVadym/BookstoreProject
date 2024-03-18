@@ -21,6 +21,11 @@ const routes = [
         path: '/createBook',
         name: "CreateBook",
         component: () => import('./src/components/CreateBookPage.vue')
+    },
+    {
+        path: '/createAuthor',
+        name: "CreateAuthor",
+        component: () => import('./src/components/CreateAuthorPage.vue')
     }
 ];
 

@@ -43,8 +43,8 @@ export default {
         const data = await listUrl.requestGetAuthorBooks(this.$route.params.id);
         this.author = data.author;
         this.books = data.books;
-        this.author.birthYear = this.author.birthYear.split('T')[0] ?? "?";
-        this.author.deathYear = this.author.deathYear.split('T')[0] ?? "?"; 
+        this.author.birthYear = this.author.birthYear != null ? this.author.birthYear.split('T')[0] : "???";
+        this.author.deathYear = this.author.deathYear != null ? this.author.deathYear.split('T')[0] : "???"; 
         this.loaded = true;
     }
 }

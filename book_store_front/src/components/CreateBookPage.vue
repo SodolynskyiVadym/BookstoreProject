@@ -25,7 +25,7 @@
         <input id="yearPublication" type="Date" v-model="yearPublication" @change="test" :max="maxDate">
         <label key="description">Description</label>
         <textarea v-model="description" id="description" placeholder="Description"></textarea>
-        <button @click="createBook">Create</button>
+        <button @click="createBook" class="button-create">Create</button>
     </div>
 </template>
 
@@ -144,6 +144,24 @@ export default {
     display: block;
     margin-bottom: 20px;
     border-radius: 15px;
+}
+
+.button-create {
+    color: white;
+    position: center;
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    background-color: rgb(0, 0, 0);
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: blod;
+    font-size: 1.2em;
+    border: none;
+}
+
+.button-create:hover {
+    background-color: rgb(48, 45, 45);
 }
 
 </style>

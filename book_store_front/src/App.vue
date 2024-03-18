@@ -4,6 +4,7 @@
         <div style="margin-right: 20px;">
             <img :src="require(`@/assets/basket.png`)" class="icons-header" style="padding-right: 30px;" @click="showOrder">
             <img :src="require(`@/assets/user.png`)" class="icons-header" style="margin-right: 20px;">
+            <img :src="require(`@/assets/create-author.png`)" class="icons-header" style="margin-right: 20px;" @click="enterCreateAuthorPage">
             <img :src="require(`@/assets/create-book.png`)" class="icons-header" style="margin-right: 20px;" @click="enterCreateBookPage">
         </div>
     </header>
@@ -79,6 +80,11 @@ export default {
 
     async enterCreateBookPage(){
       this.$router.push('/createBook');
+    },
+
+
+    async enterCreateAuthorPage(){
+      this.$router.push('/createAuthor');
     }
   },
 
