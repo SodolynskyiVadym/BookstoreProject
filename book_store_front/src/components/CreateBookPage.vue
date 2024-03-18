@@ -22,9 +22,10 @@
         <label key="numberPages">Pages number</label>
         <input id="numberPages" type="number" v-model="numberPages">
         <label key="yearPublication">Year publication</label>
-        <input id="yearPublication" type="Date" v-model="yearPublication" @change="test">
+        <input id="yearPublication" type="Date" v-model="yearPublication" @change="test" :max="maxDate">
         <label key="description">Description</label>
         <textarea v-model="description" id="description" placeholder="Description"></textarea>
+        <button @click="createBook">Create</button>
     </div>
 </template>
 
@@ -39,6 +40,7 @@ export default {
             numberPages: 0,
             bookLanguage: "",
             yearPublication: this.formatDate(Date.now()),
+            maxDate: this.formatDate(Date.now()),
             publisherId: 0,
             publisherName: "",
             authorId: 0,
@@ -75,6 +77,24 @@ export default {
             this.publisherId = this.publishers.find(publsher => publsher.name === this.publisherName).id;
             console.log(this.publisherId);
         },
+
+
+        async createBook(){
+            const data = {
+                name:  this.name,
+                description:  this.description,
+                numberPages: this.numberPages,
+                bookLanguage:  this.bookLanguage,
+                yearPublication: this.yearPublication,
+                publisherId: this.publisherId,
+                authorId: this.authorId,
+                availableQuantity: this.availableQuantity,
+                price: this.price,
+                discount: this.discount,
+            };
+
+            await listURL.requestPostCreateBook(data);
+        }
     },
 
     async mounted(){

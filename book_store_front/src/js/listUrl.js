@@ -29,3 +29,8 @@ export async function requestGetAllAuthors(){
 export async function requestGetAllPublishers(){
     return await axios.get(mainUrl + "/book/getAllPublishers").then(res => res.data);
 }
+
+
+export async function requestPostCreateBook(data){
+    return await axios.post(mainUrl + "/book/createBook", data).then(res => res.data)
+}
