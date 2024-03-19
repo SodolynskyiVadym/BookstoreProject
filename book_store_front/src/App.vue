@@ -20,7 +20,7 @@
         <div style="margin-left: 300px; margin-top: 60px; width: 120px;">{{ (book.price - book.price * book.discount / 100).toFixed() }} UAH</div>
         <div style="margin-left: 50px; margin-top: 40px;">
           <div>Quantity: </div>
-          <input type="number" min="1" @change="changeBookQuantity(book)" :max="book.availableQuantity" v-model="book.quantityOrdered" style="width: 80px;">
+          <input type="number" :min="1" @change="changeBookQuantity(book)" :max="book.availableQuantity" v-model="book.quantityOrdered" style="width: 80px;">
         </div>
         <button class="button-delete-order" @click="deleteOrderBook(book.id)">Delete</button>
       </div>
@@ -73,9 +73,16 @@ export default {
 
 
     async changeBookQuantity(book){
-      console.log(book);
-      await orderMaker.changeQuantity(book.id, book.quantityOrdered);
+      if(book.quantityOrdered === 0)
+      {
+        book.quantityOrdered = 1;
+        await orderMaker.changeQuantity(book.id, book.quantityOrdered);
+      }
+      else{
+        await orderMaker.changeQuantity(book.id, book.quantityOrdered);
+      }
       await this.calculateGenerallyPrice();
+
     },
 
     async enterCreateBookPage(){

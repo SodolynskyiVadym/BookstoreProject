@@ -1,24 +1,24 @@
 <template>
     <div class="create-author-section">
         <label key="name">Name</label>
-        <input type="text" v-model="name" id="name" placeholder="Name">
+        <input type="text" v-model="name" id="name" placeholder="Name" @change="checkIsActive">
         <label key="biography">Biography</label>
-        <textarea v-model="biography" id="biography"></textarea>
+        <textarea v-model="biography" id="biography" @change="checkIsActive"></textarea>
 
-        <input type="checkbox" v-model="isKnownBirth" id="isKnownBirth">
+        <input type="checkbox" v-model="isKnownBirth" id="isKnownBirth" @change="checkIsActive">
         <label for="isKnownBirth">Birth date</label>
-        <input type="date" v-model="birthYear" id="birthYear" :max="deathYear" :disabled="!isKnownBirth">
+        <input type="date" v-model="birthYear" id="birthYear" :max="deathYear" :disabled="!isKnownBirth" @change="checkIsActive">
 
-        <input class="checkbox-style" type="checkbox" v-model="isKnownDeath" id="isKnownDeath">
+        <input class="checkbox-style" type="checkbox" v-model="isKnownDeath" id="isKnownDeath" @change="checkIsActive">
         <label for="isKnownDeath">Death date</label>
-        <input type="date" v-model="deathYear" id="deathYear" :disabled="!isKnownDeath">
+        <input type="date" v-model="deathYear" id="deathYear" :disabled="!isKnownDeath" @change="checkIsActive">
 
-        <button @click="createAuthor" class="button-create">Create</button>
+        <button @click="createAuthor" :class="{ 'button-create': isActive, 'button-create-disabled': !isActive }" :disabled="!isActive">Create</button>
     </div>
 </template>
 
 <script>
-// import * as listURL from "@/js/listUrl";
+import * as listURL from "@/js/listUrl";
 
 
 export default {
@@ -29,7 +29,8 @@ export default {
             birthYear: this.formatDate(Date.now()),
             deathYear: this.formatDate(Date.now()),
             isKnownBirth: false,
-            isKnownDeath: false
+            isKnownDeath: false,
+            isActive: false
         }
     },
 
@@ -40,6 +41,15 @@ export default {
             const month = (d.getMonth() + 1).toString().padStart(2, '0');
             const year = d.getFullYear();
             return `${year}-${month}-${day}`;
+        },
+
+
+        async checkIsActive(){
+            if(this.name && this.biography && (!this.isKnownBirth || this.birthYear != this.formatDate(Date.now()))){
+                this.isActive = true;
+            }else{
+                this.isActive = false;
+            }
         },
 
 
@@ -54,6 +64,12 @@ export default {
                 deathYear: dateDeath
             }
             await listURL.requestPostCreateAuthor(data);
+
+            this.name = "";
+            this.biography = "";
+            this.birthYear = this.formatDate(Date.now());
+            this.deathYear = this.formatDate(Date.now());
+            this.isActive = false;
         }
     },
 
@@ -116,6 +132,21 @@ export default {
 
 .button-create:hover {
     background-color: rgb(48, 45, 45);
+}
+
+
+.button-create-disabled {
+    color: white;
+    position: center;
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    background-color: rgb(119, 116, 116);
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: blod;
+    font-size: 1.2em;
+    border: none;
 }
 
 </style>

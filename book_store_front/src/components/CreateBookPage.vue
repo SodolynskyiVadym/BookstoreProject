@@ -2,13 +2,13 @@
 
     <div class="create-book-section">
         <label key="name">Name</label>
-        <input id="name" type="text" v-model="name" placeholder="Name">
+        <input id="name" type="text" v-model="name" placeholder="Name" @change="checkIsActiveButton">
         <label key="language">Language</label>
-        <input id="language" type="text" v-model="bookLanguage" placeholder="Language">
+        <input id="language" type="text" v-model="bookLanguage" placeholder="Language" @change="checkIsActiveButton">
         <label key="price">Price</label>
-        <input id="price" type="number" v-model="price" min="0">
+        <input id="price" type="number" v-model="price" min="0" @change="checkIsActiveButton">
         <label key="discount">Discount</label>
-        <input id="discount" type="number" v-model="discount" min="0" max="100">
+        <input id="discount" type="number" v-model="discount" min="0" max="100" @change="checkIsActiveButton">
         <label key="authorName">Author</label>
         <select id="authorName" v-model="authorName" @change="findIdByNameAuthor">
             <option v-if="authors.length === 0" disabled>No authors available</option>
@@ -20,12 +20,12 @@
             <option v-for="publisher in publishers" :key="publisher.id" v-text="publisher.name"></option>
         </select>
         <label key="numberPages">Pages number</label>
-        <input id="numberPages" type="number" v-model="numberPages">
+        <input id="numberPages" type="number" v-model="numberPages" @change="checkIsActiveButton">
         <label key="yearPublication">Year publication</label>
-        <input id="yearPublication" type="Date" v-model="yearPublication" @change="test" :max="maxDate">
+        <input id="yearPublication" type="Date" v-model="yearPublication" :max="maxDate" @change="checkIsActiveButton">
         <label key="description">Description</label>
-        <textarea v-model="description" id="description" placeholder="Description"></textarea>
-        <button @click="createBook" class="button-create">Create</button>
+        <textarea v-model="description" id="description" placeholder="Description" @change="checkIsActiveButton"></textarea>
+        <button @click="createBook" :class="{ 'button-create': isActive, 'button-create-disabled': !isActive }" :disabled="!isActive">Create</button>
     </div>
 </template>
 
@@ -49,15 +49,12 @@ export default {
             price: 0,
             discount: 0,
             publishers: [],
-            authors: []
+            authors: [],
+            isActive: false
         }
     },
 
     methods: {
-        async test(){
-            console.log(this.yearPublication);
-        },
-
         formatDate(date) {
             const d = new Date(date);
             const day = d.getDate().toString().padStart(2, '0');
@@ -79,7 +76,18 @@ export default {
         },
 
 
+        async checkIsActiveButton(){
+            if(this.name && this.description && this.numberPages >= 0 && this.bookLanguage && this.publisherId > 0 && this.authorName && this.authorId > 0
+            && this.publisherName && this.price >= 0 && this.discount >= 0 && this.discount <= 100) {
+                this.isActive = true;
+            }else{
+                this.isActive = false;
+            }
+        },
+
+
         async createBook(){
+            
             const data = {
                 name:  this.name,
                 description:  this.description,
@@ -94,14 +102,24 @@ export default {
             };
 
             await listURL.requestPostCreateBook(data);
+
+            this.isActive = false;
+            this.name = "";
+            this.description = "";
+            this.numberPages = 0;
+            this.bookLanguage = "";
+            this.yearPublication = this.formatDate(Date.now());
+            this.publisherName = "";
+            this.authorName = "";
+            this.availableQuantity = 0;
+            this.price = 0;
+            this.discount = 0;
         }
     },
 
     async mounted(){
         this.publishers = await listURL.requestGetAllPublishers();
         this.authors = await listURL.requestGetAllAuthors();
-        console.log(this.publishers);
-        console.log(this.authors);
     }
 }
 </script>
@@ -162,6 +180,20 @@ export default {
 
 .button-create:hover {
     background-color: rgb(48, 45, 45);
+}
+
+.button-create-disabled {
+    color: white;
+    position: center;
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    background-color: rgb(119, 116, 116);
+    border-radius: 15px;
+    cursor: pointer;
+    font-weight: blod;
+    font-size: 1.2em;
+    border: none;
 }
 
 </style>

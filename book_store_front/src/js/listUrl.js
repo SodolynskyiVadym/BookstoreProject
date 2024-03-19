@@ -13,7 +13,8 @@ export async function requestGetBook(id){
 }
 
 export async function requestGetSomeBook(arrayBooks){
-    return await axios.post(mainUrl + "/book/getSomeBooks/", arrayBooks).then(res => res.data);
+    const strBooksId = arrayBooks.join(",");
+    return await axios.get(mainUrl + "/book/getSomeBooks?ids=" +  strBooksId).then(res => res.data);
 }
 
 export async function requestGetAuthorBooks(id){

@@ -4,6 +4,7 @@ using BookstoreAPI.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections;
 using System.Text;
 
 namespace BookstoreAPI.Controllers;
@@ -54,13 +55,25 @@ public class BookController : ControllerBase
 
 
     [AllowAnonymous]
-    [HttpPost("getSomeBooks")]
-    public IEnumerable<BookOrderDTO> getOrderedBooks([FromBody] List<int> booksId)
+    [HttpGet("getSomeBooks")]
+    public IEnumerable<BookOrderDTO> getOrderedBooks()
     {
         string sqlGetOrderedBooks = @"SELECT BookGenerallyInfo.*, Authors.Name AS authorName
             FROM book_schema.BookGenerallyInfo 
             LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId
             WHERE BookGenerallyInfo.id = ANY (@BooksId)";
+
+        string? strBooksId = Request.Query["ids"];
+        int[] booksId = new int[] { 0 };
+
+        if (!string.IsNullOrEmpty(strBooksId))
+        {
+            string[] idStrings = strBooksId.Split(",");
+            booksId = new int[idStrings.Length];
+
+            for (int i = 0; i < idStrings.Length; i++) if (int.TryParse(idStrings[i], out int id)) booksId[i] = id;
+        }
+
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@BooksId", booksId.ToArray(), System.Data.DbType.Object);
