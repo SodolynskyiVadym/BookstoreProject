@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Text;
+using System.IO;
 
 namespace BookstoreAPI.Controllers;
 
@@ -17,12 +18,14 @@ public class BookController : ControllerBase
 {
     private readonly IConfiguration _config;
     private readonly DataContextDapper _dapper;
+    private readonly FileHelper _fileHelper;
 
 
     public BookController(IConfiguration config)
     {
         _config = config ?? throw new ArgumentNullException(nameof(config));
         _dapper = new DataContextDapper(_config);
+        _fileHelper = new FileHelper();
     }
 
 
@@ -98,7 +101,7 @@ public class BookController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("createBook")]
-    public IActionResult CreateBook([FromBody] BookCreateDTO book)
+    public IActionResult CreateBook([FromBody] BookCreateUpdateDTO book)
     {
         string sqlCreateBook = @"CALL book_schema.spBook_Upsert(
             @NumberPages::INTEGER,                        
@@ -130,10 +133,14 @@ public class BookController : ControllerBase
         return Ok();
     }
 
-
+    [AllowAnonymous]
     [HttpPatch("updateBook")]
-    public IActionResult UpdateBook([FromBody] BookDTO book)
+    public IActionResult UpdateBook([FromBody] BookCreateUpdateDTO book)
     {
+        string sqlGetOldName = $@"SELECT name FROM book_schema.bookGenerallyInfo WHERE id={book.Id}";
+        string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldName);
+
+
         string sqlUpdateBook = @"CALL book_schema.spBook_upsert(
             @NumberPages::INTEGER,                        
             @Language::VARCHAR,    
@@ -147,8 +154,6 @@ public class BookController : ControllerBase
             @Discount::INTEGER,               
             @Id::INTEGER
             );";
-
-        BookDTO bookDTO = book;
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@NumberPages", book.NumberPages, System.Data.DbType.Int64);
@@ -164,6 +169,10 @@ public class BookController : ControllerBase
         parameters.Add("@Id", book.Id, System.Data.DbType.Int64);
 
         _dapper.ExecuteSqlWithParameters(sqlUpdateBook, parameters);
+
+
+        _fileHelper.RenameBookPhoto(oldName ?? "", book.Name, book.Id);
+
         return Ok();
     }
 

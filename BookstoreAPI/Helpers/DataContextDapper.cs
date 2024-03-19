@@ -38,8 +38,6 @@ namespace BookstoreAPI.Helpers
         public bool ExecuteSqlWithParameters(string sql, DynamicParameters parameters)
         {
             IDbConnection dbConnection = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
-
-            Console.WriteLine(sql);
             return _dbConnection.Execute(sql, parameters) > 0;
         }
 

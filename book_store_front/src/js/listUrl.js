@@ -40,3 +40,8 @@ export async function requestPostCreateBook(data){
 export async function requestPostCreateAuthor(data){
     return await axios.post(mainUrl + "/book/createAuthor", data).then(res => res.data)
 }
+
+
+export async function requestPatchUpdateBook(data){
+    return await axios.patch(mainUrl + "/book/updateBook", data).then(res => res.data)
+}

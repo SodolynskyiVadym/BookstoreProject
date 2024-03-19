@@ -38,8 +38,10 @@
 
         <div style="display: flex; justify-content: space-between; margin-top: 20px;">
           <input type="number" style="margin-left: 30px; font-size: large;" min="1" :max="book.availableQuantity" v-model="orderedQuantity" :value="orderedQuantity" @change="changeQuantityOrder()">
+          <button class="button-buy" @click="enterBookUpdatePage">Update</button>
           <button v-if="isNoOrdered" @click="changeOrCreateOrder(book.id)" class="button-buy">Buy</button>
           <button v-else class="button-buy" @click="cancelOrder(book.id)">Cancel</button>
+
         </div>
       </div>
     </div>
@@ -96,6 +98,11 @@ export default {
       else this.isNoOrdered = false;
       console.log(`First - ${this.firstOrderedQuantity}  Second - ${this.orderedQuantity}`)
       console.log(this.isNoOrdered)
+    },
+
+
+    async enterBookUpdatePage(){
+      this.$router.push(`/updateBook/${this.$route.params.id}`);
     }
   },
 
@@ -170,7 +177,7 @@ export default {
     font-size: 1.2em;
     border: none;
     text-align: center; 
-    margin-right: 30px;
+    margin-right: 10px;
 }
 
 .button-buy:hover {

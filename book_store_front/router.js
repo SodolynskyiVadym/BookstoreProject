@@ -26,6 +26,16 @@ const routes = [
         path: '/createAuthor',
         name: "CreateAuthor",
         component: () => import('./src/components/CreateAuthorPage.vue')
+    },
+    {
+        path: '/updateBook/:id',
+        name: "UpdateBook",
+        component: () => import('./src/components/UpdateBookPage.vue')
+    },
+    {
+        path: '/updateAuthor/:id',
+        name: "UpdateAuthor",
+        component: () => import('./src/components/UpdateAuthorPage.vue')
     }
 ];
 

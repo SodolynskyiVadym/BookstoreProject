@@ -1,6 +1,6 @@
 ﻿namespace BookstoreAPI.DTO
 {
-    public class BookCreateDTO
+    public class BookCreateUpdateDTO
     {
         public int Id { get; set; }
         public int NumberPages { get; set; }
@@ -16,7 +16,7 @@
 
 
 
-        public BookCreateDTO()
+        public BookCreateUpdateDTO()
         {
         }
     }
