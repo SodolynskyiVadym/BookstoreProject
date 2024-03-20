@@ -22,6 +22,11 @@ export async function requestGetAuthorBooks(id){
 }
 
 
+export async function requestGetAuthor(id){
+    return await axios.get(mainUrl + "/book/getAuthor/" + id).then(res => res.data);
+}
+
+
 export async function requestGetAllAuthors(){
     return await axios.get(mainUrl + "/book/getAllAuthors").then(res => res.data);
 }
@@ -44,4 +49,9 @@ export async function requestPostCreateAuthor(data){
 
 export async function requestPatchUpdateBook(data){
     return await axios.patch(mainUrl + "/book/updateBook", data).then(res => res.data)
+}
+
+
+export async function requestPatchUpdateAuthor(data){
+    return await axios.patch(mainUrl + "/book/updateAuthor", data).then(res => res.data)
 }

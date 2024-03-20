@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using System.Text;
 using System.IO;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookstoreAPI.Controllers;
 
@@ -246,10 +247,14 @@ public class BookController : ControllerBase
         else throw new Exception("Failed to insert author into DB");
     }
 
-
+    [AllowAnonymous]
     [HttpPatch("updateAuthor")]
     public IActionResult UpdateAuthor([FromBody] Author author)
     {
+        string sqlGetOldNameAuthor = $@"SELECT name FROM book_schema.authors WHERE id={author.Id}";
+
+        string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldNameAuthor);
+
         string sqlCreateAuthor = @"UPDATE book_schema.Authors SET Name=@Name, Biography=@Biography, BirthYear=@BirthYear, 
                 DeathYear=@DeathYear WHERE Id=@Id";
 
@@ -261,8 +266,10 @@ public class BookController : ControllerBase
         parameters.Add("@Id", author.Id, System.Data.DbType.Int64);
 
 
-        if (_dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters)) return Ok();
-        else throw new Exception("Failed to insert author into DB");
+        _dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters);
+
+        _fileHelper.RenameAuthorPhoto(oldName, author.Name, author.Id);
+        return Ok();
     }
 
 

@@ -4,6 +4,7 @@
             <img class="author-photo" :src="require(`@/assets/authorPhoto/${author.name.toLowerCase().replace(/\s+/g, '')}${author.id}.jpg`)">
             <div style="margin-top: 30px; font-size: x-large;">{{ author.birthYear }}     ----     {{ author.deathYear }}</div>
             <div class="biography">{{ author.biography }}</div>
+            <button class="button-update" @click="enterAuthorUpdatePage">Update</button>
 
             <div v-for="book in books" :key="book.id" class="author-book">
                 <img :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)" class="image-order">
@@ -36,6 +37,11 @@ export default {
     methods: {
         async enterBookView(id){
             this.$router.push(`/bookView/${id}`);
+        },
+
+
+        async enterAuthorUpdatePage(){
+            this.$router.push(`/updateAuthor/${this.$route.params.id}`);
         }
     },
 
@@ -105,5 +111,25 @@ export default {
 
 .button-view:hover{
   background-color: brown;
+}
+
+
+.button-update {
+  color: white;
+  position: center;
+  width: 100px;
+  height: 50px;
+  text-align: center;
+  background-color: rgb(0, 0, 0);
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: blod;
+  font-size: 1.2em;
+  border: none;
+  margin-top: 20px;
+}
+
+.button-update:hover {
+  background-color: rgb(48, 45, 45);
 }
 </style>

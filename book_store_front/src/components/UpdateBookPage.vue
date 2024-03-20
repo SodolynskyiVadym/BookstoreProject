@@ -1,47 +1,36 @@
 <template>
-
-  <div class="create-book-section" v-if="loaded">
+  <div class="update-author-section">
       <label key="name">Name</label>
-      <input id="name" type="text" v-model="book.name" placeholder="Name" @change="checkIsActiveButton">
-      <label key="language">Language</label>
-      <input id="language" type="text" v-model="book.bookLanguage" placeholder="Language" @change="checkIsActiveButton">
-      <label key="price">Price</label>
-      <input id="price" type="number" v-model="book.price" min="0" @change="checkIsActiveButton">
-      <label key="discount">Discount</label>
-      <input id="discount" type="number" v-model="book.discount" min="0" max="100" @change="checkIsActiveButton">
-      <label key="authorName">Author</label>
-      <select id="authorName" v-model="authorName" @change="findIdByNameAuthor">
-          <option v-if="authors.length === 0" disabled>No authors available</option>
-          <option v-for="author in authors" :key="author.id" v-text="author.name"></option>
-      </select>
-      <label key="publisherName">Publisher</label>
-      <select id="publisherName" v-model="publisherName" @change="findIdByNamePublisher">
-          <option v-if="publishers.length === 0" disabled>No publishers available</option>
-          <option v-for="publisher in publishers" :key="publisher.id" v-text="publisher.name"></option>
-      </select>
-      <label key="numberPages">Pages number</label>
-      <input id="numberPages" type="number" v-model="book.numberPages" @change="checkIsActiveButton">
-      <label key="yearPublication">Year publication</label>
-      <input id="yearPublication" type="Date" v-model="book.yearPublication" :max="maxDate" @change="checkIsActiveButton">
-      <label key="description">Description</label>
-      <textarea v-model="book.description" id="description" placeholder="Description" @change="checkIsActiveButton"></textarea>
-      <button @click="updateBook" :class="{ 'button-create': isActive, 'button-create-disabled': !isActive }" :disabled="!isActive">Update</button>
+      <input type="text" v-model="name" id="name" placeholder="Name" @change="checkIsActive">
+      <label key="biography">Biography</label>
+      <textarea v-model="biography" id="biography" @change="checkIsActive"></textarea>
+
+      <input type="checkbox" v-model="isKnownBirth" id="isKnownBirth" @change="checkIsActive">
+      <label for="isKnownBirth">Birth date</label>
+      <input type="date" v-model="birthYear" id="birthYear" :max="deathYear" :disabled="!isKnownBirth" @change="checkIsActive">
+
+      <input class="checkbox-style" type="checkbox" v-model="isKnownDeath" id="isKnownDeath" @change="checkIsActive">
+      <label for="isKnownDeath">Death date</label>
+      <input type="date" v-model="deathYear" id="deathYear" :disabled="!isKnownDeath" @change="checkIsActive">
+
+      <button @click="createAuthor" :class="{ 'button-update': isActive, 'button-update-disabled': !isActive }" :disabled="!isActive">Create</button>
   </div>
 </template>
 
 <script>
 import * as listURL from "@/js/listUrl";
 
+
 export default {
-  data() {
-      return {
-          publisherName: "",
-          authorName: "",
-          book: null,
-          publishers: [],
-          authors: [],
-          isActive: true,
-          loaded: false
+  data(){
+      return{
+          name: "",
+          biography: "",
+          birthYear: this.formatDate(Date.now()),
+          deathYear: this.formatDate(Date.now()),
+          isKnownBirth: false,
+          isKnownDeath: false,
+          isActive: false
       }
   },
 
@@ -55,21 +44,8 @@ export default {
       },
 
 
-      async findIdByNameAuthor(){
-          this.book.authorId = this.authors.find(author => author.name === this.authorName).id;
-          console.log(this.book.authorId);
-      },
-
-
-      async findIdByNamePublisher(){
-          this.book.publisherId = this.publishers.find(publsher => publsher.name === this.publisherName).id;
-          console.log(this.book.publisherId);
-      },
-
-
-      async checkIsActiveButton(){
-          if(this.book.name && this.book.description && this.book.numberPages >= 0 && this.book.bookLanguage && this.book.publisherId > 0 
-          && this.book.authorName && this.book.authorId > 0 && this.publisherName && this.book.price >= 0 && this.book.discount >= 0 && this.book.discount <= 100) {
+      async checkIsActive(){
+          if(this.name && this.biography && (!this.isKnownBirth || this.birthYear != this.formatDate(Date.now()))){
               this.isActive = true;
           }else{
               this.isActive = false;
@@ -77,64 +53,47 @@ export default {
       },
 
 
-      async updateBook(){
-          
+      async createAuthor(){
+          const dateBirth = this.isKnownBirth ? this.birthYear : null;
+          const dateDeath = this.isKnownDeath ? this.deathYear : null;
+
           const data = {
-            id: this.book.id,
-            name:  this.book.name,
-            description:  this.book.description,
-            numberPages: this.book.numberPages,
-            bookLanguage:  this.book.bookLanguage,
-            yearPublication: this.book.yearPublication,
-            publisherId: this.book.publisherId,
-            authorId: this.book.authorId,
-            availableQuantity: this.book.availableQuantity,
-            price: this.book.price,
-            discount: this.book.discount,
-          };
+              name: this.name,
+              biography: this.biography,
+              birthYear: dateBirth,
+              deathYear: dateDeath
+          }
+          await listURL.requestPostCreateAuthor(data);
 
-          console.log(data)
-
-          await listURL.requestPatchUpdateBook(data);
+          this.name = "";
+          this.biography = "";
+          this.birthYear = this.formatDate(Date.now());
+          this.deathYear = this.formatDate(Date.now());
+          this.isActive = false;
       }
   },
 
   async mounted(){
-      this.publishers = await listURL.requestGetAllPublishers();
-      this.authors = await listURL.requestGetAllAuthors();
-      this.book = await listURL.requestGetBook(this.$route.params.id);
 
-      this.book.yearPublication = this.formatDate(this.book.yearPublication);
-      this.authorName = this.authors.find(author => author.id === this.book.authorId).name;
-      this.publisherName = this.publishers.find(publisher => publisher.id === this.book.publisherId).name;
-      this.loaded = true;
   }
 }
 </script>
 
 <style>
 
-.create-book-section {
+.update-author-section {
   padding-top: 120px;
   justify-content: center;
   display: grid;
-
 }
 
-.create-book-section label {
+
+.update-author-section label {
   font-size: x-large;
 }
 
-.create-book-section select {
-  font-size: x-large;
-  width: 650px;
-  height: 50px;
-  display: block;
-  margin-bottom: 20px;
-  border-radius: 15px;
-}
-
-.create-book-section input {
+.update-author-section input[type="text"],
+.update-author-section input[type="date"] {
   font-size: x-large;
   width: 650px;
   height: 50px;
@@ -143,16 +102,21 @@ export default {
   border-radius: 15px;
 }
 
-.create-book-section textarea {
+
+.update-author-section input[type="checkbox"]{
+  transform: scale(2);
+}
+
+.update-author-section textarea {
   font-size: x-large;
   width: 650px;
-  height: 150px;
+  height: 250px;
   display: block;
   margin-bottom: 20px;
   border-radius: 15px;
 }
 
-.button-create {
+.button-update {
   color: white;
   position: center;
   width: 100px;
@@ -166,11 +130,12 @@ export default {
   border: none;
 }
 
-.button-create:hover {
+.button-update:hover {
   background-color: rgb(48, 45, 45);
 }
 
-.button-create-disabled {
+
+.button-update-disabled {
   color: white;
   position: center;
   width: 100px;
