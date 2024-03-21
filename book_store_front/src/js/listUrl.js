@@ -22,6 +22,11 @@ export async function requestGetAuthorBooks(id){
 }
 
 
+export async function requestGetPublisherBooks(id){
+    return await axios.get(mainUrl + "/book/getPublisherBooks/" + id).then(res => res.data);
+}
+
+
 export async function requestGetAuthor(id){
     return await axios.get(mainUrl + "/book/getAuthor/" + id).then(res => res.data);
 }

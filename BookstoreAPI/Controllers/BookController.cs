@@ -301,6 +301,30 @@ public class BookController : ControllerBase
     }
 
 
+    [AllowAnonymous]
+    [HttpGet("getPublisherBooks/{id}")]
+    public IActionResult GetPublisherBooks(int id)
+    {
+
+        string sqlGetAuthor = @"SELECT * FROM book_schema.Publishers WHERE Publishers.Id=@Id";
+
+        string sqlGetBooks = @"SELECT
+                BookGenerallyInfo.*
+            FROM book_schema.BookGenerallyInfo
+            JOIN book_schema.BookDetailInfo ON BookDetailInfo.bookId = BookGenerallyInfo.Id
+            WHERE book_schema.BookDetailInfo.publisherId = @Id;";
+
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@Id", id, System.Data.DbType.Int64);
+
+        Publisher? publisher = _dapper.LoadDataSingleWithParameters<Publisher>(sqlGetAuthor, parameters);
+
+        IEnumerable<BookGenerallyInfo> books = _dapper.LoadDataWithParameters<BookGenerallyInfo>(sqlGetBooks, parameters);
+
+        return Ok(new { Publisher = publisher, Books = books });
+    }
+
+
     [HttpPost("createPublisher")]
     public IActionResult CreatePublisher([FromBody] Publisher publisher) 
     {

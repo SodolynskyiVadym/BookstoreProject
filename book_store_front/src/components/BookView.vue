@@ -24,7 +24,7 @@
         <div>{{ book.yearPublication}}</div>
         <div>{{ book.numberPages }}</div>
         <div>{{ book.bookLanguage }}</div>
-        <div style="color: red; cursor: pointer;">{{ book.publisherName }}</div>
+        <div @click="enterPublisherPage" style="color: red; cursor: pointer;">{{ book.publisherName }}</div>
         <div>{{ book.price }}</div>
         <div>{{ book.discount }}</div>
       </div>
@@ -103,6 +103,11 @@ export default {
 
     async enterBookUpdatePage(){
       this.$router.push(`/updateBook/${this.$route.params.id}`);
+    },
+
+
+    async enterPublisherPage(){
+      this.$router.push(`/publisher/${this.book.publisherId}`);
     }
   },
 
