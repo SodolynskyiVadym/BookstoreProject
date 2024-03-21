@@ -41,6 +41,11 @@ const routes = [
         path: '/publisher/:id',
         name: "PublisherView",
         component: () => import('./src/components/PublisherPage.vue')
+    },
+    {
+        path: '/updatePublisher/:id',
+        name: "UpdatePublisher",
+        component: () => import('./src/components/UpdatePublisherPage.vue')
     }
 ];
 

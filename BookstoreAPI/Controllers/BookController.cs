@@ -337,17 +337,26 @@ public class BookController : ControllerBase
        else throw new Exception("Failed to insert publisher into DB");
     }
 
-
+    [AllowAnonymous]
     [HttpPatch("updatePublisher")]
     public IActionResult UpdatePublisher([FromBody] Publisher publisher)
     {
+        string sqlGetNamePublisher = @"SELECT name FROM book_schema.publishers WHERE publishers.Id = @Id";
+
+
         string sqlUpdatePublisher = $@"UPDATE book_schema.Publishers SET Name=@Name WHERE Publishers.Id=@Id";
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@Name", publisher.Name, System.Data.DbType.String);
         parameters.Add("@Id", publisher.Id, System.Data.DbType.Int64);
 
-        if (_dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters)) return Ok();
-        else throw new Exception("Failed to update publisher");
+
+        string? oldName = _dapper.LoadDataSingleWithParameters<string>(sqlGetNamePublisher, parameters);
+        _dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters);
+  
+
+        _fileHelper.RenamePublisherPhoto(oldName, publisher.Name, publisher.Id);
+
+        return Ok();
     }
 
 

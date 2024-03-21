@@ -3,7 +3,7 @@
         <div style="text-align: center;">
             <img class="publisher-photo" :src="require(`@/assets/publisherPhoto/${publisher.name.toLowerCase().replace(/\s+/g, '')}${publisher.id}.jpg`)"><br>
 
-            <button class="button-update" @click="enterAuthorUpdatePage">Update</button>
+            <button class="button-update" @click="enterPublisherUpdatePage">Update</button>
 
             <div v-for="book in books" :key="book.id" class="publisher-book">
                 <img :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)" class="image-order">

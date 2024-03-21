@@ -8,6 +8,11 @@ export async function requestGetBooks(){
 }
 
 
+export async function requestGetPublisher(id){
+    return await axios.get(mainUrl + "/book/getPublisher/" + id).then(res => res.data);
+}
+
+
 export async function requestGetBook(id){
     return await axios.get(mainUrl + "/book/getBook/" + id).then(res => res.data);
 }
@@ -59,4 +64,9 @@ export async function requestPatchUpdateBook(data){
 
 export async function requestPatchUpdateAuthor(data){
     return await axios.patch(mainUrl + "/book/updateAuthor", data).then(res => res.data)
+}
+
+
+export async function requestPatchUpdatePublisher(data){
+    return await axios.patch(mainUrl + "/book/updatePublisher", data).then(res => res.data)
 }
