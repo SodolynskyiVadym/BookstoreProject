@@ -3,6 +3,7 @@ node_modules
 /dist
 /bookPhoto/*
 /authorPhoto/*
+/publisherPhoto/*
 
 
 # local env files
