@@ -5,6 +5,7 @@ using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Data;
 
 namespace BookstoreAPI.Controllers
@@ -29,12 +30,45 @@ namespace BookstoreAPI.Controllers
 
 
         [AllowAnonymous]
+        [HttpGet("getAllUsers")]
+        public IEnumerable<User> GetAllUsers()
+        {
+            return _dapper.LoadData<User>("SELECT * FROM book_schema.Users");
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("getUser")]
+        public User? GetUser(int id)
+        {
+            return _dapper.LoadDataSingle<User>($"SELECT * FROM book_schema.Users WHERE id={id}");
+        }
+
+
+
+        [HttpGet("getUserByToken")]
+        public IActionResult getUserByToken()
+        {
+            int userId;
+            if (Int32.TryParse(this.User.FindFirst("userId")?.Value, out userId))
+            {
+                string sqlGetUser = @"SELECT * FROM book_schema.users where users.id = @Id";
+                DynamicParameters parameters = new DynamicParameters();
+                parameters.Add("@Id", userId, DbType.Int32);
+
+                return Ok(_dapper.LoadDataSingleWithParameters<User>(sqlGetUser, parameters));
+            }
+            else return StatusCode(401, "Incorrect token");
+        }
+
+
+        [AllowAnonymous]
         [HttpPost("registerUser")]
         public IActionResult RegisterUser([FromBody]UserRegisterDTO userRegister)
         {
-            User? userExist = _dapper.LoadDataSingle<User>($"SELECT * FROM book_schema.Users WHERE email='{userRegister.Email}'");
+            string? isUserNameExist = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.Users WHERE email='{userRegister.Email}'");
 
-            if (userRegister.Password.Equals(userRegister.ConfirmPassword) || userExist == null)
+            if (userRegister.Password.Equals(userRegister.ConfirmPassword) && isUserNameExist.IsNullOrEmpty())
             {
                 _authHelper.RegisterUser(userRegister, "USER");
                 return Ok();

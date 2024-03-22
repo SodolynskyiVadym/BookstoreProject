@@ -3,6 +3,19 @@ import axios from "axios";
 const mainUrl = "http://localhost:5284";
 
 
+
+export async function requestGetUserByToken(token) {
+  const config = {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  };
+
+  return await axios.get(mainUrl + "/auth/getUserByToken", config).then(res => res.data);
+}
+
+
+
 export async function requestGetBooks(){
     return await axios.get(mainUrl + "/book/getAllBooks").then(res => res.data);
 }
@@ -69,4 +82,14 @@ export async function requestPatchUpdateAuthor(data){
 
 export async function requestPatchUpdatePublisher(data){
     return await axios.patch(mainUrl + "/book/updatePublisher", data).then(res => res.data)
+}
+
+
+export async function requestPostRegistration(data){
+    return await axios.post(mainUrl + "/auth/registerUser", data).then(res => res.data)
+}
+
+
+export async function requestPostLogin(data){
+    return await axios.post(mainUrl + "/auth/login", data).then(res => res.data)
 }

@@ -3,9 +3,12 @@
         <img :src="require(`@/assets/logo.png`)" >
         <div style="margin-right: 20px;">
             <img :src="require(`@/assets/basket.png`)" class="icons-header" style="padding-right: 30px;" @click="showOrder">
-            <img :src="require(`@/assets/user.png`)" class="icons-header" style="margin-right: 20px;">
-            <img :src="require(`@/assets/create-author.png`)" class="icons-header" style="margin-right: 20px;" @click="enterCreateAuthorPage">
-            <img :src="require(`@/assets/create-book.png`)" class="icons-header" style="margin-right: 20px;" @click="enterCreateBookPage">
+            <img :src="require(`@/assets/home.png`)" v-if="isUser" class="icons-header" style="margin-right: 20px;">
+            <img :src="require(`@/assets/create-author.png`)" v-if="isEditor" class="icons-header" style="margin-right: 20px;" @click="enterCreateAuthorPage">
+            <img :src="require(`@/assets/create-book.png`)" v-if="isEditor" class="icons-header" style="margin-right: 20px;" @click="enterCreateBookPage">
+            <img :src="require(`@/assets/admin.png`)" v-if="isAdmin" class="icons-header" style="margin-right: 20px;" @click="enterAdminPage">
+            <img :src="require(`@/assets/registration.png`)" v-if="!isUser" class="icons-header" style="margin-right: 20px;" @click="enterRegistrationPage">
+            <img :src="require(`@/assets/login.png`)" class="icons-header" style="margin-right: 20px;" @click="enterLoginPage">
         </div>
     </header>
 
@@ -37,9 +40,13 @@ import * as orderMaker from "@/js/orderMaker"
 export default {
   data() {
     return {
+      user: null,
       isShowOrder: false,
       orderedBook : [],
-      generallyPrice : 0
+      generallyPrice : 0,
+      isUser: false,
+      isAdmin: false,
+      isEditor: false
     };
   },
 
@@ -92,8 +99,34 @@ export default {
 
     async enterCreateAuthorPage(){
       this.$router.push('/createAuthor');
+    },
+
+    async enterRegistrationPage(){
+      this.$router.push('/registration');
+    },
+
+    async enterAdminPage(){
+      this.$router.push('/adminPage');
+    },
+
+    async enterLoginPage(){
+      this.$router.push('/login');
     }
   },
+
+
+  async mounted(){
+    const token = localStorage.getItem("token");
+    if(token){
+      this.user = await listURL.requestGetUserByToken(token);
+
+      if(this.user.role) this.isUser = true;
+
+      if(this.user.role && this.user.role != "USER") this.isEditor = true;
+
+      if(this.user.role === "ADMIN") this.isAdmin = true;
+    }
+  }
 
 };
 </script>

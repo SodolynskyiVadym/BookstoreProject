@@ -46,6 +46,21 @@ const routes = [
         path: '/updatePublisher/:id',
         name: "UpdatePublisher",
         component: () => import('./src/components/UpdatePublisherPage.vue')
+    },
+    {
+        path: '/login',
+        name: "Login",
+        component: () => import('./src/components/LoginPage.vue')
+    },
+    {
+        path: '/registration',
+        name: "Registration",
+        component: () => import('./src/components/RegistrationPage.vue')
+    },
+    {
+        path: '/adminPage',
+        name: "AdminPage",
+        component: () => import('./src/components/AdminPage.vue')
     }
 ];
 
