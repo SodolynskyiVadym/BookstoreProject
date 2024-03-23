@@ -101,7 +101,8 @@ export default {
                 discount: this.discount,
             };
 
-            await listURL.requestPostCreateBook(data);
+            const token = localStorage.getItem("token");
+            await listURL.requestPostCreateBook(data, token);
 
             this.isActive = false;
             this.name = "";

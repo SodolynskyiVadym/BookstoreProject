@@ -29,6 +29,7 @@ namespace BookstoreAPI.Controllers
         }
 
 
+
         [AllowAnonymous]
         [HttpGet("getAllUsers")]
         public IEnumerable<User> GetAllUsers()
@@ -45,7 +46,7 @@ namespace BookstoreAPI.Controllers
         }
 
 
-
+       
         [HttpGet("getUserByToken")]
         public IActionResult getUserByToken()
         {
@@ -98,6 +99,7 @@ namespace BookstoreAPI.Controllers
             }
             else return StatusCode(400, "User donesn't exist");
         }
+
 
 
         [HttpPatch("updateUser")]

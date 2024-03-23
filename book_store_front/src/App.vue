@@ -8,7 +8,8 @@
             <img :src="require(`@/assets/create-book.png`)" v-if="isEditor" class="icons-header" style="margin-right: 20px;" @click="enterCreateBookPage">
             <img :src="require(`@/assets/admin.png`)" v-if="isAdmin" class="icons-header" style="margin-right: 20px;" @click="enterAdminPage">
             <img :src="require(`@/assets/registration.png`)" v-if="!isUser" class="icons-header" style="margin-right: 20px;" @click="enterRegistrationPage">
-            <img :src="require(`@/assets/login.png`)" class="icons-header" style="margin-right: 20px;" @click="enterLoginPage">
+            <img :src="require(`@/assets/login.png`)" class="icons-header" v-if="!isUser" style="margin-right: 20px;" @click="enterLoginPage">
+            <img :src="require(`@/assets/logout.png`)" class="icons-header"  v-if="isUser" style="margin-right: 20px;" @click="logout">
         </div>
     </header>
 
@@ -111,6 +112,12 @@ export default {
 
     async enterLoginPage(){
       this.$router.push('/login');
+    },
+
+
+    async logout(){
+      localStorage.removeItem("token");
+      window.location.reload();
     }
   },
 

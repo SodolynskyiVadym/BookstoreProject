@@ -60,8 +60,19 @@ export async function requestGetAllPublishers(){
 }
 
 
-export async function requestPostCreateBook(data){
-    return await axios.post(mainUrl + "/book/createBook", data).then(res => res.data)
+export async function requestGetAllUsers(){
+    return await axios.get(mainUrl + "/auth/getAllUsers").then(res => res.data);
+}
+
+
+export async function requestPostCreateBook(data, token){
+    const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+    };
+
+    return await axios.post(mainUrl + "/book/createBook", data, config).then(res => res.data)
 }
 
 

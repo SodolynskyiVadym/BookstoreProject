@@ -30,6 +30,8 @@ public class BookController : ControllerBase
     }
 
 
+
+
     [AllowAnonymous]
     [HttpGet("getBook/{id}")]
     public BookDTO? GetBookInfo(int id)
@@ -55,6 +57,7 @@ public class BookController : ControllerBase
         BookDTO? book = _dapper.LoadDataSingleWithParameters<BookDTO>(sqlGetInfoBook, parameters);
         return book;
     }
+
 
 
 
@@ -100,7 +103,7 @@ public class BookController : ControllerBase
     }
 
 
-    [AllowAnonymous]
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [HttpPost("createBook")]
     public IActionResult CreateBook([FromBody] BookCreateUpdateDTO book)
     {
@@ -134,6 +137,9 @@ public class BookController : ControllerBase
         return Ok();
     }
 
+
+
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [AllowAnonymous]
     [HttpPatch("updateBook")]
     public IActionResult UpdateBook([FromBody] BookCreateUpdateDTO book)
@@ -178,6 +184,7 @@ public class BookController : ControllerBase
     }
 
 
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [HttpDelete("deleteBook/{id}")]
     public IActionResult DeleteBook(int id)
     {
@@ -186,6 +193,7 @@ public class BookController : ControllerBase
         if (_dapper.ExecuteSql(sqlDeleteBook)) return Ok();
         else return StatusCode(400, "Book not fount for deleting");
     }
+
 
 
 
@@ -198,6 +206,7 @@ public class BookController : ControllerBase
 
 
 
+
     [AllowAnonymous]
     [HttpGet("getAuthor/{id}")]
     public Author? GetAuthor(int id)
@@ -207,6 +216,8 @@ public class BookController : ControllerBase
         parameters.Add("id", id, System.Data.DbType.Int64);
         return _dapper.LoadDataSingleWithParameters<Author>(sqlGetAuthor, parameters);
     }
+
+
 
 
     [AllowAnonymous]
@@ -228,6 +239,8 @@ public class BookController : ControllerBase
     }
 
 
+
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [AllowAnonymous]
     [HttpPost("createAuthor")]
     public IActionResult CreateAuthor([FromBody] Author author)
@@ -247,6 +260,9 @@ public class BookController : ControllerBase
         else throw new Exception("Failed to insert author into DB");
     }
 
+
+
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [AllowAnonymous]
     [HttpPatch("updateAuthor")]
     public IActionResult UpdateAuthor([FromBody] Author author)
@@ -273,6 +289,8 @@ public class BookController : ControllerBase
     }
 
 
+
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [HttpDelete("deleteAuthor/{id}")]
     public IActionResult DeleteAuthor(int id)
     {
@@ -301,6 +319,8 @@ public class BookController : ControllerBase
     }
 
 
+
+
     [AllowAnonymous]
     [HttpGet("getPublisherBooks/{id}")]
     public IActionResult GetPublisherBooks(int id)
@@ -325,6 +345,8 @@ public class BookController : ControllerBase
     }
 
 
+
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [HttpPost("createPublisher")]
     public IActionResult CreatePublisher([FromBody] Publisher publisher) 
     {
@@ -337,6 +359,9 @@ public class BookController : ControllerBase
        else throw new Exception("Failed to insert publisher into DB");
     }
 
+
+
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [AllowAnonymous]
     [HttpPatch("updatePublisher")]
     public IActionResult UpdatePublisher([FromBody] Publisher publisher)
@@ -360,6 +385,7 @@ public class BookController : ControllerBase
     }
 
 
+    [Authorize(Roles = "EDITOR, ADMIN")]
     [HttpDelete("deletePublisher/{id}")]
     public IActionResult DeletePublisher(int id)
     {
