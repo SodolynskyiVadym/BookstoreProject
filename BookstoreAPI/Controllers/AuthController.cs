@@ -1,7 +1,9 @@
 ﻿using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
+using BookstoreAPI.Settings;
 using Dapper;
+using MailKit;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +21,25 @@ namespace BookstoreAPI.Controllers
         private readonly IConfiguration _config;
         private readonly DataContextDapper _dapper;
         private readonly AuthHelper _authHelper;
+        private readonly IMail_Service _mailService;
 
 
-        public AuthController(IConfiguration config)
+        public AuthController(IConfiguration config, IMail_Service mailService)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _dapper = new DataContextDapper(_config);
             _authHelper = new AuthHelper(_config, _dapper);
+            _mailService = mailService;
         }
 
 
+        [AllowAnonymous]
+        [HttpPost("testMail")]
+        public IActionResult TestMail(MailData mailData)
+        {
+            _mailService.SendMail(mailData);
+            return Ok();
+        }
 
         [AllowAnonymous]
         [HttpGet("getAllUsers")]
@@ -75,6 +86,15 @@ namespace BookstoreAPI.Controllers
                 return Ok();
             }
             else return StatusCode(400, "User already exist or incorrect password");            
+        }
+
+
+        [Authorize(Roles = "ADMIN")]
+        [HttpPost("registerWorker")]
+        public IActionResult RegisterWorker([FromBody] UserRegisterWithRoleDTO userRegister)
+        {
+
+            return Ok();
         }
 
 

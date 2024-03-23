@@ -1,4 +1,6 @@
 using System.Text;
+using BookstoreAPI.Settings;
+using MailKit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,6 +11,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+builder.Services.AddTransient<IMail_Service, BookstoreAPI.Settings.MailService>();
 
 
 builder.Services.AddCors((options) =>
