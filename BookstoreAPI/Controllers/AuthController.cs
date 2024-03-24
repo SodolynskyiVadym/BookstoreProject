@@ -3,10 +3,9 @@ using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
 using BookstoreAPI.Settings;
 using Dapper;
-using MailKit;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
 
@@ -18,27 +17,16 @@ namespace BookstoreAPI.Controllers
     [Authorize]
     public class AuthController : ControllerBase
     {
-        private readonly IConfiguration _config;
         private readonly DataContextDapper _dapper;
         private readonly AuthHelper _authHelper;
-        private readonly IMail_Service _mailService;
+        private readonly MailHelper _mailHelper;
 
 
-        public AuthController(IConfiguration config, IMail_Service mailService)
+        public AuthController(IConfiguration config, IOptions<MailSettings> mailSettings)
         {
-            _config = config ?? throw new ArgumentNullException(nameof(config));
-            _dapper = new DataContextDapper(_config);
-            _authHelper = new AuthHelper(_config, _dapper);
-            _mailService = mailService;
-        }
-
-
-        [AllowAnonymous]
-        [HttpPost("testMail")]
-        public IActionResult TestMail(MailData mailData)
-        {
-            _mailService.SendMail(mailData);
-            return Ok();
+            _dapper = new DataContextDapper(config);
+            _authHelper = new AuthHelper(config, _dapper);
+            _mailHelper = new Helpers.MailHelper(mailSettings);
         }
 
         [AllowAnonymous]
@@ -57,7 +45,7 @@ namespace BookstoreAPI.Controllers
         }
 
 
-       
+        [Authorize]
         [HttpGet("getUserByToken")]
         public IActionResult getUserByToken()
         {
@@ -74,13 +62,14 @@ namespace BookstoreAPI.Controllers
         }
 
 
+
         [AllowAnonymous]
         [HttpPost("registerUser")]
         public IActionResult RegisterUser([FromBody]UserRegisterDTO userRegister)
         {
             string? isUserNameExist = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.Users WHERE email='{userRegister.Email}'");
 
-            if (userRegister.Password.Equals(userRegister.ConfirmPassword) && isUserNameExist.IsNullOrEmpty())
+            if (isUserNameExist.IsNullOrEmpty())
             {
                 _authHelper.RegisterUser(userRegister, "USER");
                 return Ok();
@@ -89,12 +78,24 @@ namespace BookstoreAPI.Controllers
         }
 
 
+
         [Authorize(Roles = "ADMIN")]
         [HttpPost("registerWorker")]
-        public IActionResult RegisterWorker([FromBody] UserRegisterWithRoleDTO userRegister)
+        public IActionResult RegisterWorker([FromBody] UserRegisterByEmailRoleDTO userEmailRole)
         {
+            string? isUserNameExist = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.Users WHERE email='{userEmailRole.Email}'");
+            if (isUserNameExist.IsNullOrEmpty())
+            {
+                string password = _authHelper.GenerateRandomPassword();
 
-            return Ok();
+                UserRegisterDTO userRegister = new UserRegisterDTO(userEmailRole.Role, userEmailRole.Email, password);
+                _authHelper.RegisterUser(userRegister, userEmailRole.Role);
+                _mailHelper.SendPassword(userEmailRole.Email, password, userEmailRole.Role);
+
+                return Ok();
+            }
+            else return StatusCode(400, "User already exist");
+            
         }
 
 
@@ -121,7 +122,7 @@ namespace BookstoreAPI.Controllers
         }
 
 
-
+        [Authorize]
         [HttpPatch("updateUser")]
         public IActionResult UpdateUser(UserUpdateDTO userUpdate)
         {
@@ -132,6 +133,14 @@ namespace BookstoreAPI.Controllers
                 else return StatusCode(500, "User was not updated");
             }
             else return StatusCode(400, "User was not updated");
+        }
+
+        [Authorize(Roles = "ADMIN")]
+        [HttpDelete("deleteUser/{id}")]
+        public IActionResult DeleteUser(int id)
+        {
+            _dapper.ExecuteSql(@$"DELETE FROM book_schema.users WHERE id={id}");
+            return Ok();
         }
     }
 }

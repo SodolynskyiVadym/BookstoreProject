@@ -1,13 +1,13 @@
 <template>
     <div class="register-section">
         <label key="email">Email</label><br>
-        <input type="email" id="email" v-model="email"><br>
+        <input type="text" id="email" v-model="email" @input="checkActive"><br>
         <label key="role">Role</label><br>
-        <select id="role" v-model="role">
-            <option>EDITOR</option>
-            <option>ADMIN</option>
+        <select id="role" v-model="role" @input="checkActive">
+            <option value="EDITOR">EDITOR</option>
+            <option value="ADMIN">ADMIN</option>
         </select><br>
-        <button @click="registerUser" class="register-button">Register</button>
+        <button @click="registerUser" :class="{ 'register-button': isActive, 'register-button-disabled': !isActive }" :disabled="!isActive">Register</button>
     </div>
     <table class="users-section">
         <thead>
@@ -35,18 +35,45 @@ export default {
     data(){
         return{
             email: "",
-            role: "",
-            users: []
+            role: "EDITOR",
+            users: [],
+            isActive: false
         }
     },
 
     methods: {
+        async checkEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        },
+
+
+        async checkActive(){
+            if((this.role === "ADMIN" || this.role === "EDITOR") && await this.checkEmail(this.email)) this.isActive = true;
+            else this.isActive = false;
+        },
+
+
         async deleteUser(id){
-            console.log(id);
+            const token = localStorage.getItem("token");
+            await listURL.requestDeleteUser(id, token);
+            this.users = this.users = await listURL.requestGetAllUsers();
         },
 
 
         async registerUser(){
+            this.isActive = false;
+            const data = {
+                email : this.email,
+                role : this.role
+            }
+            const token = localStorage.getItem("token");
+
+            await listURL.requestPostRegistrationWorker(data, token);
+
+            this.users = this.users = await listURL.requestGetAllUsers();
+            this.email = "";
+            this.role = "EDITOR";
 
         }
     },
@@ -85,7 +112,6 @@ export default {
     font-size: x-large;
     width: 650px;
     height: 50px;
-    /* display: block; */
     margin-bottom: 20px;
     border-radius: 15px;
 }
@@ -93,11 +119,24 @@ export default {
 
 .register-button{
     color: white;
-    /* position: center; */
     width: 160px;
     height: 50px;
     text-align: center;
     background-color: rgb(0, 0, 0);
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: blod;
+    font-size: x-large;
+    border: none;
+}
+
+
+.register-button-disabled {
+    color: white;
+    width: 160px;
+    height: 50px;
+    text-align: center;
+    background-color: rgb(158, 158, 158);
     border-radius: 5px;
     cursor: pointer;
     font-weight: blod;

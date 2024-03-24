@@ -4,6 +4,7 @@ using Dapper;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.IdentityModel.Tokens;
 using System.Data;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -15,6 +16,7 @@ namespace BookstoreAPI.Helpers
     {
         private readonly IConfiguration _config;
         private readonly DataContextDapper _dapper;
+        private readonly string possibleValuePassword = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
         public AuthHelper(IConfiguration config, DataContextDapper dapper)
         {
@@ -118,6 +120,28 @@ namespace BookstoreAPI.Helpers
             parameters.Add("@PasswordSalt", passwordSalt, DbType.Binary);
 
             return _dapper.ExecuteSqlWithParameters(sqlUpdateUser, parameters);
+        }
+
+
+
+        public string GenerateRandomPassword()
+        {
+            int length = 12;
+            var randomBytes = new byte[length];
+
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(randomBytes);
+            }
+
+            var result = new StringBuilder(length);
+
+            foreach (var b in randomBytes)
+            {
+                result.Append(possibleValuePassword[b % (possibleValuePassword.Length)]);
+            }
+
+            return result.ToString();
         }
     }
 }

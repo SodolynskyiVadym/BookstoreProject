@@ -5,7 +5,7 @@
         <label key="password">Password</label>
         <input type="text" v-model="password" id="password" placeholder="Password" @change="checkIsActive">
 
-        <button @click="login" :class="{ 'button-login': isActive, 'button-login-disabled': !isActive }" :disabled="!isActive">Registration</button>
+        <button @click="login" :class="{ 'button-login': isActive, 'button-login-disabled': !isActive }" :disabled="!isActive">Login</button>
     </div>
 </template>
 

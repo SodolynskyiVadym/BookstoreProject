@@ -80,6 +80,25 @@ export async function requestPostCreateAuthor(data){
     return await axios.post(mainUrl + "/book/createAuthor", data).then(res => res.data)
 }
 
+export async function requestPostRegistration(data){
+    return await axios.post(mainUrl + "/auth/registerUser", data).then(res => res.data)
+}
+
+
+export async function requestPostLogin(data){
+    return await axios.post(mainUrl + "/auth/login", data).then(res => res.data)
+}
+
+
+export async function requestPostRegistrationWorker(data, token){
+    const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+    };
+    return await axios.post(mainUrl + "/auth/registerWorker", data, config).then(res => res.data);
+}
+
 
 export async function requestPatchUpdateBook(data){
     return await axios.patch(mainUrl + "/book/updateBook", data).then(res => res.data)
@@ -96,11 +115,11 @@ export async function requestPatchUpdatePublisher(data){
 }
 
 
-export async function requestPostRegistration(data){
-    return await axios.post(mainUrl + "/auth/registerUser", data).then(res => res.data)
-}
-
-
-export async function requestPostLogin(data){
-    return await axios.post(mainUrl + "/auth/login", data).then(res => res.data)
+export async function requestDeleteUser(id, token){
+    const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+    };
+    return await axios.delete(mainUrl + "/auth/deleteUser/" + id, null, config).then(res => res.data);
 }
