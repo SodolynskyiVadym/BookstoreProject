@@ -19,6 +19,8 @@
           <option v-if="publishers.length === 0" disabled>No publishers available</option>
           <option v-for="publisher in publishers" :key="publisher.id" v-text="publisher.name"></option>
       </select>
+      <label key="quantity">Available quantity</label>
+      <input type="number" v-model="book.availableQuantity" placeholder="Available quantity">
       <label key="numberPages">Pages number</label>
       <input id="numberPages" type="number" v-model="book.numberPages" @change="checkIsActiveButton">
       <label key="yearPublication">Year publication</label>
@@ -69,7 +71,8 @@ export default {
 
       async checkIsActiveButton(){
           if(this.book.name && this.book.description && this.book.numberPages >= 0 && this.book.bookLanguage && this.book.publisherId > 0 
-          && this.book.authorName && this.book.authorId > 0 && this.publisherName && this.book.price >= 0 && this.book.discount >= 0 && this.book.discount <= 100) {
+          && this.book.authorName && this.book.authorId > 0 && this.publisherName && this.book.price >= 0 && this.book.discount >= 0 
+          && this.book.discount <= 100 && this.availableQuantity >= 0) {
               this.isActive = true;
           }else{
               this.isActive = false;

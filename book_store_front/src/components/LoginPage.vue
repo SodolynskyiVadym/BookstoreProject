@@ -42,6 +42,9 @@ export default {
             localStorage.setItem("token", token)
 
             this.$router.push('/');
+            setTimeout(() => {
+                window.location.reload();
+            }, 1);
         }
     }
 }

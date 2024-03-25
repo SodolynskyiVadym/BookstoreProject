@@ -18,13 +18,14 @@
         <div>Discount ------------</div>
       </div>
       <div class="book-info-section" style="margin-left: 0px; border-bottom-right-radius: 15px; border-top-right-radius: 15px;">
-        <div class="isBookStyle">THE BOOK IS IN STOCK</div>
+        <div class="isBookStyle" v-if="isInStock">THE BOOK IS IN STOCK</div>
+        <div class="isNotBookStyle" v-else>THE BOOK IS NOT IN STOCK</div>
         <div>{{ book.name }}</div>
-        <a @click="enterAuthorPage" style="color: red; cursor: pointer;"><div>{{ book.authorName }}</div></a>
+        <a @click="enterAuthorPage" style="color: blue; cursor: pointer; text-decoration: underline;"><div>{{ book.authorName }}</div></a>
         <div>{{ book.yearPublication}}</div>
         <div>{{ book.numberPages }}</div>
         <div>{{ book.bookLanguage }}</div>
-        <div @click="enterPublisherPage" style="color: red; cursor: pointer;">{{ book.publisherName }}</div>
+        <div @click="enterPublisherPage" style="color: blue; cursor: pointer; text-decoration: underline;">{{ book.publisherName }}</div>
         <div>{{ book.price }}</div>
         <div>{{ book.discount }}</div>
       </div>
@@ -37,10 +38,13 @@
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-          <input type="number" style="margin-left: 30px; font-size: large;" min="1" :max="book.availableQuantity" v-model="orderedQuantity" :value="orderedQuantity" @change="changeQuantityOrder()">
+          <input type="number" v-if="isInStock" style="margin-left: 30px; font-size: large;" min="1" :max="book.availableQuantity" v-model="orderedQuantity" :value="orderedQuantity" @change="changeQuantityOrder()">
           <button class="button-buy" @click="enterBookUpdatePage">Update</button>
-          <button v-if="isNoOrdered" @click="changeOrCreateOrder(book.id)" class="button-buy">Buy</button>
-          <button v-else class="button-buy" @click="cancelOrder(book.id)">Cancel</button>
+          <div v-if="isInStock">
+            <button v-if="isNoOrdered" @click="changeOrCreateOrder(book.id)" class="button-buy">Buy</button>
+            <button v-else class="button-buy" @click="cancelOrder(book.id)">Cancel</button>
+          </div>
+          
 
         </div>
       </div>
@@ -65,7 +69,8 @@ export default {
       loaded: false,
       firstOrderedQuantity: 0,
       orderedQuantity: 0,
-      isNoOrdered: false
+      isNoOrdered: false,
+      isInStock: false
     };
   },
 
@@ -91,13 +96,13 @@ export default {
       this.firstOrderedQuantity = this.orderedQuantity;
       this.isNoOrdered = false;
 
+      
+
     },
 
     async changeQuantityOrder(){
       if(this.firstOrderedQuantity != this.orderedQuantity) this.isNoOrdered = true;
       else this.isNoOrdered = false;
-      console.log(`First - ${this.firstOrderedQuantity}  Second - ${this.orderedQuantity}`)
-      console.log(this.isNoOrdered)
     },
 
 
@@ -121,7 +126,9 @@ export default {
     this.firstOrderedQuantity = orderBookQuantity[this.book.id] ?? -1;
 
     this.isNoOrdered = !orderedBooks.includes(this.book.id);
+    this.isInStock = this.book.availableQuantity > 0;
     this.loaded = true;
+    console.log(this.book.availableQuantity)
   }
 }
 </script>
@@ -156,6 +163,11 @@ export default {
 
 .isBookStyle {
   color: green;
+  padding-bottom: 10px;
+}
+
+.isNotBookStyle {
+  color: rgb(255, 0, 0);
   padding-bottom: 10px;
 }
 

@@ -121,5 +121,6 @@ export async function requestDeleteUser(id, token){
           'Authorization': `Bearer ${token}`
         }
     };
-    return await axios.delete(mainUrl + "/auth/deleteUser/" + id, null, config).then(res => res.data);
+    console.log(token)
+    return await axios.delete(mainUrl + "/auth/deleteUser/" + id, config).then(res => res.data);
 }

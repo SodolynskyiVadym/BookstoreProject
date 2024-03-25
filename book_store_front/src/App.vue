@@ -117,7 +117,11 @@ export default {
 
     async logout(){
       localStorage.removeItem("token");
-      window.location.reload();
+      this.$router.push("/");
+      setTimeout(() => {
+          window.location.reload();
+      }, 1);
+
     }
   },
 
