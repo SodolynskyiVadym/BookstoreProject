@@ -44,7 +44,7 @@ export default {
             this.$router.push('/');
             setTimeout(() => {
                 window.location.reload();
-            }, 1);
+            }, 10);
         }
     }
 }

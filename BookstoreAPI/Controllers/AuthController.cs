@@ -99,6 +99,8 @@ namespace BookstoreAPI.Controllers
         }
 
 
+
+
         [AllowAnonymous]
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDTO userLogin)
@@ -126,14 +128,18 @@ namespace BookstoreAPI.Controllers
         [HttpPatch("updateUser")]
         public IActionResult UpdateUser(UserUpdateDTO userUpdate)
         {
+            if (!userUpdate.Password.IsNullOrEmpty() && userUpdate.Password.Length < 8) return StatusCode(400, "Password must be greater than 8 symbols");
+
             int userId;
             if (Int32.TryParse(this.User.FindFirst("userId")?.Value, out userId))
             {
                 if (_authHelper.UpdateUser(userId, userUpdate)) return Ok();
                 else return StatusCode(500, "User was not updated");
             }
-            else return StatusCode(400, "User was not updated");
+            else return StatusCode(400, "User was not found");
         }
+
+
 
         [Authorize(Roles = "ADMIN")]
         [HttpDelete("deleteUser/{id}")]

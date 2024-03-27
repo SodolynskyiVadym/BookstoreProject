@@ -102,24 +102,37 @@ namespace BookstoreAPI.Helpers
 
         public bool UpdateUser(int userID, UserUpdateDTO userUpdate)
         {
-            byte[] passwordSalt = new byte[128 / 8];
-            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
-            {
-                rng.GetNonZeroBytes(passwordSalt);
-            }
+            string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.users WHERE id = {userID}");
+            if (name.IsNullOrEmpty()) return false;
 
-            byte[] passwordHash = GetPasswordHash(userUpdate.Password, passwordSalt);
-
-            string sqlUpdateUser = @"UPDATE book_schema.Users SET Name=@Name, PasswordHash=@PasswordHash, PasswordSalt=@PasswordSalt WHERE Id=@Id";
+            userUpdate.Name = userUpdate.Name ?? name;
 
             DynamicParameters parameters = new DynamicParameters();
-
             parameters.Add("@Id", userID, DbType.Int32);
             parameters.Add("@Name", userUpdate.Name, DbType.String);
-            parameters.Add("@PasswordHash", passwordHash, DbType.Binary);
-            parameters.Add("@PasswordSalt", passwordSalt, DbType.Binary);
 
-            return _dapper.ExecuteSqlWithParameters(sqlUpdateUser, parameters);
+            if (userUpdate.Password.IsNullOrEmpty())
+            {
+                _dapper.ExecuteSqlWithParameters(@"UPDATE book_schema.Users SET Name=@Name WHERE Id=@Id", parameters);
+            }
+            else
+            {
+                byte[] passwordSalt = new byte[128 / 8];
+                using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+                {
+                    rng.GetNonZeroBytes(passwordSalt);
+                }
+
+                byte[] passwordHash = GetPasswordHash(userUpdate.Password, passwordSalt);
+
+                string sqlUpdateUser = @"UPDATE book_schema.Users SET Name=@Name, PasswordHash=@PasswordHash, PasswordSalt=@PasswordSalt WHERE Id=@Id";
+
+                parameters.Add("@PasswordHash", passwordHash, DbType.Binary);
+                parameters.Add("@PasswordSalt", passwordSalt, DbType.Binary);
+
+                _dapper.ExecuteSqlWithParameters(sqlUpdateUser, parameters);
+            }
+            return true;
         }
 
 

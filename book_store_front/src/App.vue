@@ -3,7 +3,7 @@
         <img :src="require(`@/assets/logo.png`)" >
         <div style="margin-right: 20px;">
             <img :src="require(`@/assets/basket.png`)" class="icons-header" style="padding-right: 30px;" @click="showOrder">
-            <img :src="require(`@/assets/home.png`)" v-if="isUser" class="icons-header" style="margin-right: 20px;">
+            <img :src="require(`@/assets/home.png`)" v-if="isUser" class="icons-header" style="margin-right: 20px;" @click="enterUserPage">
             <img :src="require(`@/assets/create-author.png`)" v-if="isEditor" class="icons-header" style="margin-right: 20px;" @click="enterCreateAuthorPage">
             <img :src="require(`@/assets/create-book.png`)" v-if="isEditor" class="icons-header" style="margin-right: 20px;" @click="enterCreateBookPage">
             <img :src="require(`@/assets/admin.png`)" v-if="isAdmin" class="icons-header" style="margin-right: 20px;" @click="enterAdminPage">
@@ -91,6 +91,10 @@ export default {
       }
       await this.calculateGenerallyPrice();
 
+    },
+
+    async enterUserPage(){
+      this.$router.push('/myPage');
     },
 
     async enterCreateBookPage(){

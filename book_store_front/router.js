@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
-// import * as listURL from "@/js/listURL";
+import * as listURL from "@/js/listUrl";
 
 const routes = [
     {
         path: '/',
-        name: 'HomePage',
-        component: () => import('./src/components/HomePage.vue')
+        name: 'MainPage',
+        component: () => import('./src/components/MainPage.vue')
     },
     {
         path: '/bookView/:id',
@@ -20,22 +20,38 @@ const routes = [
     {
         path: '/createBook',
         name: "CreateBook",
-        component: () => import('./src/components/CreateBookPage.vue')
+        component: () => import('./src/components/CreateBookPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN", "EDITOR"]
+        }
     },
     {
         path: '/createAuthor',
         name: "CreateAuthor",
-        component: () => import('./src/components/CreateAuthorPage.vue')
+        component: () => import('./src/components/CreateAuthorPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN", "EDITOR"]
+        }
     },
     {
         path: '/updateBook/:id',
         name: "UpdateBook",
-        component: () => import('./src/components/UpdateBookPage.vue')
+        component: () => import('./src/components/UpdateBookPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN", "EDITOR"]
+        }
     },
     {
         path: '/updateAuthor/:id',
         name: "UpdateAuthor",
-        component: () => import('./src/components/UpdateAuthorPage.vue')
+        component: () => import('./src/components/UpdateAuthorPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN", "EDITOR"]
+        }
     },
     {
         path: '/publisher/:id',
@@ -45,7 +61,11 @@ const routes = [
     {
         path: '/updatePublisher/:id',
         name: "UpdatePublisher",
-        component: () => import('./src/components/UpdatePublisherPage.vue')
+        component: () => import('./src/components/UpdatePublisherPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN", "EDITOR"]
+        }
     },
     {
         path: '/login',
@@ -60,7 +80,20 @@ const routes = [
     {
         path: '/adminPage',
         name: "AdminPage",
-        component: () => import('./src/components/AdminPage.vue')
+        component: () => import('./src/components/AdminPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN"]
+        }
+    },
+    {
+        path: '/myPage',
+        name: "MyPage",
+        component: () => import('./src/components/UserPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN", "EDITOR", "USER"]
+        }
     }
 ];
 
@@ -73,24 +106,24 @@ const router = createRouter({
 
 
 
-// router.beforeEach(async (to, from, next) => {
-//     if (to.meta.requiresAuth) {
-//         const token = localStorage.getItem('token');
-//         if (token) {
-//             const userData = await listURL.getUserByToken(localStorage.getItem("token"));
-//             const role = userData.role;
+router.beforeEach(async (to, from, next) => {
+    if (to.meta.requiresAuth) {
+        const token = localStorage.getItem('token');
+        if (token) {
+            const userData = await listURL.requestGetUserByToken(token);
+            const role = userData.role;
 
-//             if (to.meta.roles.includes(role)) {
-//                 next();
-//             } else {
-//                 next("/login");
-//             }
-//         } else {
-//             next('/login');
-//         }
-//     }else {
-//         next();
-//     }
-// });
+            if (to.meta.roles.includes(role)) {
+                next();
+            } else {
+                next("/login");
+            }
+        } else {
+            next('/login');
+        }
+    }else {
+        next();
+    }
+});
 
 export default router;

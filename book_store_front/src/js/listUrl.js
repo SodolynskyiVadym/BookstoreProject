@@ -80,6 +80,16 @@ export async function requestPostCreateAuthor(data){
     return await axios.post(mainUrl + "/book/createAuthor", data).then(res => res.data)
 }
 
+
+export async function requestPatchUpdateUser(data, token){
+    const config = {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+    };
+    return await axios.patch(mainUrl + "/auth/updateUser", data, config).then(res => res.data)
+}
+
 export async function requestPostRegistration(data){
     return await axios.post(mainUrl + "/auth/registerUser", data).then(res => res.data)
 }
