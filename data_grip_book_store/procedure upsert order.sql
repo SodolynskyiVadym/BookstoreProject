@@ -22,4 +22,4 @@ BEGIN
 END;
 $$;
 
-DROP PROCEDURE book_schema.spOrder_Upsert
+-- DROP PROCEDURE book_schema.spOrder_Upsert

@@ -29,5 +29,5 @@ $$;
 
 
 
-DROP PROCEDURE book_schema.spOrder_Delete;
+-- DROP PROCEDURE book_schema.spOrder_Delete;
 

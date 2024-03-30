@@ -1,11 +1,7 @@
 ﻿using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
-using BookstoreAPI.Models;
 using Dapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using NpgsqlTypes;
 using System.Data;
 
 namespace BookstoreAPI.Controllers

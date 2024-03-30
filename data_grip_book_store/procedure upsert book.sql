@@ -75,4 +75,4 @@ END;
 $$;
 
 
-DROP PROCEDURE book_schema.spBook_Upsert
+-- DROP PROCEDURE book_schema.spBook_Upsert
