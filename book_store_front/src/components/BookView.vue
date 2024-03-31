@@ -79,6 +79,14 @@ export default {
       this.$router.push(`/author/${this.book.authorId}`);
     },
 
+    async formatDate(date) {
+      const d = new Date(date);
+      const day = d.getDate().toString().padStart(2, '0');
+      const month = (d.getMonth() + 1).toString().padStart(2, '0');
+      const year = d.getFullYear();
+      return `${year}-${month}-${day}`;
+    },
+
 
     async cancelOrder(id){
       await orderMaker.removeBookFromOrder(id);
@@ -101,8 +109,7 @@ export default {
     },
 
     async changeQuantityOrder(){
-      if(this.firstOrderedQuantity != this.orderedQuantity) this.isNoOrdered = true;
-      else this.isNoOrdered = false;
+      this.isNoOrdered = this.firstOrderedQuantity !== this.orderedQuantity;
     },
 
 
@@ -121,12 +128,12 @@ export default {
     const orderBookQuantity = await orderMaker.getOrderBookQuantity();
     const orderedBooks = await orderMaker.getOrderedBooksArray();
 
-    const orderedQuantity = orderBookQuantity[this.book.id] ?? 1;
-    this.orderedQuantity = orderedQuantity;
+    this.orderedQuantity = orderBookQuantity[this.book.id] ?? 1;
     this.firstOrderedQuantity = orderBookQuantity[this.book.id] ?? -1;
 
     this.isNoOrdered = !orderedBooks.includes(this.book.id);
     this.isInStock = this.book.availableQuantity > 0;
+    this.book.yearPublication = await this.formatDate(this.book.yearPublication);
     this.loaded = true;
     console.log(this.book.availableQuantity)
   }
@@ -156,7 +163,6 @@ export default {
 
 .book-info-section div {
   margin: 14px;
-  font-weight: medium;
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-size: x-large;
 }
@@ -175,7 +181,6 @@ export default {
 .buy-section {
   box-shadow: 10px 10px 10px 10px;
   margin-left: 40px;
-  font-weight: medium;
   font-family: Georgia, 'Times New Roman', Times, serif;
   font-size: x-large;
   height: 300px;
@@ -190,7 +195,6 @@ export default {
     background-color: red;
     border-radius: 15px;
     cursor: pointer;
-    font-weight: blod;
     font-size: 1.2em;
     border: none;
     text-align: center; 

@@ -68,6 +68,15 @@ const routes = [
         }
     },
     {
+        path: '/createPublisher',
+        name: "CreatePublisher",
+        component: () => import('./src/components/CreatePublisherPage.vue'),
+        meta: {
+            requiresAuth: true,
+            roles: ["ADMIN", "EDITOR"]
+        }
+    },
+    {
         path: '/login',
         name: "Login",
         component: () => import('./src/components/LoginPage.vue')
