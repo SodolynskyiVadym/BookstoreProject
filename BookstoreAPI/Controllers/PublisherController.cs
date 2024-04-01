@@ -96,13 +96,34 @@ namespace BookstoreAPI.Controllers
             parameters.Add("@Name", publisher.Name, System.Data.DbType.String);
             parameters.Add("@Id", publisher.Id, System.Data.DbType.Int64);
 
-
             string? oldName = _dapper.LoadDataSingleWithParameters<string>(sqlGetNamePublisher, parameters);
             _dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters);
 
 
-            _fileHelper.RenamePublisherPhoto(oldName, publisher.Name, publisher.Id);
+            _fileHelper.RenamePhoto(oldName, publisher.Name, publisher.Id, "publisherPhoto");
 
+            return Ok();
+        }
+
+        [Authorize(Roles = "EDITOR, ADMIN")]
+        [HttpPost("createImagePublisher")]
+        public async Task<IActionResult> UploadImagePublisher()
+        {
+            string? name = Request.Form["name"];
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@Name", name, System.Data.DbType.String);
+
+            int? id = _dapper.LoadDataSingleWithParameters<int>($"SELECT id FROM book_schema.publishers where name=@Name", parameters);
+            if (id == null) return StatusCode(400, "Publisher doesn't exist");
+
+            var file = Request.Form.Files[0];
+            var filePath = Path.Combine(@"../book_store_front/src/assets/publisherPhoto/", $"{name.ToLower().Replace(" ", "")}{id}.jpg");
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
             return Ok();
         }
 
@@ -111,8 +132,14 @@ namespace BookstoreAPI.Controllers
         [HttpDelete("deletePublisher/{id}")]
         public IActionResult DeletePublisher(int id)
         {
+            string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.publishers WHERE id={id}");
             string sqlDeletePublisher = $@"DELETE FROM book_schema.Publishers WHERE id={id}";
-            if (_dapper.ExecuteSql(sqlDeletePublisher)) return Ok();
+
+            if (_dapper.ExecuteSql(sqlDeletePublisher))
+            {
+                _fileHelper.DeletePhoto(name, id, "publisherPhoto");
+                return Ok();
+            }
             else return StatusCode(400, "Publisher not fount for deleting");
         }
     }

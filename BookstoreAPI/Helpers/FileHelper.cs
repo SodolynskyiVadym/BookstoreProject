@@ -6,9 +6,10 @@
         string pathBooks = @"../book_store_front/src/assets/bookPhoto/";
         string pathAuthors = @"../book_store_front/src/assets/authorPhoto/";
         string pathPublishers = @"../book_store_front/src/assets/publisherPhoto/";
+        string path = @"../book_store_front/src/assets/";
 
 
-        public void RenameBookPhoto(string? oldName, string newName, int id)
+        public void RenamePhoto(string? oldName, string newName, int id, string folderName)
         {
             if (oldName != null)
             {
@@ -16,41 +17,21 @@
                 string newFileName = newName.Replace(" ", "").ToLower() + id.ToString() + ".jpg";
 
 
-                if (File.Exists(pathBooks + oldFileName))
+                if (File.Exists($"{path}{folderName}/{oldFileName}"))
                 {
-                    File.Move(pathBooks + oldFileName, pathBooks + newFileName);
+                    File.Move($"{path}{folderName}/{oldFileName}", $"{path}{folderName}/{newFileName}");
                 }
             } 
         }
 
 
-        public void RenameAuthorPhoto(string? oldName, string newName, int id)
+        public void DeletePhoto(string? name, int id, string folderName)
         {
-            if (oldName != null)
+            if (name != null)
             {
-                string oldFileName = oldName.Replace(" ", "").ToLower() + id.ToString() + ".jpg";
-                string newFileName = newName.Replace(" ", "").ToLower() + id.ToString() + ".jpg";
-
-
-                if (File.Exists(pathAuthors + oldFileName))
+                if (File.Exists($"{path}{folderName}/{name}"))
                 {
-                    File.Move(pathAuthors + oldFileName, pathAuthors + newFileName);
-                }
-            }
-        }
-
-
-        public void RenamePublisherPhoto(string? oldName, string newName, int id)
-        {
-            if (oldName != null)
-            {
-                string oldFileName = oldName.Replace(" ", "").ToLower() + id.ToString() + ".jpg";
-                string newFileName = newName.Replace(" ", "").ToLower() + id.ToString() + ".jpg";
-
-
-                if (File.Exists(pathPublishers + oldFileName))
-                {
-                    File.Move(pathPublishers + oldFileName, pathPublishers + newFileName);
+                    File.Delete($"{path}{folderName}/{name}");
                 }
             }
         }

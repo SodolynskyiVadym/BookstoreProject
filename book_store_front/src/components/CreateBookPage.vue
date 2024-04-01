@@ -8,6 +8,8 @@
     <input id="price" type="number" v-model="price" min="0" @change="checkIsActiveButton">
     <label key="discount">Discount</label>
     <input id="discount" type="number" v-model="discount" min="0" max="100" @change="checkIsActiveButton">
+    <label>Available quantity</label>
+    <input type="text" v-model="availableQuantity" @change="checkIsActiveButton" min="0">
     <label key="authorName">Author</label>
     <select id="authorName" v-model="authorName" @change="findIdByNameAuthor">
       <option v-if="authors.length === 0" disabled>No authors available</option>

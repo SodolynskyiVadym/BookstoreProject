@@ -143,6 +143,7 @@ export default {
 <style>
 
 .author-nameBook {
+  padding-top: 100px;
   margin-left: 100px;
   font-size: x-large;
   font-weight: bold;
@@ -151,7 +152,7 @@ export default {
 
 .book-info {
   margin-left: 200px;
-  margin-top: 50px;
+  margin-top: 20px;
   display: flex;
 }
 

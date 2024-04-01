@@ -76,8 +76,23 @@ export async function requestPostCreateBook(data, token){
 }
 
 
-export async function requestPostCreateAuthor(data){
-    return await axios.post(mainUrl + "/author/createAuthor", data).then(res => res.data)
+export async function requestPostCreateAuthor(data, token){
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+    return await axios.post(mainUrl + "/author/createAuthor", data, config).then(res => res.data)
+}
+
+
+export async function requestPostCreatePublisher(data, token){
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+    return await axios.post(mainUrl + "/publisher/createPublisher", data, config).then(res => res.data)
 }
 
 
@@ -117,6 +132,26 @@ export async function requestCreateBookImage(data, token){
         }
     }
     return await axios.post(mainUrl + "/book/createImageBook", data, config).then(res => res.data);
+}
+
+
+export async function requestCreatePublisherImage(data, token){
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }
+    return await axios.post(mainUrl + "/publisher/createImagePublisher", data, config).then(res => res.data);
+}
+
+
+export async function requestCreateAuthorImage(data, token){
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }
+    return await axios.post(mainUrl + "/author/createImageAuthor", data, config).then(res => res.data);
 }
 
 

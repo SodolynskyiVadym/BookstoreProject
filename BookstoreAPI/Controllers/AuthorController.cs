@@ -88,6 +88,32 @@ namespace BookstoreAPI.Controllers
         }
 
 
+        [Authorize(Roles = "EDITOR, ADMIN")]
+        [HttpPost("createImageAuthor")]
+        public async Task<IActionResult> UploadImageAuthor()
+        {
+            string? biography = Request.Form["biography"];
+            string? name = Request.Form["name"];
+
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@Biography", biography, System.Data.DbType.String);
+            parameters.Add("@Name", name, System.Data.DbType.String);
+
+            int? id = _dapper.LoadDataSingleWithParameters<int>($"SELECT id FROM book_schema.authors where biography=@Biography and name=@Name", parameters);
+            if (id == null) return StatusCode(400, "Author doesn't exist");
+
+            var file = Request.Form.Files[0];
+            var filePath = Path.Combine(@"../book_store_front/src/assets/authorPhoto/", $"{name.ToLower().Replace(" ", "")}{id}.jpg");
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+            return Ok();
+        }
+
+
 
         [Authorize(Roles = "EDITOR, ADMIN")]
         [AllowAnonymous]
@@ -111,7 +137,7 @@ namespace BookstoreAPI.Controllers
 
             _dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters);
 
-            _fileHelper.RenameAuthorPhoto(oldName, author.Name, author.Id);
+            _fileHelper.RenamePhoto(oldName, author.Name, author.Id, "authorPhoto");
             return Ok();
         }
 
@@ -121,8 +147,13 @@ namespace BookstoreAPI.Controllers
         [HttpDelete("deleteAuthor/{id}")]
         public IActionResult DeleteAuthor(int id)
         {
+            string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.authors WHERE id={id}");
             string sqlDeleteAuthor = $@"DELETE FROM book_schema.Authors WHERE id={id}";
-            if (_dapper.ExecuteSql(sqlDeleteAuthor)) return Ok();
+            if (_dapper.ExecuteSql(sqlDeleteAuthor))
+            {
+                _fileHelper.DeletePhoto(name, id, "authorPhoto");
+                return Ok();
+            }
             else return StatusCode(400, "Author not fount for deleting");
         }
 

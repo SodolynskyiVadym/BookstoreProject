@@ -170,6 +170,8 @@ public class BookController : ControllerBase
         string sqlGetOldName = $@"SELECT name FROM book_schema.bookGenerallyInfo WHERE id={book.Id}";
         string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldName);
 
+        Console.WriteLine(book.Description);
+
 
         string sqlUpdateBook = @"CALL book_schema.spBook_upsert(
             @NumberPages::INTEGER,                        
@@ -201,7 +203,7 @@ public class BookController : ControllerBase
         _dapper.ExecuteSqlWithParameters(sqlUpdateBook, parameters);
 
 
-        _fileHelper.RenameBookPhoto(oldName ?? "", book.Name, book.Id);
+        _fileHelper.RenamePhoto(oldName ?? "", book.Name, book.Id, "bookPhoto");
 
         return Ok();
     }
@@ -211,9 +213,14 @@ public class BookController : ControllerBase
     [HttpDelete("deleteBook/{id}")]
     public IActionResult DeleteBook(int id)
     {
+        string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.bookgenerallyinfo WHERE id={id}");
         string sqlDeleteBook = $@"DELETE FROM book_schema.BookDetailInfo WHERE bookId={id};
             DELETE FROM book_schema.BookGenerallyInfo WHERE id={id};";
-        if (_dapper.ExecuteSql(sqlDeleteBook)) return Ok();
+        if (_dapper.ExecuteSql(sqlDeleteBook))
+        {
+            _fileHelper.DeletePhoto(name, id, "bookPhoto");
+            return Ok();
+        }
         else return StatusCode(400, "Book not fount for deleting");
     }
 }
