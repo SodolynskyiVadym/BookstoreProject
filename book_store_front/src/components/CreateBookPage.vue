@@ -1,34 +1,35 @@
 <template>
-  <div class="create-book-section">
-    <label key="name">Name</label>
-    <input id="name" type="text" v-model="name" placeholder="Name" @change="checkIsActiveButton">
-    <label key="language">Language</label>
-    <input id="language" type="text" v-model="bookLanguage" placeholder="Language" @change="checkIsActiveButton">
-    <label key="price">Price</label>
-    <input id="price" type="number" v-model="price" min="0" @change="checkIsActiveButton">
-    <label key="discount">Discount</label>
-    <input id="discount" type="number" v-model="discount" min="0" max="100" @change="checkIsActiveButton">
-    <label>Available quantity</label>
-    <input type="text" v-model="availableQuantity" @change="checkIsActiveButton" min="0">
-    <label key="authorName">Author</label>
+  <div class="main-section">
+    <label key="name">Name</label><br>
+    <input id="name" type="text" v-model="name" placeholder="Name" @change="checkIsActiveButton"><br>
+    <label key="language">Language</label><br>
+    <input id="language" type="text" v-model="bookLanguage" placeholder="Language" @change="checkIsActiveButton"><br>
+    <label key="price">Price</label><br>
+    <input id="price" type="number" v-model="price" min="0" @change="checkIsActiveButton"><br>
+    <label key="discount">Discount</label><br>
+    <input id="discount" type="number" v-model="discount" min="0" max="100" @change="checkIsActiveButton"><br>
+    <label>Available quantity</label><br>
+    <input type="text" v-model="availableQuantity" @change="checkIsActiveButton" min="0"><br>
+    <label key="authorName">Author</label><br>
     <select id="authorName" v-model="authorName" @change="findIdByNameAuthor">
       <option v-if="authors.length === 0" disabled>No authors available</option>
       <option v-for="author in authors" :key="author.id" v-text="author.name"></option>
-    </select>
-    <label key="publisherName">Publisher</label>
+    </select><br>
+    <label key="publisherName">Publisher</label><br>
     <select id="publisherName" v-model="publisherName" @change="findIdByNamePublisher">
       <option v-if="publishers.length === 0" disabled>No publishers available</option>
       <option v-for="publisher in publishers" :key="publisher.id" v-text="publisher.name"></option>
-    </select>
-    <label key="numberPages">Pages number</label>
-    <input id="numberPages" type="number" v-model="numberPages" @change="checkIsActiveButton">
-    <label key="yearPublication">Year publication</label>
-    <input id="yearPublication" type="Date" v-model="yearPublication" :max="maxDate" @change="checkIsActiveButton">
-    <label key="description">Description</label>
-    <textarea v-model="description" id="description" placeholder="Description" @change="checkIsActiveButton"></textarea>
-    <input type="file" ref="fileInput" @change="checkIsActiveButton">
-    <button @click="createBook" :class="{ 'button-create': isActive, 'button-create-disabled': !isActive }" :disabled="!isActive">Create</button>
+    </select><br>
+    <label key="numberPages">Pages number</label><br>
+    <input id="numberPages" type="number" v-model="numberPages" @change="checkIsActiveButton"><br>
+    <label key="yearPublication">Year publication</label><br>
+    <input id="yearPublication" type="Date" v-model="yearPublication" :max="maxDate" @change="checkIsActiveButton"><br>
+    <label key="description">Description</label><br>
+    <textarea v-model="description" id="description" placeholder="Description" @change="checkIsActiveButton"></textarea><br>
+    <input type="file" ref="fileInput" @change="checkIsActiveButton"><br>
+    <button @click="createBook" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Create</button>
   </div>
+
 </template>
 
 <script>
@@ -138,74 +139,6 @@ export default {
 
 <style>
 
-.create-book-section {
-  padding-top: 120px;
-  justify-content: center;
-  display: grid;
-
-}
-
-.create-book-section label {
-  font-size: x-large;
-}
-
-.create-book-section select {
-  font-size: x-large;
-  width: 650px;
-  height: 50px;
-  display: block;
-  margin-bottom: 20px;
-  border-radius: 15px;
-}
-
-.create-book-section input {
-  font-size: x-large;
-  width: 650px;
-  height: 50px;
-  display: block;
-  margin-bottom: 20px;
-  border-radius: 15px;
-}
-
-.create-book-section textarea {
-  font-size: x-large;
-  width: 650px;
-  height: 150px;
-  display: block;
-  margin-bottom: 20px;
-  border-radius: 15px;
-}
-
-.button-create {
-  color: white;
-  position: center;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  background-color: rgb(0, 0, 0);
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: blod;
-  font-size: 1.2em;
-  border: none;
-}
-
-.button-create:hover {
-  background-color: rgb(48, 45, 45);
-}
-
-.button-create-disabled {
-  color: white;
-  position: center;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  background-color: rgb(119, 116, 116);
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: blod;
-  font-size: 1.2em;
-  border: none;
-}
+@import "@/assets/css/styles.css";
 
 </style>

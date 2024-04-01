@@ -1,19 +1,19 @@
 <template>
-  <div class="update-author-section" v-if="loaded">
-      <label key="name">Name</label>
-      <input type="text" v-model="author.name" id="name" placeholder="Name" @change="checkIsActive">
-      <label key="biography">Biography</label>
-      <textarea v-model="author.biography" id="biography" @change="checkIsActive"></textarea>
+  <div class="main-section" v-if="loaded">
+    <label key="name">Name</label>
+    <input type="text" v-model="author.name" id="name" placeholder="Name" @change="checkIsActive"><br>
+    <label key="biography">Biography</label><br>
+    <textarea v-model="author.biography" id="biography" @change="checkIsActive"></textarea><br>
 
-      <input type="checkbox" v-model="isKnownBirth" id="isKnownBirth" @change="checkIsActive">
-      <label for="isKnownBirth">Birth date</label>
-      <input type="date" v-model="author.birthYear" id="birthYear" :max="author.deathYear" :disabled="!isKnownBirth" @change="checkIsActive">
+    <label for="isKnownBirth">Birth date</label><br>
+    <input type="checkbox" v-model="isKnownBirth" id="isKnownBirth" @change="checkIsActive"><br>
+    <input type="date" v-model="author.birthYear" id="birthYear" :max="author.deathYear" :disabled="!isKnownBirth" @change="checkIsActive"><br>
 
-      <input class="checkbox-style" type="checkbox" v-model="isKnownDeath" id="isKnownDeath" @change="checkIsActive">
-      <label for="isKnownDeath">Death date</label>
-      <input type="date" v-model="author.deathYear" id="deathYear" :disabled="!isKnownDeath" @change="checkIsActive">
+    <label for="isKnownDeath">Death date</label><br>
+    <input class="checkbox-style" type="checkbox" v-model="isKnownDeath" id="isKnownDeath" @change="checkIsActive"><br>
+    <input type="date" v-model="author.deathYear" id="deathYear" :disabled="!isKnownDeath" @change="checkIsActive"><br>
 
-      <button @click="updateAuthor" :class="{ 'button-update': isActive, 'button-update-disabled': !isActive }" :disabled="!isActive">Update</button>
+    <button @click="updateAuthor" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Update</button>
   </div>
 </template>
 
@@ -88,72 +88,6 @@ export default {
 
 <style>
 
-.update-author-section {
-  padding-top: 120px;
-  justify-content: center;
-  display: grid;
-}
-
-
-.update-author-section label {
-  font-size: x-large;
-}
-
-.update-author-section input[type="text"],
-.update-author-section input[type="date"] {
-  font-size: x-large;
-  width: 650px;
-  height: 50px;
-  display: block;
-  margin-bottom: 20px;
-  border-radius: 15px;
-}
-
-
-.update-author-section input[type="checkbox"]{
-  transform: scale(2);
-}
-
-.update-author-section textarea {
-  font-size: x-large;
-  width: 650px;
-  height: 250px;
-  display: block;
-  margin-bottom: 20px;
-  border-radius: 15px;
-}
-
-.button-update {
-  color: white;
-  position: center;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  background-color: rgb(0, 0, 0);
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: blod;
-  font-size: 1.2em;
-  border: none;
-}
-
-.button-update:hover {
-  background-color: rgb(48, 45, 45);
-}
-
-
-.button-update-disabled {
-  color: white;
-  position: center;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  background-color: rgb(119, 116, 116);
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: blod;
-  font-size: 1.2em;
-  border: none;
-}
+@import "@/assets/css/styles.css";
 
 </style>
