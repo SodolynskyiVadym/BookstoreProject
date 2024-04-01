@@ -34,6 +34,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import * as dateHelper from "@/js/dateHelper";
 
 export default {
   data() {
@@ -58,15 +59,6 @@ export default {
   },
 
   methods: {
-    formatDate(date) {
-      const d = new Date(date);
-      const day = d.getDate().toString().padStart(2, '0');
-      const month = (d.getMonth() + 1).toString().padStart(2, '0');
-      const year = d.getFullYear();
-      return `${year}-${month}-${day}`;
-    },
-
-
     async findIdByNameAuthor() {
       this.authorId = this.authors.find(author => author.name === this.authorName).id;
       console.log(this.authorId);
@@ -121,7 +113,7 @@ export default {
       this.description = "";
       this.numberPages = 0;
       this.bookLanguage = "";
-      this.yearPublication = this.formatDate(Date.now());
+      this.yearPublication = dateHelper.formatDate(Date.now());
       this.publisherName = "";
       this.authorName = "";
       this.availableQuantity = 0;

@@ -19,7 +19,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
-
+import * as dateHelper from "@/js/dateHelper";
 
 export default {
   data(){
@@ -33,19 +33,10 @@ export default {
   },
 
   methods: {
-      formatDate(date) {
-          const d = new Date(date);
-          const day = d.getDate().toString().padStart(2, '0');
-          const month = (d.getMonth() + 1).toString().padStart(2, '0');
-          const year = d.getFullYear();
-          return `${year}-${month}-${day}`;
-      },
-
-
       async checkIsActive(){
         console.log("code work")
-        console.log(this.author.name && this.author.biography && (!this.isKnownBirth || this.author.birthYear != this.formatDate(Date.now())));
-          if(this.author.name && this.author.biography && (!this.isKnownBirth || this.author.birthYear != this.formatDate(Date.now()))){
+        console.log(this.author.name && this.author.biography && (!this.isKnownBirth || this.author.birthYear !== dateHelper.formatDate(Date.now())));
+          if(this.author.name && this.author.biography && (!this.isKnownBirth || this.author.birthYear !== dateHelper.formatDate(Date.now()))){
               this.isActive = true;
           }else{
               this.isActive = false;
@@ -71,15 +62,15 @@ export default {
   async mounted(){
     this.author = await listURL.requestGetAuthor(this.$route.params.id);
     if(this.author.deathYear){
-      this.author.deathYear = this.formatDate(this.author.deathYear);
+      this.author.deathYear = dateHelper.formatDate(this.author.deathYear);
       this.isKnownDeath = true;
     }else this.author.deathYear = this.formatDate(Date.now());
 
 
     if(this.author.birthYear){
-      this.author.birthYear = this.formatDate(this.author.birthYear);
+      this.author.birthYear = dateHelper.formatDate(this.author.birthYear);
       this.isKnownBirth = true;
-    }else this.author.birthYear = this.formatDate(Date.now());
+    }else this.author.birthYear = dateHelper.formatDate(Date.now());
 
     if(this.author) this.loaded = true;
   }

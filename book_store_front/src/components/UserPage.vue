@@ -1,12 +1,12 @@
 <template>
-    <div class="user-section" v-if="loaded">
-        <label key="email">Email</label>
-        <input type="text" id="email" v-model="user.email" readonly>
-        <label key="name">Name</label>
-        <input type="text" id="name" v-model="user.name" @change="checkIsActive">
-        <label key="password">Password</label>
-        <input type="password" id="password" v-model="user.password" @change="checkIsActive">
-        <button @click="sendChanges" :class="{ 'button-send-changes': isActive, 'button-send-changes-disabled': !isActive }" :disabled="!isActive">Change</button>
+    <div class="main-section" v-if="loaded">
+        <label key="email">Email</label><br>
+        <input type="text" id="email" v-model="user.email" readonly><br>
+        <label key="name">Name</label><br>
+        <input type="text" id="name" v-model="user.name" @change="checkIsActive"><br>
+        <label key="password">Password</label><br>
+        <input type="password" id="password" v-model="user.password" @change="checkIsActive"><br>
+        <button @click="sendChanges" :class="{ 'main-button-changes': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Change</button>
     </div>
 </template>
 
@@ -58,58 +58,5 @@ export default {
 </script>
   
 <style>
-.user-section {
-    padding-top: 120px;
-    justify-content: center;
-    display: grid;
-}
-
-
-.user-section label {
-    font-size: x-large;
-}
-
-.user-section input {
-    font-size: x-large;
-    width: 650px;
-    height: 50px;
-    display: block;
-    margin-bottom: 20px;
-    border-radius: 15px;
-}
-
-
-.button-send-changes{
-    color: white;
-    position: center;
-    width: 100px;
-    height: 50px;
-    text-align: center;
-    background-color: rgb(0, 0, 0);
-    border-radius: 15px;
-    cursor: pointer;
-    font-weight: blod;
-    font-size: 1.2em;
-    border: none;
-}
-
-.button-send-changes:hover {
-    background-color: rgb(48, 45, 45);
-}
-
-
-
-.button-send-changes-disabled {
-    color: white;
-    position: center;
-    width: 100px;
-    height: 50px;
-    text-align: center;
-    background-color: rgb(119, 116, 116);
-    border-radius: 15px;
-    cursor: pointer;
-    font-weight: blod;
-    font-size: 1.2em;
-    border: none;
-}
+@import "@/assets/css/styles.css";
 </style>

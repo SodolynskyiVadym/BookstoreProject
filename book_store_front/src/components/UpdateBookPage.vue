@@ -44,6 +44,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import * as dateHelper from "@/js/dateHelper";
 
 export default {
   data() {
@@ -53,22 +54,13 @@ export default {
       book: null,
       publishers: [],
       authors: [],
-      maxDate: this.formatDate(Date.now()),
+      maxDate: dateHelper.formatDate(Date.now()),
       isActive: true,
       loaded: false
     }
   },
 
   methods: {
-    formatDate(date) {
-      const d = new Date(date);
-      const day = d.getDate().toString().padStart(2, '0');
-      const month = (d.getMonth() + 1).toString().padStart(2, '0');
-      const year = d.getFullYear();
-      return `${year}-${month}-${day}`;
-    },
-
-
     async findIdByNameAuthor() {
       this.book.authorId = this.authors.find(author => author.name === this.authorName).id;
       console.log(this.book.authorId);
@@ -104,8 +96,6 @@ export default {
         discount: this.book.discount,
       };
 
-      console.log(data)
-
       await listURL.requestPatchUpdateBook(data);
     }
   },
@@ -115,7 +105,7 @@ export default {
     this.authors = await listURL.requestGetAllAuthors();
     this.book = await listURL.requestGetBook(this.$route.params.id);
 
-    this.book.yearPublication = this.formatDate(this.book.yearPublication);
+    this.book.yearPublication = dateHelper.formatDate(this.book.yearPublication);
     this.authorName = this.authors.find(author => author.id === this.book.authorId).name;
     this.publisherName = this.publishers.find(publisher => publisher.id === this.book.publisherId).name;
     this.loaded = true;

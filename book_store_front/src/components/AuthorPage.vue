@@ -4,9 +4,9 @@
             <img class="author-photo" :src="require(`@/assets/authorPhoto/${author.name.toLowerCase().replace(/\s+/g, '')}${author.id}.jpg`)">
             <div style="margin-top: 30px; font-size: x-large;">{{ author.birthYear }}     ----     {{ author.deathYear }}</div>
             <div class="biography">{{ author.biography }}</div>
-            <button class="button-update" @click="enterAuthorUpdatePage">Update</button>
+            <button class="main-button" @click="enterAuthorUpdatePage">Update</button>
 
-            <div v-for="book in books" :key="book.id" class="author-book">
+            <div v-for="book in books" :key="book.id" class="list-book">
                 <img :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)" class="image-order">
                 <div style="margin-left: 15px; width: 300px;">
                 <div style="margin-top: 20%;">{{ book.name }}</div>
@@ -58,6 +58,8 @@ export default {
 
 
 <style scoped>
+@import "@/assets/css/styles.css";
+
 .author-photo {
     padding-top: 80px;
 }
@@ -73,63 +75,8 @@ export default {
 }
 
 
-.author-book {
-  display: flex;
-  padding-bottom: 10px;
-  padding-top: 10px;
-  padding-left: 10px;
-  margin-left: 180px;
-  margin-right: 280px;
-  margin-top: 20px;
-  border: solid 1px;
-}
-
-.author-book div{
-    font-size: x-large;
-}
-
-
 .image-order {
   height: 160px;
   width: 90px;
-}
-
-.button-view {
-  margin-top: 50px;
-  margin-left: 250px;
-  background-color: red;
-  color: white;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: blod;
-  font-size: 1.2em;
-  border: none;
-}
-
-.button-view:hover{
-  background-color: brown;
-}
-
-
-.button-update {
-  color: white;
-  position: center;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  background-color: rgb(0, 0, 0);
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: blod;
-  font-size: 1.2em;
-  border: none;
-  margin-top: 20px;
-}
-
-.button-update:hover {
-  background-color: rgb(48, 45, 45);
 }
 </style>

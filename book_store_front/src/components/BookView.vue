@@ -60,7 +60,8 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
-import * as orderMaker from "@/js/orderMaker"
+import * as orderMaker from "@/js/orderMaker";
+import * as dateHelper from "@/js/dateHelper";
 
 export default {
   data() {
@@ -77,14 +78,6 @@ export default {
   methods: {
     async enterAuthorPage(){
       this.$router.push(`/author/${this.book.authorId}`);
-    },
-
-    async formatDate(date) {
-      const d = new Date(date);
-      const day = d.getDate().toString().padStart(2, '0');
-      const month = (d.getMonth() + 1).toString().padStart(2, '0');
-      const year = d.getFullYear();
-      return `${year}-${month}-${day}`;
     },
 
 
@@ -133,7 +126,7 @@ export default {
 
     this.isNoOrdered = !orderedBooks.includes(this.book.id);
     this.isInStock = this.book.availableQuantity > 0;
-    this.book.yearPublication = await this.formatDate(this.book.yearPublication);
+    this.book.yearPublication = dateHelper.formatDate(this.book.yearPublication);
     this.loaded = true;
     console.log(this.book.availableQuantity)
   }
