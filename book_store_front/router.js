@@ -103,6 +103,11 @@ const routes = [
             requiresAuth: true,
             roles: ["ADMIN", "EDITOR", "USER"]
         }
+    },
+    {
+        path: '/orderPage',
+        name: "OrderPage",
+        component: () => import('./src/components/OrderPage.vue')
     }
 ];
 

@@ -64,8 +64,8 @@ CREATE TABLE book_schema.OrderGenerallyInfo (
     Id SERIAL PRIMARY KEY,
     UserId INTEGER,
     Destination VARCHAR NOT NULL,
-    CreatedAt DATE NOT NULL,
-    IsDelevered BOOLEAN
+    PhoneNumber VARCHAR NOT NULL,
+    CreatedAt DATE NOT NULL
 );
 
 ALTER TABLE book_schema.bookgenerallyinfo ADD CONSTRAINT book_gen_idauthor FOREIGN KEY (authorId) REFERENCES book_schema.authors (id);
@@ -81,11 +81,11 @@ ALTER TABLE book_schema.OrderDetailInfo ADD CONSTRAINT orderdet_ordergen FOREIGN
 ALTER TABLE book_schema.OrderDetailInfo ADD CONSTRAINT orderdet_bookid FOREIGN KEY (BookId) REFERENCES book_schema.BookGenerallyInfo (id);
 
 
--- DROP TABLE book_schema.Authors;
--- DROP TABLE book_schema.Users;
--- DROP TABLE book_schema.Reviews;
--- DROP TABLE book_schema.Publishers;
--- DROP TABLE book_schema.BookGenerallyInfo;
--- DROP TABLE book_schema.BookDetailInfo;
--- DROP TABLE book_schema.OrderDetailInfo;
--- DROP TABLE book_schema.OrderGenerallyInfo;
+DROP TABLE book_schema.Authors;
+DROP TABLE book_schema.Users;
+DROP TABLE book_schema.Reviews;
+DROP TABLE book_schema.Publishers;
+DROP TABLE book_schema.BookGenerallyInfo;
+DROP TABLE book_schema.BookDetailInfo;
+DROP TABLE book_schema.OrderDetailInfo;
+DROP TABLE book_schema.OrderGenerallyInfo;

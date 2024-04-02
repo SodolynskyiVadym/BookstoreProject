@@ -2,6 +2,7 @@ CREATE OR REPLACE PROCEDURE book_schema.spOrder_Upsert(
     IN InputBooksId INTEGER ARRAY,
     IN InputQuantities INTEGER ARRAY,
     IN InputDestination VARCHAR,
+    IN InputPhoneNumber VARCHAR,
     IN InputUserId INTEGER = NULL
 )
 LANGUAGE plpgsql
@@ -10,8 +11,8 @@ DECLARE
     i INT;
     OutputOrderId INT;
 BEGIN
-    INSERT INTO book_schema.ordergenerallyinfo (userId, destination, createdAt, isDelevered)
-    VALUES (InputUserId, InputDestination, NOW(), FALSE)
+    INSERT INTO book_schema.ordergenerallyinfo (userId, destination, phonenumber, createdAt)
+    VALUES (InputUserId, InputDestination, InputPhoneNumber, NOW())
     RETURNING LASTVAL() INTO OutputOrderId; 
 
 
@@ -22,4 +23,4 @@ BEGIN
 END;
 $$;
 
--- DROP PROCEDURE book_schema.spOrder_Upsert
+DROP PROCEDURE book_schema.spOrder_Upsert

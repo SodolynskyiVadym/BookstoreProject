@@ -80,8 +80,6 @@ public class BookController : ControllerBase
         parameters.Add("@BooksId", booksId.ToArray(), System.Data.DbType.Object);
 
         return _dapper.LoadDataWithParameters<BookOrderDTO>(sqlGetOrderedBooks, parameters);
-
-
     }
 
 

@@ -10,7 +10,7 @@ export async function getOrderedBooksArray(){
 }
 
 
-export async function getOrderBookQuantity(){
+export async function getOrderBookIdQuantity(){
     const result = {};
     if(localStorage.getItem("order")){
         const array = localStorage.getItem("order").split(" ");
@@ -23,13 +23,15 @@ export async function getOrderBookQuantity(){
 
 
 export async function removeBookFromOrder(id){
-    var strOrder = "";
+    let strOrder = "";
     if(localStorage.getItem("order")){
         const array = localStorage.getItem("order").split(" ");
+        console.log(array);
         for (let i = 0; i < array.length - 2; i += 2) {
-            if(array[i] != id) strOrder = strOrder + `${array[i]} ${array[i+1]} `
+            if(parseInt(array[i]) !== id){
+                strOrder = strOrder + `${array[i]} ${array[i+1]} `
+            }
         }
-
         localStorage.setItem("order", strOrder);
     }
     return strOrder;

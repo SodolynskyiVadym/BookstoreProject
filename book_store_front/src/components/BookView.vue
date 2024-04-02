@@ -118,7 +118,7 @@ export default {
 
   async mounted() {
     this.book = await listURL.requestGetBook(this.$route.params.id);
-    const orderBookQuantity = await orderMaker.getOrderBookQuantity();
+    const orderBookQuantity = await orderMaker.getOrderBookIdQuantity();
     const orderedBooks = await orderMaker.getOrderedBooksArray();
 
     this.orderedQuantity = orderBookQuantity[this.book.id] ?? 1;

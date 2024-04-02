@@ -16,7 +16,7 @@
 
     <div class="my-order" v-if="isShowOrder">
       <p class="order-inscription">Your order</p>
-      <div v-for="book in orderedBook" :key="book.id" class="orderBook">
+      <div v-for="book in orderedBooks" :key="book.id" class="orderBook">
         <img :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)" class="image-order">
         <div style="margin-left: 15px; width: 300px;">
           <div style="padding-bottom: 20px;">{{ book.name }}</div>
@@ -29,6 +29,7 @@
         </div>
         <button class="button-delete-order" @click="deleteOrderBook(book.id)">Delete</button>
       </div>
+      <button class="main-button" style="margin-top: 30px; margin-left: 45%" @click="enterOrderPage">Make order</button>
       <div class="generally-price">Price: {{ generallyPrice }} UAH</div>
     </div>
     <router-view style="z-index: 1;"></router-view>
@@ -44,7 +45,7 @@ export default {
     return {
       user: null,
       isShowOrder: false,
-      orderedBook : [],
+      orderedBooks : [],
       generallyPrice : 0,
       isUser: false,
       isAdmin: false,
@@ -55,7 +56,7 @@ export default {
   methods: {
     async calculateGenerallyPrice(){
       this.generallyPrice = 0;
-      for(var book of this.orderedBook){
+      for(var book of this.orderedBooks){
           this.generallyPrice += (book.price - book.price*book.discount/100) * book.quantityOrdered;
       }
       this.generallyPrice = this.generallyPrice.toFixed();
@@ -64,9 +65,9 @@ export default {
     async showOrder(){
       if(!this.isShowOrder){
         const orderedBooksId = await orderMaker.getOrderedBooksArray();
-        const arrayBookQuantity = await orderMaker.getOrderBookQuantity();
-        this.orderedBook = await listURL.requestGetSomeBook(orderedBooksId);
-        for(var book of this.orderedBook){
+        const arrayBookQuantity = await orderMaker.getOrderBookIdQuantity();
+        this.orderedBooks = await listURL.requestGetSomeBook(orderedBooksId);
+        for(let book of this.orderedBooks){
           book.quantityOrdered = arrayBookQuantity[book.id];
         }
         await this.calculateGenerallyPrice();
@@ -75,9 +76,15 @@ export default {
     },
 
     async deleteOrderBook(id){
-      this.orderedBook = this.orderedBook.filter(book => book.id != id);
-      localStorage.setItem("order", await orderMaker.removeBookFromOrder(id));
+      this.orderedBooks = this.orderedBooks.filter(book => book.id !== id);
+      const orderLabel = await orderMaker.removeBookFromOrder(id)
+      localStorage.setItem("order", orderLabel);
       await this.calculateGenerallyPrice();
+    },
+
+    async enterOrderPage(){
+      this.isShowOrder = false;
+      this.$router.push("/orderPage");
     },
 
 
@@ -142,7 +149,7 @@ export default {
 
       if(this.user.role) this.isUser = true;
 
-      if(this.user.role && this.user.role != "USER") this.isEditor = true;
+      if(this.user.role && this.user.role !== "USER") this.isEditor = true;
 
       if(this.user.role === "ADMIN") this.isAdmin = true;
     }
@@ -153,7 +160,7 @@ export default {
 
 <style>
 
-
+@import "@/assets/css/styles.css";
 .header {
     z-index: 2;
     width: 100%;

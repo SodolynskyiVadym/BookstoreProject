@@ -15,7 +15,13 @@
     <PackageReference Include="MimeKit" Version="4.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql" Version="8.0.2" />
+    <PackageReference Include="Stripe.net" Version="43.22.0-beta.1" />
     <PackageReference Include="System.Text.Json" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Settings\StripeSettings.cs" />
+    <Compile Remove="DTO\CheckOutResponseDTO.cs" />
   </ItemGroup>
 
 </Project>
