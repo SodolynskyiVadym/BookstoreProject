@@ -1,4 +1,5 @@
-﻿using BookstoreAPI.Models;
+﻿using BookstoreAPI.DTO;
+using BookstoreAPI.Models;
 using Stripe.Checkout;
 
 namespace BookstoreAPI.Helpers;
@@ -11,7 +12,7 @@ public class StripeHelper
         _config = config;
     }
     
-    public async Task<string> CheckOut(IEnumerable<BookGenerallyInfo> books, IDictionary<int, int> idQuantity)
+    public async Task<string> CheckOut(IEnumerable<BookGenerallyInfo> books, OrderDTO order, int userId)
     {
         string? serverUrl = _config.GetSection("Urls:Server").Value;
         string? clientUrl = _config.GetSection("Urls:Client").Value;
@@ -19,9 +20,16 @@ public class StripeHelper
         var options = new SessionCreateOptions
         {
             SuccessUrl = $"{serverUrl}/order/success/{{CHECKOUT_SESSION_ID}}",
-            CancelUrl = clientUrl,
+            CancelUrl = $"{clientUrl}/clearOrder",
             PaymentMethodTypes = ["card"],
-            Metadata = idQuantity.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString()),
+            Metadata = new Dictionary<string, string>
+                {
+                    { "Destination", order.Destination },
+                    { "PhoneNumber", order.PhoneNumber },
+                    { "UserId", userId.ToString() },
+                }.Concat(order.BooksAndQuantity.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString()))
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value),
+            
             LineItems = books.Select(book => new SessionLineItemOptions
             {
                 PriceData = new SessionLineItemPriceDataOptions
@@ -33,7 +41,7 @@ public class StripeHelper
                         Name = book.Name
                     },
                 },
-                Quantity = idQuantity[book.Id],
+                Quantity = order.BooksAndQuantity[book.Id],
             }).ToList(),
             Mode = "payment"
         };

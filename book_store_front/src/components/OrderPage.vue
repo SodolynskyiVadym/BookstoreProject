@@ -73,8 +73,14 @@ export default {
 
 
     async makeOrder(){
-      const data = await orderMaker.getOrderBookIdQuantity();
-      await buyBooks(data);
+      const token = localStorage.getItem("token");
+
+      const data = {
+        booksAndQuantity: await orderMaker.getOrderBookIdQuantity(),
+        destination: this.destination,
+        phoneNumber: this.phoneNumber
+      }
+      await buyBooks(data, token);
     },
 
     async changeBookQuantity(book){

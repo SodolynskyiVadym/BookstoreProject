@@ -3,10 +3,12 @@ using BookstoreAPI.Helpers;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using BookstoreAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Stripe.Checkout;
 
 namespace BookstoreAPI.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class OrderController : ControllerBase
@@ -22,34 +24,47 @@ namespace BookstoreAPI.Controllers
             _stripeHelper = new StripeHelper(_config);
         }
 
-
+        [AllowAnonymous]
         [HttpPost("makeOrder")]
-        public async Task<IActionResult> CreateOrder(IDictionary<int, int> idQuantity)
+        public async Task<IActionResult> CreateOrder(OrderDTO order)
         {
+            int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
             string sqlGetBooks = @"SELECT * FROM book_schema.bookgenerallyInfo WHERE BookGenerallyInfo.id = ANY (@BooksId)";
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@BooksId", idQuantity.Keys.ToArray(), System.Data.DbType.Object);
+            parameters.Add("@BooksId", order.BooksAndQuantity.Keys.ToArray(), System.Data.DbType.Object);
             IEnumerable<BookGenerallyInfo> books = _dapper.LoadDataWithParameters<BookGenerallyInfo>(sqlGetBooks, parameters);
+
+            foreach (BookGenerallyInfo book in books) if (book.AvailableQuantity < order.BooksAndQuantity[book.Id]) throw new Exception("Not enough books in stock");
             
-            string id = await _stripeHelper.CheckOut(books, idQuantity);
-            string pubKey = _config["StripeSettings:PubKey"];
+            string id = await _stripeHelper.CheckOut(books, order, userId);
             
-            var dataOrder = new CheckoutOrderResponseDTO()
-            {
-                SessionId = id,
-                PubKey = pubKey
-            };
-            return Ok(dataOrder);
+            return Ok(id);
         }
         
-        
+        [AllowAnonymous]
         [HttpGet("success/{sessionId}")]
         public ActionResult CheckoutSuccess(string sessionId)
         {
             var sessionService = new SessionService();
             var session = sessionService.Get(sessionId);
+
+            var idQuantity = session.Metadata
+                .Where(kvp => int.TryParse(kvp.Key, out _))
+                .ToDictionary(kvp => int.Parse(kvp.Key), kvp => int.Parse(kvp.Value));
+
+            var destination = session.Metadata["Destination"];
+            var phoneNumber = session.Metadata["PhoneNumber"];
+            int userId = int.Parse(session.Metadata["UserId"]);
+
+            string sqlCreateOrder = "CALL book_schema.spOrder_Upsert(@BooksId, @OrderedQuantity, @Destination, @PhoneNumber, @UserId)";
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@BooksId", idQuantity.Keys.ToArray(), System.Data.DbType.Object);
+            parameters.Add("@OrderedQuantity", idQuantity.Values.ToArray(), System.Data.DbType.Object);
+            parameters.Add("@UserId", userId, System.Data.DbType.Int32);
+            parameters.Add("@Destination", destination, System.Data.DbType.String);
+            parameters.Add("@PhoneNumber", phoneNumber, System.Data.DbType.String);
             
-            IDictionary<int, int> idQuantity = session.Metadata.ToDictionary(kvp => int.Parse(kvp.Key), kvp => int.Parse(kvp.Value));
+            _dapper.ExecuteSqlWithParameters(sqlCreateOrder, parameters);
             
             return Redirect(_config.GetSection("Urls:Client").Value);
         }

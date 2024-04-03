@@ -108,7 +108,14 @@ const routes = [
         path: '/orderPage',
         name: "OrderPage",
         component: () => import('./src/components/OrderPage.vue')
-    }
+    },
+    {
+        path: '/clearOrder',
+        name: "CleanOrderPage",
+        component: () => import('@/components/CleanOrderScript.vue')
+    },
+
+
 ];
 
 

@@ -22,6 +22,7 @@
   <ItemGroup>
     <Compile Remove="Settings\StripeSettings.cs" />
     <Compile Remove="DTO\CheckOutResponseDTO.cs" />
+    <Compile Remove="DTO\CheckoutOrderResponseDTO.cs" />
   </ItemGroup>
 
 </Project>

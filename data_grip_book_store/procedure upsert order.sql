@@ -20,6 +20,12 @@ BEGIN
         INSERT INTO book_schema.OrderDetailInfo (orderId, bookid, quantity)
         VALUES (OutputOrderId, InputBooksId[i], InputQuantities[i]);
     END LOOP;
+
+    FOR k IN 1..array_length(InputBooksId, 1) LOOP
+        UPDATE book_schema.bookgenerallyinfo
+        SET availablequantity = bookgenerallyinfo.availablequantity - InputQuantities[k]
+        WHERE id = InputBooksId[k];
+    END LOOP;
 END;
 $$;
 
