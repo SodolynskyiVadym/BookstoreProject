@@ -26,7 +26,7 @@ namespace BookstoreAPI.Controllers
         [HttpPost("makeOrder")]
         public async Task<IActionResult> CreateOrder(IDictionary<int, int> idQuantity)
         {
-            string sqlGetBooks = @"SELECT * WHERE BookGenerallyInfo.id = ANY (@BooksId)";
+            string sqlGetBooks = @"SELECT * FROM book_schema.bookgenerallyInfo WHERE BookGenerallyInfo.id = ANY (@BooksId)";
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@BooksId", idQuantity.Keys.ToArray(), System.Data.DbType.Object);
             IEnumerable<BookGenerallyInfo> books = _dapper.LoadDataWithParameters<BookGenerallyInfo>(sqlGetBooks, parameters);
@@ -34,25 +34,24 @@ namespace BookstoreAPI.Controllers
             string id = await _stripeHelper.CheckOut(books, idQuantity);
             string pubKey = _config["StripeSettings:PubKey"];
             
-            var checkoutOrderResponse = new CheckoutOrderResponseDTO()
+            var dataOrder = new CheckoutOrderResponseDTO()
             {
                 SessionId = id,
                 PubKey = pubKey
             };
-            return Ok(checkoutOrderResponse);
+            return Ok(dataOrder);
         }
         
-        [HttpGet("success")]
+        
+        [HttpGet("success/{sessionId}")]
         public ActionResult CheckoutSuccess(string sessionId)
         {
             var sessionService = new SessionService();
             var session = sessionService.Get(sessionId);
             
+            IDictionary<int, int> idQuantity = session.Metadata.ToDictionary(kvp => int.Parse(kvp.Key), kvp => int.Parse(kvp.Value));
             
-            var total = session.AmountTotal.Value;
-            var customerEmail = session.CustomerDetails.Email;
-
-            return Redirect(_config.GetSection("Url:Client").Value);
+            return Redirect(_config.GetSection("Urls:Client").Value);
         }
         
     }

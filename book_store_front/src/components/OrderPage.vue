@@ -22,6 +22,7 @@
 <script>
 import * as listURL from "@/js/listUrl";
 import * as orderMaker from "@/js/orderMaker";
+import {buyBooks} from "@/js/stripe";
 
 export default {
   data() {
@@ -72,7 +73,8 @@ export default {
 
 
     async makeOrder(){
-
+      const data = await orderMaker.getOrderBookIdQuantity();
+      await buyBooks(data);
     },
 
     async changeBookQuantity(book){

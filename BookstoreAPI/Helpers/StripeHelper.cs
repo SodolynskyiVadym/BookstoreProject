@@ -1,7 +1,4 @@
 ﻿using BookstoreAPI.Models;
-using BookstoreAPI.Settings;
-using Microsoft.Extensions.Options;
-using Stripe;
 using Stripe.Checkout;
 
 namespace BookstoreAPI.Helpers;
@@ -16,36 +13,28 @@ public class StripeHelper
     
     public async Task<string> CheckOut(IEnumerable<BookGenerallyInfo> books, IDictionary<int, int> idQuantity)
     {
-        string thisApiUrl = _config.GetSection("Url:Server").Value;
-        string clientUrl = _config.GetSection("Url:Client").Value;
+        string? serverUrl = _config.GetSection("Urls:Server").Value;
+        string? clientUrl = _config.GetSection("Urls:Client").Value;
         
-        string description = "You are buying: " + string.Join(", ", books.Select(book => book.Name));
-        int total = books.Sum(book => book.Price * idQuantity[book.Id]);
         var options = new SessionCreateOptions
         {
-            SuccessUrl = $"{thisApiUrl}/order/success?sessionId=" + "{CHECKOUT_SESSION_ID}",
-            CancelUrl = clientUrl + "/failure",
-            PaymentMethodTypes = new List<string>
+            SuccessUrl = $"{serverUrl}/order/success/{{CHECKOUT_SESSION_ID}}",
+            CancelUrl = clientUrl,
+            PaymentMethodTypes = ["card"],
+            Metadata = idQuantity.ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString()),
+            LineItems = books.Select(book => new SessionLineItemOptions
             {
-                "card"
-            },
-            LineItems = new List<SessionLineItemOptions>
-            {
-                new()
+                PriceData = new SessionLineItemPriceDataOptions
                 {
-                    PriceData = new SessionLineItemPriceDataOptions
+                    UnitAmount = (book.Price - book.Price * book.Discount / 100) * 100,
+                    Currency = "USD",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
                     {
-                        UnitAmount = total,
-                        Currency = "USD",
-                        ProductData = new SessionLineItemPriceDataProductDataOptions
-                        {
-                            Name = "Bookstore Product",
-                            Description = description
-                        },
+                        Name = book.Name
                     },
-                    Quantity = 1,
                 },
-            },
+                Quantity = idQuantity[book.Id],
+            }).ToList(),
             Mode = "payment"
         };
 
