@@ -4,14 +4,16 @@
       <a @click="enterBookPage(book.id)">
         <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
         <div class="book-name">{{ book.name }}</div>
-        <p>
+        <p v-if="book.discount > 0 && book.discount <= 100">
             <span class="full-price">{{ book.price }} UAH</span>
             <sup>-{{ book.discount }}%</sup>
         </p>
         <div>{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
       </a>
-      <button class="button-buy" v-if="!book.isOrdered" @click="buyBook(book)">Buy</button>
-      <button style="background-color: gray; width: auto; cursor: auto;" class="button-buy" v-else >Already in your backet</button>
+      <div v-if="book.availableQuantity > 0">
+        <button class="button-buy" v-if="!book.isOrdered" @click="buyBook(book)" :disabled="book.availableQuantity <= 0">Buy</button>
+        <button style="background-color: gray; width: auto; cursor: auto;" class="button-buy" disabled v-else >Already in your backet</button>
+      </div>
     </div>
   </div>
 </template>
