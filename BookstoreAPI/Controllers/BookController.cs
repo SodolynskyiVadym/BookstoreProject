@@ -164,8 +164,6 @@ public class BookController : ControllerBase
         string sqlGetOldName = $@"SELECT name FROM book_schema.bookGenerallyInfo WHERE id={book.Id}";
         string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldName);
 
-        Console.WriteLine(book.Description);
-
 
         string sqlUpdateBook = @"CALL book_schema.spBook_upsert(
             @NumberPages::INTEGER,                        

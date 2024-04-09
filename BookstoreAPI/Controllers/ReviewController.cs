@@ -26,10 +26,23 @@ public class ReviewController : ControllerBase
     public IEnumerable<Review> GetBookReviews(int id)
     {
         string sqlGetReviews = $@"SELECT * FROM book_schema.Reviews WHERE bookId = @Id";
-        DynamicParameters parameters = new DynamicParameters();
+        var parameters = new DynamicParameters();
         parameters.Add("@Id", id, System.Data.DbType.Int64);
         return _dapper.LoadDataWithParameters<Review>(sqlGetReviews, parameters);
     }
+
+    [HttpGet("getReview/{bookId}")]
+    public Review? GetReview(int bookId)
+    {
+        int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
+        string sqlGetReview = $@"SELECT * FROM book_schema.Reviews WHERE bookId = @BookId AND userId = @UserId";
+        
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@BookId", bookId, System.Data.DbType.Int64);
+        parameters.Add("@UserId", userId, System.Data.DbType.Int64);
+        return _dapper.LoadDataSingleWithParameters<Review>(sqlGetReview, parameters);
+    }
+    
     
     [HttpPost("createReview")]
     public IActionResult CreateReview(ReviewCreateDTO reviewCreate)
