@@ -45,7 +45,7 @@ export default {
     },
 
     async mounted(){
-        const data = await listUrl.requestGetPublisherBooks(this.$route.params.id);
+        const data = await listUrl.getPublisherBooks(this.$route.params.id);
         this.publisher = data.publisher;
         this.books = data.books;
         this.loaded = true;

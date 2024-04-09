@@ -14,6 +14,9 @@
         <button class="button-buy" v-if="!book.isOrdered" @click="buyBook(book)" :disabled="book.availableQuantity <= 0">Buy</button>
         <button style="background-color: gray; width: auto; cursor: auto;" class="button-buy" disabled v-else >Already in your backet</button>
       </div>
+      <div v-else>
+        <button style="background-color: gray; width: auto; cursor: auto;" class="button-buy" disabled>Not available</button>
+      </div>
     </div>
   </div>
 </template>
@@ -43,7 +46,7 @@ export default {
   },
 
   async mounted() {
-    this.books = await listURL.requestGetBooks();
+    this.books = await listURL.getBooks();
     var indexesOrderedBooks = await orderMaker.getOrderedBooksArray();
     
     for(var book of this.books){

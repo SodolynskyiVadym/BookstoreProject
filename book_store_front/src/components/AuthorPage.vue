@@ -46,7 +46,7 @@ export default {
     },
 
     async mounted(){
-        const data = await listUrl.requestGetAuthorBooks(this.$route.params.id);
+        const data = await listUrl.getAuthorBooks(this.$route.params.id);
         this.author = data.author;
         this.books = data.books;
         this.author.birthYear = this.author.birthYear != null ? this.author.birthYear.split('T')[0] : "???";

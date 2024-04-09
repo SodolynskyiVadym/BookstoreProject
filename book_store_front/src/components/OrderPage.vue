@@ -102,7 +102,7 @@ export default {
     async mounted() {
       const orderedBooksId = await orderMaker.getOrderedBooksArray();
       const arrayBookQuantity = await orderMaker.getOrderBookIdQuantity();
-      this.orderedBooks = await listURL.requestGetSomeBook(orderedBooksId);
+      this.orderedBooks = await listURL.getSomeBook(orderedBooksId);
       console.log(this.orderedBooks)
       for (let book of this.orderedBooks) {
         book.quantityOrdered = arrayBookQuantity[book.id];

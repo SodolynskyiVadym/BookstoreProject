@@ -57,7 +57,7 @@ export default {
           birthYear: dateBirth,
           deathYear: dateDeath
         }
-        await listURL.requestPostCreateAuthor(data, token);
+        await listURL.postCreateAuthor(data, token);
 
         const file = this.$refs.fileInput.files[0];
         const formData = new FormData();
@@ -65,7 +65,7 @@ export default {
         formData.append('biography', this.biography);
         formData.append('name', this.name);
 
-        await listURL.requestCreateAuthorImage(formData, token);
+        await listURL.postCreateAuthorImage(formData, token);
 
         this.$refs.fileInput.value = ''
         this.name = "";

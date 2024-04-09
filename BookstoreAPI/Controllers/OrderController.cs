@@ -41,6 +41,7 @@ namespace BookstoreAPI.Controllers
             return Ok(id);
         }
         
+        
         [AllowAnonymous]
         [HttpGet("success/{sessionId}")]
         public ActionResult CheckoutSuccess(string sessionId)

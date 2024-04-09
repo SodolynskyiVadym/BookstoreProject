@@ -32,7 +32,7 @@ export default {
        const token = localStorage.getItem("token");
        if(token){
         this.isActive = false;
-        await listURL.requestPatchUpdateUser(data, token);
+        await listURL.patchUpdateUser(data, token);
         this.currentName = this.user.name;
        }
     },
@@ -47,7 +47,7 @@ export default {
   async mounted(){
     const token = localStorage.getItem("token");
     if(token){
-        this.user = await listURL.requestGetUserByToken(token);
+        this.user = await listURL.getUserByToken(token);
         this.user.passsword = "";
         this.currentName = this.user.name;
         this.loaded = true;

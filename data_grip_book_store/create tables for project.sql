@@ -37,6 +37,7 @@ CREATE TABLE book_schema.Publishers (
 CREATE TABLE book_schema.Reviews (
     Id SERIAL PRIMARY KEY,
     UserId INTEGER NOT NULL,
+    BookId INTEGER NOT NULL,
     Description TEXT,
     Mark INTEGER NOT NULL
 );
@@ -79,6 +80,10 @@ ALTER TABLE book_schema.reviews ADD CONSTRAINT review_userid FOREIGN KEY (userid
 ALTER TABLE book_schema.OrderDetailInfo ADD CONSTRAINT orderdet_ordergen FOREIGN KEY (OrderId) REFERENCES book_schema.OrderGenerallyInfo (id);
 
 ALTER TABLE book_schema.OrderDetailInfo ADD CONSTRAINT orderdet_bookid FOREIGN KEY (BookId) REFERENCES book_schema.BookGenerallyInfo (id);
+
+ALTER TABLE book_schema.reviews ADD CONSTRAINT review_bookid FOREIGN KEY (bookid) REFERENCES book_schema.bookgenerallyinfo (id);
+
+ALTER TABLE book_schema.reviews ADD CONSTRAINT UC_UserId_BookId UNIQUE (UserId, BookId);
 
 
 DROP TABLE book_schema.Authors;

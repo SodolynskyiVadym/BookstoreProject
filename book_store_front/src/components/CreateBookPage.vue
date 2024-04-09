@@ -97,7 +97,7 @@ export default {
       };
 
       const token = localStorage.getItem("token");
-      await listURL.requestPostCreateBook(data, token);
+      await listURL.postCreateBook(data, token);
 
       const file = this.$refs.fileInput.files[0];
       const formData = new FormData();
@@ -105,7 +105,7 @@ export default {
       formData.append('authorId', this.authorId);
       formData.append('name', this.name);
 
-      await listURL.requestCreateBookImage(formData, token);
+      await listURL.postCreateBookImage(formData, token);
 
       this.$refs.fileInput.value = ''
       this.isActive = false;
@@ -123,8 +123,8 @@ export default {
   },
 
   async mounted() {
-    this.publishers = await listURL.requestGetAllPublishers();
-    this.authors = await listURL.requestGetAllAuthors();
+    this.publishers = await listURL.getAllPublishers();
+    this.authors = await listURL.getAllAuthors();
   }
 }
 </script>

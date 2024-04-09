@@ -116,7 +116,7 @@ public class AuthController : ControllerBase
             return Ok(new Dictionary<string, string> { { "token", _authHelper.CreateToken(user.Id, user.Role) } });
         }
 
-        return StatusCode(400, "User donesn't exist");
+        return StatusCode(400, "User doesn't exist");
     }
 
 

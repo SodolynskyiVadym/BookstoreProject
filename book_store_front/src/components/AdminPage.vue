@@ -29,6 +29,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import {postRegistrationWorker} from "@/js/listUrl";
 
 
 export default {
@@ -56,8 +57,8 @@ export default {
 
         async deleteUser(id){
             const token = localStorage.getItem("token");
-            await listURL.requestDeleteUser(id, token);
-            this.users = this.users = await listURL.requestGetAllUsers();
+            await listURL.deleteUser(id, token);
+            this.users = this.users = await listURL.getAllUsers();
         },
 
 
@@ -69,9 +70,9 @@ export default {
             }
             const token = localStorage.getItem("token");
 
-            await listURL.requestPostRegistrationWorker(data, token);
+            await listURL.postRegistrationWorker(data, token);
 
-            this.users = this.users = await listURL.requestGetAllUsers();
+            this.users = this.users = await listURL.getAllUsers();
             this.email = "";
             this.role = "EDITOR";
 
@@ -79,7 +80,7 @@ export default {
     },
 
     async mounted(){
-        this.users = await listURL.requestGetAllUsers();
+        this.users = await listURL.getAllUsers();
     }
 }
 </script>

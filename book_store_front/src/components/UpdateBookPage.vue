@@ -96,14 +96,14 @@ export default {
         discount: this.book.discount,
       };
 
-      await listURL.requestPatchUpdateBook(data);
+      await listURL.patchUpdateBook(data);
     }
   },
 
   async mounted() {
-    this.publishers = await listURL.requestGetAllPublishers();
-    this.authors = await listURL.requestGetAllAuthors();
-    this.book = await listURL.requestGetBook(this.$route.params.id);
+    this.publishers = await listURL.getAllPublishers();
+    this.authors = await listURL.getAllAuthors();
+    this.book = await listURL.getBook(this.$route.params.id);
 
     this.book.yearPublication = dateHelper.formatDate(this.book.yearPublication);
     this.authorName = this.authors.find(author => author.id === this.book.authorId).name;

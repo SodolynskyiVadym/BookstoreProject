@@ -32,14 +32,14 @@ export default {
           name: this.name
         };
 
-        await listUrl.requestPostCreatePublisher(data, token);
+        await listUrl.postCreatePublisher(data, token);
 
         const file = this.$refs.fileInput.files[0];
         const formData = new FormData();
         formData.append('file', file);
         formData.append('name', this.name);
 
-        await listUrl.requestCreatePublisherImage(formData, token);
+        await listUrl.postCreatePublisherImage(formData, token);
 
         this.$refs.fileInput.value = ''
         this.name = "";

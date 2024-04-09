@@ -4,7 +4,7 @@ const mainUrl = "http://localhost:5224";
 
 
 
-export async function requestGetUserByToken(token) {
+export async function getUserByToken(token) {
   const config = {
     headers: {
       'Authorization': `Bearer ${token}`
@@ -16,56 +16,70 @@ export async function requestGetUserByToken(token) {
 
 
 
-export async function requestGetBooks(){
+export async function getBooks(){
     return await axios.get(mainUrl + "/book/getAllBooks").then(res => res.data);
 }
 
+export async function getReviews(id){
+    return await axios.get(mainUrl + "/review/getReviews/" + id).then(res => res.data);
+}
 
-export async function requestGetPublisher(id){
+
+export async function getPublisher(id){
     return await axios.get(mainUrl + "/publisher/getPublisher/" + id).then(res => res.data);
 }
 
+export async function getReviewUserBook(bookId, token){
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+    return await axios.get(mainUrl + "/review/GetReview/" + bookId, config).then(res => res.data);
+}
 
-export async function requestGetBook(id){
+
+
+export async function getBook(id){
     return await axios.get(mainUrl + "/book/getBook/" + id).then(res => res.data);
 }
 
-export async function requestGetSomeBook(arrayBooks){
+export async function getSomeBook(arrayBooks){
     const strBooksId = arrayBooks.join(",");
     return await axios.get(mainUrl + "/book/getSomeBooks?ids=" +  strBooksId).then(res => res.data);
 }
 
-export async function requestGetAuthorBooks(id){
+export async function getAuthorBooks(id){
     return await axios.get(mainUrl + "/author/getAuthorBooks/" + id).then(res => res.data);
 }
 
 
-export async function requestGetPublisherBooks(id){
+export async function getPublisherBooks(id){
     return await axios.get(mainUrl + "/publisher/getPublisherBooks/" + id).then(res => res.data);
 }
 
 
-export async function requestGetAuthor(id){
+export async function getAuthor(id){
     return await axios.get(mainUrl + "/author/getAuthor/" + id).then(res => res.data);
 }
 
 
-export async function requestGetAllAuthors(){
+export async function getAllAuthors(){
     return await axios.get(mainUrl + "/author/getAllAuthors").then(res => res.data);
 }
 
 
-export async function requestGetAllPublishers(){
+export async function getAllPublishers(){
     return await axios.get(mainUrl + "/publisher/getAllPublishers").then(res => res.data);
 }
 
 
-export async function requestGetAllUsers(){
+export async function getAllUsers(){
     return await axios.get(mainUrl + "/auth/getAllUsers").then(res => res.data);
 }
 
 
-export async function requestPostCreateBook(data, token){
+export async function postCreateBook(data, token){
     const config = {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -75,8 +89,19 @@ export async function requestPostCreateBook(data, token){
     return await axios.post(mainUrl + "/book/createBook", data, config).then(res => res.data)
 }
 
+export async function postCreateReview(data, token){
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
 
-export async function requestPostCreateAuthor(data, token){
+    return await axios.post(mainUrl + "/review/createReview", data, config).then(res => res.data)
+}
+
+
+
+export async function postCreateAuthor(data, token){
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -86,7 +111,7 @@ export async function requestPostCreateAuthor(data, token){
 }
 
 
-export async function requestPostCreatePublisher(data, token){
+export async function postCreatePublisher(data, token){
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -96,7 +121,7 @@ export async function requestPostCreatePublisher(data, token){
 }
 
 
-export async function requestPatchUpdateUser(data, token){
+export async function patchUpdateUser(data, token){
     const config = {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -105,17 +130,17 @@ export async function requestPatchUpdateUser(data, token){
     return await axios.patch(mainUrl + "/auth/updateUser", data, config).then(res => res.data)
 }
 
-export async function requestPostRegistration(data){
+export async function postRegistration(data){
     return await axios.post(mainUrl + "/auth/registerUser", data).then(res => res.data)
 }
 
 
-export async function requestPostLogin(data){
+export async function postLogin(data){
     return await axios.post(mainUrl + "/auth/login", data).then(res => res.data)
 }
 
 
-export async function requestPostRegistrationWorker(data, token){
+export async function postRegistrationWorker(data, token){
     const config = {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -125,7 +150,7 @@ export async function requestPostRegistrationWorker(data, token){
 }
 
 
-export async function requestCreateBookImage(data, token){
+export async function postCreateBookImage(data, token){
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -135,7 +160,7 @@ export async function requestCreateBookImage(data, token){
 }
 
 
-export async function requestCreatePublisherImage(data, token){
+export async function postCreatePublisherImage(data, token){
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -145,7 +170,7 @@ export async function requestCreatePublisherImage(data, token){
 }
 
 
-export async function requestCreateAuthorImage(data, token){
+export async function postCreateAuthorImage(data, token){
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -155,22 +180,31 @@ export async function requestCreateAuthorImage(data, token){
 }
 
 
-export async function requestPatchUpdateBook(data){
+export async function patchUpdateBook(data){
     return await axios.patch(mainUrl + "/book/updateBook", data).then(res => res.data)
 }
 
 
-export async function requestPatchUpdateAuthor(data){
+export async function patchUpdateAuthor(data){
     return await axios.patch(mainUrl + "/author/updateAuthor", data).then(res => res.data)
 }
 
 
-export async function requestPatchUpdatePublisher(data){
+export async function patchUpdatePublisher(data){
     return await axios.patch(mainUrl + "/publisher/updatePublisher", data).then(res => res.data)
 }
 
+export async function patchUpdateReview(data, token){
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    }
+    return await axios.patch(mainUrl + "/review/updateReview", data, config).then(res => res.data);
+}
 
-export async function requestDeleteUser(id, token){
+
+export async function deleteUser(id, token){
     const config = {
         headers: {
           'Authorization': `Bearer ${token}`

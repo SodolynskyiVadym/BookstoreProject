@@ -37,7 +37,7 @@ export default {
                 email: this.email,
                 password: this.password
             }
-            const data = await listURL.requestPostLogin(dataLogin);
+            const data = await listURL.postLogin(dataLogin);
             const token = data.token
             localStorage.setItem("token", token)
 

@@ -131,7 +131,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.meta.requiresAuth) {
         const token = localStorage.getItem('token');
         if (token) {
-            const userData = await listURL.requestGetUserByToken(token);
+            const userData = await listURL.getUserByToken(token);
             const role = userData.role;
 
             if (to.meta.roles.includes(role)) {

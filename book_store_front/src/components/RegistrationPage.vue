@@ -51,7 +51,7 @@ export default {
                 password: this.password,
                 confirmPassword: this.confirmPassword
             }
-            await listURL.requestPostRegistration(data);
+            await listURL.postRegistration(data);
 
             this.$router.push('/');
         }

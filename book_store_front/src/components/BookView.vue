@@ -2,10 +2,11 @@
   <div v-if="loaded">
     <div class="author-nameBook">
       <div>{{ book.authorName }}</div>
-      <div>Book "{{book.name}}"</div>
+      <div>Book "{{ book.name }}"</div>
     </div>
     <div class="book-info">
-      <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
+      <img class="img-book"
+           :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
       <div class="book-info-section" style="border-top-left-radius: 15px; border-bottom-left-radius: 15px;">
         <br><br><br>
         <div>Name ----------------</div>
@@ -17,15 +18,20 @@
         <div>Price ---------------</div>
         <div>Discount ------------</div>
       </div>
-      <div class="book-info-section" style="margin-left: 0px; border-bottom-right-radius: 15px; border-top-right-radius: 15px;">
+      <div class="book-info-section"
+           style="margin-left: 0px; border-bottom-right-radius: 15px; border-top-right-radius: 15px;">
         <div class="isBookStyle" v-if="isInStock">THE BOOK IS IN STOCK</div>
         <div class="isNotBookStyle" v-else>THE BOOK IS NOT IN STOCK</div>
         <div>{{ book.name }}</div>
-        <a @click="enterAuthorPage" style="color: blue; cursor: pointer; text-decoration: underline;"><div>{{ book.authorName }}</div></a>
-        <div>{{ book.yearPublication}}</div>
+        <a @click="enterAuthorPage" style="color: blue; cursor: pointer; text-decoration: underline;">
+          <div>{{ book.authorName }}</div>
+        </a>
+        <div>{{ book.yearPublication }}</div>
         <div>{{ book.numberPages }}</div>
         <div>{{ book.bookLanguage }}</div>
-        <div @click="enterPublisherPage" style="color: blue; cursor: pointer; text-decoration: underline;">{{ book.publisherName }}</div>
+        <div @click="enterPublisherPage" style="color: blue; cursor: pointer; text-decoration: underline;">
+          {{ book.publisherName }}
+        </div>
         <div>{{ book.price }}</div>
         <div>{{ book.discount }}</div>
       </div>
@@ -34,26 +40,47 @@
         <br><br><br>
         <div style="display: flex; justify-content: space-between;">
           <div style="margin-left: 30px;">Price</div>
-          <div style="text-align: right; margin-right: 30px;">{{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH</div>
+          <div style="text-align: right; margin-right: 30px;">
+            {{ (book.price - (book.price * book.discount / 100)).toFixed(0) }} UAH
+          </div>
         </div>
 
         <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-          <input type="number" v-if="isInStock" style="margin-left: 30px; font-size: large;" min="1" :max="book.availableQuantity" v-model="orderedQuantity" :value="orderedQuantity" @change="changeQuantityOrder()">
-          <button class="button-buy" @click="enterBookUpdatePage">Update</button>
+          <input type="number" v-if="isInStock" style="margin-left: 30px; font-size: large;" min="1"
+                 :max="book.availableQuantity" v-model="orderedQuantity" :value="orderedQuantity"
+                 @change="changeQuantityOrder()">
+          <button class="button-buy" @click="enterBookUpdatePage" v-if="isEditorAdmin">Update</button>
           <div v-if="isInStock">
             <button v-if="isNoOrdered" @click="changeOrCreateOrder(book.id)" class="button-buy">Buy</button>
             <button v-else class="button-buy" @click="cancelOrder(book.id)">Cancel</button>
           </div>
-          
 
         </div>
       </div>
     </div>
     <div class="description">
       <text>
-      {{ book.description }}
+        {{ book.description }}
       </text>
     </div>
+  </div>
+
+
+  <div v-for="review in reviews" :key="review.id">
+    <div>
+<!--      <div>{{ review.userName }}</div>-->
+      <div>{{ review.mark }}</div>
+      <text>{{ review.Description }}</text>
+    </div>
+  </div>
+
+  <div v-if="isUser" class="review-section">
+    <label key="mark">Mark </label>
+    <input id="mark" type="number" v-model="userReview.mark" min="0" max="5" @keydown.prevent><br>
+    <label>Review</label><br>
+    <textarea id="descriptionReview" v-model="userReview.description"></textarea><br>
+    <button v-if="isUserReview" @click="updateReview" class="main-button" style="margin-bottom: 40px">Update</button>
+    <button v-else @click="createReview" class="main-button" style="margin-bottom: 40px">Create</button>
   </div>
 </template>
 
@@ -71,53 +98,99 @@ export default {
       firstOrderedQuantity: 0,
       orderedQuantity: 0,
       isNoOrdered: false,
-      isInStock: false
+      isInStock: false,
+      reviews: null,
+      isUser: false,
+      isEditorAdmin: false,
+      userReview: {
+        description: "",
+        mark: 0
+      },
+      isUserReview: false
     };
   },
 
   methods: {
-    async enterAuthorPage(){
+    async enterAuthorPage() {
       this.$router.push(`/author/${this.book.authorId}`);
     },
 
 
-    async cancelOrder(id){
+    async cancelOrder(id) {
       await orderMaker.removeBookFromOrder(id);
       this.firstOrderedQuantity = -1;
       this.isNoOrdered = true;
     },
 
-    async changeOrCreateOrder(id){
+    async changeOrCreateOrder(id) {
       const arrayOrderedBooks = await orderMaker.getOrderedBooksArray();
-      if(arrayOrderedBooks.includes(id)){
+      if (arrayOrderedBooks.includes(id)) {
         await orderMaker.changeQuantity(id, this.orderedQuantity);
-      }
-      else await orderMaker.addBookToOrder(id, this.orderedQuantity);
+      } else await orderMaker.addBookToOrder(id, this.orderedQuantity);
 
       this.firstOrderedQuantity = this.orderedQuantity;
       this.isNoOrdered = false;
-
-      
-
     },
 
-    async changeQuantityOrder(){
+    async createReview() {
+      const data = {
+        bookId: this.$route.params.id,
+        mark: this.userReview.mark,
+        description: this.userReview.description
+      }
+      const token = localStorage.getItem("token");
+      await listURL.postCreateReview(data, token);
+      this.reviews = await listURL.getReviews(this.$route.params.id);
+      this.isUserReview = true;
+    },
+
+
+    async updateReview() {
+      const data = {
+        id: this.userReview.id,
+        bookId: this.$route.params.id,
+        mark: this.userReview.mark,
+        description: this.userReview.description
+      }
+      const token = localStorage.getItem("token");
+      await listURL.patchUpdateReview(data, token);
+      this.reviews = await listURL.getReviews(this.$route.params.id);
+    },
+
+    async changeQuantityOrder() {
       this.isNoOrdered = this.firstOrderedQuantity !== this.orderedQuantity;
     },
 
 
-    async enterBookUpdatePage(){
+    async enterBookUpdatePage() {
       this.$router.push(`/updateBook/${this.$route.params.id}`);
     },
 
 
-    async enterPublisherPage(){
+    async enterPublisherPage() {
       this.$router.push(`/publisher/${this.book.publisherId}`);
     }
   },
 
   async mounted() {
-    this.book = await listURL.requestGetBook(this.$route.params.id);
+    this.book = await listURL.getBook(this.$route.params.id);
+    const array = await listURL.getReviews(this.$route.params.id);
+    this.reviews = array;
+    const token = localStorage.getItem("token");
+    if (token) {
+      const review = await listURL.getReviewUserBook(this.$route.params.id, token);
+      if (review){
+        this.userReview = review;
+        this.isUserReview = true;
+      }
+
+      const user = await listURL.getUserByToken(token);
+      if (user.role) {
+        this.isUser = true;
+      }
+      if (user.role === "EDITOR" || user.role === "ADMIN") this.isEditorAdmin = true;
+    }
+
     const orderBookQuantity = await orderMaker.getOrderBookIdQuantity();
     const orderedBooks = await orderMaker.getOrderedBooksArray();
 
@@ -128,12 +201,36 @@ export default {
     this.isInStock = this.book.availableQuantity > 0;
     this.book.yearPublication = dateHelper.formatDate(this.book.yearPublication);
     this.loaded = true;
-    console.log(this.book.availableQuantity)
+    console.log(this.reviews);
   }
 }
 </script>
 
 <style>
+@import "@/assets/css/styles.css";
+
+.review-section {
+  margin-top: 50px;
+  margin-left: 420px;
+  margin-right: 420px;
+  border: 2px solid black;
+  font-size: x-large;
+  border-radius: 13px;
+  text-align: center;
+}
+
+.review-section input {
+  font-size: x-large;
+  width: auto;
+}
+
+.review-section textarea {
+  font-size: x-large;
+  width: 800px;
+  height: 200px;
+  margin-bottom: 30px;
+}
+
 
 .author-nameBook {
   padding-top: 100px;
@@ -183,20 +280,20 @@ export default {
 
 
 .button-buy {
-    color: white;
-    width: 100px;
-    height: 50px;
-    background-color: red;
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 1.2em;
-    border: none;
-    text-align: center; 
-    margin-right: 10px;
+  color: white;
+  width: 100px;
+  height: 50px;
+  background-color: red;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 1.2em;
+  border: none;
+  text-align: center;
+  margin-right: 10px;
 }
 
 .button-buy:hover {
-    background-color: brown;
+  background-color: brown;
 }
 
 .description {
@@ -205,7 +302,7 @@ export default {
   margin-left: 420px;
   margin-right: 420px;
   border: 2px solid black;
-  font-size:x-large;
+  font-size: x-large;
   border-radius: 13px;
 }
 

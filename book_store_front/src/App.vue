@@ -66,7 +66,7 @@ export default {
       if(!this.isShowOrder){
         const orderedBooksId = await orderMaker.getOrderedBooksArray();
         const arrayBookQuantity = await orderMaker.getOrderBookIdQuantity();
-        this.orderedBooks = await listURL.requestGetSomeBook(orderedBooksId);
+        this.orderedBooks = await listURL.getSomeBook(orderedBooksId);
         for(let book of this.orderedBooks){
           book.quantityOrdered = arrayBookQuantity[book.id];
         }
@@ -145,7 +145,7 @@ export default {
   async mounted(){
     const token = localStorage.getItem("token");
     if(token){
-      this.user = await listURL.requestGetUserByToken(token);
+      this.user = await listURL.getUserByToken(token);
 
       if(this.user.role) this.isUser = true;
 

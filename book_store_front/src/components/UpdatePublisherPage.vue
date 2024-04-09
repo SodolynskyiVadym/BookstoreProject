@@ -36,12 +36,12 @@ export default {
         id: this.$route.params.id,
         name: this.publisher.name,
       }
-      await listURL.requestPatchUpdatePublisher(data);
+      await listURL.patchUpdatePublisher(data);
     }
   },
 
   async mounted() {
-    this.publisher = await listURL.requestGetPublisher(this.$route.params.id);
+    this.publisher = await listURL.getPublisher(this.$route.params.id);
 
     console.log(this.publisher)
 

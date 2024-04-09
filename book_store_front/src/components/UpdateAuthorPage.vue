@@ -55,16 +55,16 @@ export default {
             birthYear: dateBirth,
             deathYear: dateDeath
           }
-          await listURL.requestPatchUpdateAuthor(data);
+          await listURL.patchUpdateAuthor(data);
       }
   },
 
   async mounted(){
-    this.author = await listURL.requestGetAuthor(this.$route.params.id);
+    this.author = await listURL.getAuthor(this.$route.params.id);
     if(this.author.deathYear){
       this.author.deathYear = dateHelper.formatDate(this.author.deathYear);
       this.isKnownDeath = true;
-    }else this.author.deathYear = this.formatDate(Date.now());
+    }else this.author.deathYear = dateHelper.formatDate(Date.now());
 
 
     if(this.author.birthYear){
