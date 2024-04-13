@@ -23,16 +23,19 @@ public class ReviewController : ControllerBase
     
     [AllowAnonymous]
     [HttpGet("getReviews/{id}")]
-    public IEnumerable<Review> GetBookReviews(int id)
+    public IEnumerable<ReviewDTO> GetBookReviews(int id)
     {
-        string sqlGetReviews = $@"SELECT * FROM book_schema.Reviews WHERE bookId = @Id";
+        string sqlGetReviews = $@"SELECT reviews.*, Users.name AS userName 
+            FROM book_schema.Reviews 
+            LEFT JOIN book_schema.Users ON Reviews.userId = Users.id
+            WHERE bookId = @Id";
         var parameters = new DynamicParameters();
         parameters.Add("@Id", id, System.Data.DbType.Int64);
-        return _dapper.LoadDataWithParameters<Review>(sqlGetReviews, parameters);
+        return _dapper.LoadDataWithParameters<ReviewDTO>(sqlGetReviews, parameters);
     }
 
-    [HttpGet("getReview/{bookId}")]
-    public Review? GetReview(int bookId)
+    [HttpGet("getUserReview/{bookId}")]
+    public Review? GetUserReview(int bookId)
     {
         int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
         string sqlGetReview = $@"SELECT * FROM book_schema.Reviews WHERE bookId = @BookId AND userId = @UserId";

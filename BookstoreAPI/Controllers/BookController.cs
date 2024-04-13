@@ -86,9 +86,9 @@ public class BookController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("getAllBooks")]
-    public IEnumerable<BookDTO> GetAllBooks()
+    public IEnumerable<BookOrderDTO> GetAllBooks()
     {
-        return _dapper.LoadData<BookDTO>(@"SELECT BookGenerallyInfo.*, Authors.Name AS authorName 
+        return _dapper.LoadData<BookOrderDTO>(@"SELECT BookGenerallyInfo.*, Authors.Name AS authorName 
             FROM book_schema.BookGenerallyInfo 
             LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId;");
     }
@@ -213,6 +213,6 @@ public class BookController : ControllerBase
             _fileHelper.DeletePhoto(name, id, "bookPhoto");
             return Ok();
         }
-        else return StatusCode(400, "Book not fount for deleting");
+        return StatusCode(400, "Book not fount for deleting");
     }
 }

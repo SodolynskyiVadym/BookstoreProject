@@ -37,7 +37,7 @@ public class AuthController : ControllerBase
 
 
     [AllowAnonymous]
-    [HttpGet("getUser")]
+    [HttpGet("getUser/{id}")]
     public User? GetUser(int id)
     {
         return _dapper.LoadDataSingle<User>($"SELECT * FROM book_schema.Users WHERE id={id}");
