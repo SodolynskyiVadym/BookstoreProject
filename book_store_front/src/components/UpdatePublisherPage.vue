@@ -51,7 +51,5 @@ export default {
 </script>
 
 <style>
-
 @import "@/assets/css/styles.css";
-
 </style>

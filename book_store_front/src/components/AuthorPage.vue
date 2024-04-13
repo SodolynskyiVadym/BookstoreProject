@@ -59,24 +59,5 @@ export default {
 
 <style scoped>
 @import "@/assets/css/styles.css";
-
-.author-photo {
-    padding-top: 80px;
-}
-
-.biography {
-    height: auto;
-    margin-top: 50px;
-    margin-left: 420px;
-    margin-right: 420px;
-    border: 2px solid black;
-    font-size:x-large;
-    border-radius: 13px;
-}
-
-
-.image-order {
-  height: 160px;
-  width: 90px;
-}
+@import "@/assets/css/authorPage.css";
 </style>

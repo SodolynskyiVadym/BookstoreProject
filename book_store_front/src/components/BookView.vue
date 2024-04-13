@@ -65,16 +65,18 @@
     </div>
   </div>
 
-
-  <div v-for="review in reviews" :key="review.id">
-    <div>
-<!--      <div>{{ review.userName }}</div>-->
-      <div>{{ review.mark }}</div>
-      <text>{{ review.Description }}</text>
+  <div class="review-section" v-if="reviews.length > 0">
+    <div v-for="review in reviews" :key="review.id">
+      <div>
+        <div>{{ review.userName }}</div>
+        <div>{{ review.mark }} <img style="width: 40px; height: 40px" src="../assets/star.png"></div>
+        <div style="text-align: center">{{ review.description }}</div>
+      </div>
     </div>
   </div>
 
-  <div v-if="isUser" class="review-section">
+
+  <div v-if="isUser" class="review-create-section">
     <label key="mark">Mark </label>
     <input id="mark" type="number" v-model="userReview.mark" min="0" max="5" @keydown.prevent><br>
     <label>Review</label><br>
@@ -99,7 +101,7 @@ export default {
       orderedQuantity: 0,
       isNoOrdered: false,
       isInStock: false,
-      reviews: null,
+      reviews: [],
       isUser: false,
       isEditorAdmin: false,
       userReview: {
@@ -174,8 +176,10 @@ export default {
 
   async mounted() {
     this.book = await listURL.getBook(this.$route.params.id);
-    const array = await listURL.getReviews(this.$route.params.id);
-    this.reviews = array;
+    this.reviews = await listURL.getReviews(this.$route.params.id);
+    for(let review of this.reviews){
+      console.log(review)
+    }
     const token = localStorage.getItem("token");
     if (token) {
       const review = await listURL.getReviewUserBook(this.$route.params.id, token);
@@ -208,102 +212,6 @@ export default {
 
 <style>
 @import "@/assets/css/styles.css";
-
-.review-section {
-  margin-top: 50px;
-  margin-left: 420px;
-  margin-right: 420px;
-  border: 2px solid black;
-  font-size: x-large;
-  border-radius: 13px;
-  text-align: center;
-}
-
-.review-section input {
-  font-size: x-large;
-  width: auto;
-}
-
-.review-section textarea {
-  font-size: x-large;
-  width: 800px;
-  height: 200px;
-  margin-bottom: 30px;
-}
-
-
-.author-nameBook {
-  padding-top: 100px;
-  margin-left: 100px;
-  font-size: x-large;
-  font-weight: bold;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-}
-
-.book-info {
-  margin-left: 200px;
-  margin-top: 20px;
-  display: flex;
-}
-
-.book-info-section {
-  margin-left: 40px;
-  background-color: rgb(218, 217, 217);
-  height: 400px;
-}
-
-.book-info-section div {
-  margin: 14px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-size: x-large;
-}
-
-.isBookStyle {
-  color: green;
-  padding-bottom: 10px;
-}
-
-.isNotBookStyle {
-  color: rgb(255, 0, 0);
-  padding-bottom: 10px;
-}
-
-
-.buy-section {
-  box-shadow: 10px 10px 10px 10px;
-  margin-left: 40px;
-  font-family: Georgia, 'Times New Roman', Times, serif;
-  font-size: x-large;
-  height: 300px;
-  width: 400px;
-}
-
-
-.button-buy {
-  color: white;
-  width: 100px;
-  height: 50px;
-  background-color: red;
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 1.2em;
-  border: none;
-  text-align: center;
-  margin-right: 10px;
-}
-
-.button-buy:hover {
-  background-color: brown;
-}
-
-.description {
-  height: auto;
-  margin-top: 50px;
-  margin-left: 420px;
-  margin-right: 420px;
-  border: 2px solid black;
-  font-size: x-large;
-  border-radius: 13px;
-}
+@import "@/assets/css/bookView.css";
 
 </style>

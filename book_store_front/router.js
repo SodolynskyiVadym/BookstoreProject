@@ -114,6 +114,11 @@ const routes = [
         name: "CleanOrderPage",
         component: () => import('@/components/CleanOrderScript.vue')
     },
+    {
+        path: '/error',
+        name: "ErrorPage",
+        component: () => import('@/components/ErrorPage.vue')
+    }
 
 
 ];

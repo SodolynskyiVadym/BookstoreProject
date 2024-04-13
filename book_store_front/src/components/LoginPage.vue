@@ -3,7 +3,7 @@
         <label key="email">Email</label><br>
         <input type="text" v-model="email" id="email" placeholder="Email" @change="checkIsActive"><br>
         <label key="password">Password</label><br>
-        <input type="text" v-model="password" id="password" placeholder="Password" @change="checkIsActive"><br>
+        <input type="password" v-model="password" id="password" placeholder="Password" @change="checkIsActive"><br>
 
         <button @click="login" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Login</button>
     </div>
@@ -51,7 +51,5 @@ export default {
 </script>
 
 <style>
-
 @import "@/assets/css/styles.css";
-
 </style>

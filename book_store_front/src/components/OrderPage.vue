@@ -115,34 +115,5 @@ export default {
 
 <style>
 @import "@/assets/css/styles.css";
-
-.quantityBookOrder{
-  margin-top: 40px;
-  margin-left: 100px
-}
-
-.button-delete-order {
-  margin-top: 60px;
-  margin-left: 30px;
-  background-color: red;
-  color: white;
-  width: 100px;
-  height: 50px;
-  text-align: center;
-  border-radius: 15px;
-  cursor: pointer;
-  font-weight: blod;
-  font-size: 1.2em;
-  border: none;
-}
-
-.button-delete-order:hover{
-  background-color: brown;
-}
-
-
-.generally-price {
-  font-size: xx-large;
-  font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
-}
+@import "@/assets/css/orderPage.css";
 </style>
