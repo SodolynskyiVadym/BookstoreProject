@@ -29,7 +29,6 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
-import {postRegistrationWorker} from "@/js/listUrl";
 
 
 export default {

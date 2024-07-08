@@ -1,7 +1,14 @@
 import { loadStripe } from '@stripe/stripe-js';
 import axios from "axios";
 
-const stripePromise = await loadStripe("pk_test_51OIGBKKfdlsNCGTnyxFs1IzyDJ1Wfe4TKOpDgeDyyubqHixilJu2an4WBdktNWgAUqfPMV6fw8eLNjf6QumdqC9X00g6whFvLS");
+
+let stripePromise;
+
+const initializeStripe = async () => {
+    stripePromise = await loadStripe("pk_test_51OIGBKKfdlsNCGTnyxFs1IzyDJ1Wfe4TKOpDgeDyyubqHixilJu2an4WBdktNWgAUqfPMV6fw8eLNjf6QumdqC9X00g6whFvLS");
+}
+
+initializeStripe();
 
 export const buyBooks = async (order, token) => {
     const config = {
@@ -10,11 +17,10 @@ export const buyBooks = async (order, token) => {
         }
     }
     const id  = await axios.post(`http://localhost:5224/order/makeOrder`, order, config).then(res => res.data);
-    console.log(id);
 
-    // const stripe = await stripePromise;
+    const stripe = await stripePromise;
 
-    await stripePromise.redirectToCheckout({
+    await stripe.redirectToCheckout({
         sessionId: id
     });
 };

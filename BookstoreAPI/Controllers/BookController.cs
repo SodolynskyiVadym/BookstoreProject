@@ -1,4 +1,5 @@
-﻿using BookstoreAPI.DTO;
+﻿using BookstoreAPI.DapperRequests;
+using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
@@ -30,20 +31,7 @@ public class BookController : ControllerBase
     [HttpGet("getBook/{id}")]
     public BookDTO? GetBookInfo(int id)
     {
-        string sqlGetInfoBook = $@"SELECT
-                BookGenerallyInfo.*,
-                BookDetailInfo.booklanguage,
-                BookDetailInfo.numberpages,
-                BookDetailInfo.publisherid,
-                BookDetailInfo.yearpublication,
-                BookDetailInfo.description,
-                Authors.Name AS authorName,
-                Publishers.Name AS PublisherName
-            FROM book_schema.BookGenerallyInfo
-            INNER JOIN book_schema.BookDetailInfo ON book_schema.BookGenerallyInfo.id = book_schema.BookDetailInfo.BookId
-            INNER JOIN book_schema.Authors ON book_schema.BookGenerallyInfo.authorId = book_schema.Authors.Id
-            INNER JOIN book_schema.Publishers ON BookDetailInfo.publisherId = book_schema.Publishers.Id
-            WHERE book_schema.BookGenerallyInfo.id =@Id;";
+        string sqlGetInfoBook = BookRequest.GetInfoBook;
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@Id", id, System.Data.DbType.Int64);
@@ -52,17 +40,12 @@ public class BookController : ControllerBase
         return book;
     }
 
-
-
-
+    
     [AllowAnonymous]
     [HttpGet("getSomeBooks")]
-    public IEnumerable<BookOrderDTO> getOrderedBooks()
+    public IEnumerable<BookOrderDTO> GetOrderedBooks()
     {
-        string sqlGetOrderedBooks = @"SELECT BookGenerallyInfo.*, Authors.Name AS authorName
-            FROM book_schema.BookGenerallyInfo 
-            LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId
-            WHERE BookGenerallyInfo.id = ANY (@BooksId)";
+        string sqlGetOrderedBooks = BookRequest.GetOrderedBooks;
 
         string? strBooksId = Request.Query["ids"];
         int[] booksId = new int[] { 0 };
@@ -88,9 +71,7 @@ public class BookController : ControllerBase
     [HttpGet("getAllBooks")]
     public IEnumerable<BookOrderDTO> GetAllBooks()
     {
-        return _dapper.LoadData<BookOrderDTO>(@"SELECT BookGenerallyInfo.*, Authors.Name AS authorName 
-            FROM book_schema.BookGenerallyInfo 
-            LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId;");
+        return _dapper.LoadData<BookOrderDTO>(BookRequest.GetAllBooks);
     }
 
 
@@ -98,19 +79,7 @@ public class BookController : ControllerBase
     [HttpPost("createBook")]
     public IActionResult CreateBook([FromBody] BookCreateUpdateDTO book)
     {
-        string sqlCreateBook = @"CALL book_schema.spBook_Upsert(
-            @NumberPages::INTEGER,                        
-            @Language::VARCHAR,    
-            @YearPublication::DATE,
-            @Description::TEXT,    
-            @PublisherId::INTEGER,            
-            @Name::VARCHAR,        
-            @AuthorId::INTEGER,               
-            @AvailableQuantity::INTEGER,      
-            @Price::INTEGER,                  
-            @Discount::INTEGER                                        
-            );";
-
+        string sqlCreateBook = BookRequest.CreateBook;
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@NumberPages", book.NumberPages, System.Data.DbType.Int64);
@@ -141,7 +110,7 @@ public class BookController : ControllerBase
         parameters.Add("@AuthorId", int.Parse(authorId), System.Data.DbType.Int64);
         parameters.Add("@Name", name, System.Data.DbType.String);
 
-        int? id = _dapper.LoadDataSingleWithParameters<int>($"SELECT id FROM book_schema.bookgenerallyinfo where authorId=@AuthorId and name=@Name", parameters);
+        int? id = _dapper.LoadDataSingleWithParameters<int>(BookRequest.GetBooksByNameAndAuthor, parameters);
         if (id == null) return StatusCode(400, "Book doesn't exist");
 
         var file = Request.Form.Files[0];
@@ -165,19 +134,7 @@ public class BookController : ControllerBase
         string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldName);
 
 
-        string sqlUpdateBook = @"CALL book_schema.spBook_upsert(
-            @NumberPages::INTEGER,                        
-            @Language::VARCHAR,    
-            @YearPublication::DATE,
-            @Description::TEXT,    
-            @PublisherId::INTEGER,            
-            @Name::VARCHAR,        
-            @AuthorId::INTEGER,               
-            @AvailableQuantity::INTEGER,      
-            @Price::INTEGER,                  
-            @Discount::INTEGER,               
-            @Id::INTEGER
-            );";
+        string sqlUpdateBook = BookRequest.UpdateBook;
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@NumberPages", book.NumberPages, System.Data.DbType.Int64);
@@ -206,8 +163,7 @@ public class BookController : ControllerBase
     public IActionResult DeleteBook(int id)
     {
         string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.bookgenerallyinfo WHERE id={id}");
-        string sqlDeleteBook = $@"DELETE FROM book_schema.BookDetailInfo WHERE bookId={id};
-            DELETE FROM book_schema.BookGenerallyInfo WHERE id={id};";
+        string sqlDeleteBook = BookRequest.DeleteBook(id);
         if (_dapper.ExecuteSql(sqlDeleteBook))
         {
             _fileHelper.DeletePhoto(name, id, "bookPhoto");
