@@ -11,13 +11,13 @@ DECLARE
     i INT;
     OutputOrderId INT;
 BEGIN
-    INSERT INTO book_schema.ordergenerallyinfo (userId, destination, phonenumber, createdAt)
+    INSERT INTO book_schema.payments (userId, destination, phonenumber, createdAt)
     VALUES (InputUserId, InputDestination, InputPhoneNumber, NOW())
     RETURNING LASTVAL() INTO OutputOrderId; 
 
 
     FOR i IN 1..array_length(InputBooksId, 1) LOOP
-        INSERT INTO book_schema.OrderDetailInfo (orderId, bookid, quantity)
+        INSERT INTO book_schema.orderedbooks (orderId, bookid, quantity)
         VALUES (OutputOrderId, InputBooksId[i], InputQuantities[i]);
     END LOOP;
 

@@ -1,4 +1,5 @@
-﻿using BookstoreAPI.Helpers;
+﻿using BookstoreAPI.DapperRequests;
+using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
@@ -30,11 +31,9 @@ namespace BookstoreAPI.Controllers
         [HttpGet("getAllAuthors")]
         public IEnumerable<Author> GetAllAuthors()
         {
-            return _dapper.LoadData<Author>("SELECT * FROM book_schema.Authors");
+            return _dapper.LoadData<Author>(AuthorRequest.GetAllAuthors);
         }
-
-
-
+        
 
         [AllowAnonymous]
         [HttpGet("getAuthor/{id}")]
@@ -61,17 +60,14 @@ namespace BookstoreAPI.Controllers
         [HttpPost("createAuthor")]
         public IActionResult CreateAuthor([FromBody] Author author)
         {
-            string sqlCreateAuthor = @"
-            INSERT INTO book_schema.Authors(Name, Biography, BirthYear, DeathYear) 
-            VALUES (@Name, @Biography, @BirthYear, @DeathYear)";
+            string sqlCreateAuthor = AuthorRequest.CreateAuthor;
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@Name", author.Name, System.Data.DbType.String);
             parameters.Add("@Biography", author.Biography, System.Data.DbType.String);
             parameters.Add("@BirthYear", author.BirthYear, System.Data.DbType.Date);
             parameters.Add("@DeathYear", author.DeathYear, System.Data.DbType.Date);
-
-
+            
             if (_dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters)) return Ok();
             return StatusCode(400, "Failed to insert author into DB");
         }
@@ -113,8 +109,7 @@ namespace BookstoreAPI.Controllers
 
             string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldNameAuthor);
 
-            string sqlCreateAuthor = @"UPDATE book_schema.Authors SET name=@Name, biography=@Biography, birthYear=@BirthYear, 
-                deathYear=@DeathYear WHERE Id=@Id";
+            string sqlCreateAuthor = AuthorRequest.UpdateAuthor;
 
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@Name", author.Name, System.Data.DbType.String);
@@ -136,7 +131,7 @@ namespace BookstoreAPI.Controllers
         public IActionResult DeleteAuthor(int id)
         {
             string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.authors WHERE id={id}");
-            string sqlDeleteAuthor = $@"DELETE FROM book_schema.Authors WHERE id={id}";
+            string sqlDeleteAuthor = AuthorRequest.DeleteAuthor(id);
             if (_dapper.ExecuteSql(sqlDeleteAuthor))
             {
                 _fileHelper.DeletePhoto(name, id, "authorPhoto");

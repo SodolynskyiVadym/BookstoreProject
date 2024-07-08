@@ -1,4 +1,5 @@
-﻿using BookstoreAPI.Helpers;
+﻿using BookstoreAPI.DapperRequests;
+using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
@@ -27,52 +28,36 @@ namespace BookstoreAPI.Controllers
         [HttpGet("getAllPublishers")]
         public IEnumerable<Publisher> GetAllPublishers()
         {
-            return _dapper.LoadData<Publisher>("SELECT * FROM book_schema.Publishers");
+            return _dapper.LoadData<Publisher>(PublisherRequest.GetAllPublishers);
         }
 
-
-
-
+        
         [AllowAnonymous]
         [HttpGet("getPublisher/{id}")]
         public Publisher? GetPublisher(int id)
         {
-            return _dapper.LoadDataSingle<Publisher>($@"SELECT * FROM book_schema.Publishers WHERE Publishers.Id={id}");
+            return _dapper.LoadDataSingle<Publisher>(PublisherRequest.GetPublisherById(id));
         }
 
-
-
-
+        
         [AllowAnonymous]
         [HttpGet("getPublisherBooks/{id}")]
         public IActionResult GetPublisherBooks(int id)
         {
+            string sqlGetPublishersById = PublisherRequest.GetPublisherById(id);
+            string sqlGetBooks = BookRequest.GetBooksByPublisherId(id);
 
-            string sqlGetAuthor = @"SELECT * FROM book_schema.Publishers WHERE Publishers.Id=@Id";
-
-            string sqlGetBooks = @"SELECT
-                BookGenerallyInfo.*
-            FROM book_schema.BookGenerallyInfo
-            JOIN book_schema.BookDetailInfo ON BookDetailInfo.bookId = BookGenerallyInfo.Id
-            WHERE book_schema.BookDetailInfo.publisherId = @Id;";
-
-            DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Id", id, System.Data.DbType.Int64);
-
-            Publisher? publisher = _dapper.LoadDataSingleWithParameters<Publisher>(sqlGetAuthor, parameters);
-
-            IEnumerable<BookGenerallyInfo> books = _dapper.LoadDataWithParameters<BookGenerallyInfo>(sqlGetBooks, parameters);
-
+            Publisher? publisher = _dapper.LoadDataSingle<Publisher>(sqlGetPublishersById);
+            IEnumerable<BookGenerallyInfo> books = _dapper.LoadData<BookGenerallyInfo>(sqlGetBooks);
             return Ok(new { Publisher = publisher, Books = books });
         }
 
-
-
+        
         [Authorize(Roles = "EDITOR, ADMIN")]
         [HttpPost("createPublisher")]
         public IActionResult CreatePublisher([FromBody] Publisher publisher)
         {
-            string sqlCreatePublisher = @"INSERT INTO book_schema.Publishers(Name) VALUES (@Name)";
+            string sqlCreatePublisher = PublisherRequest.CreatePublisher;
 
             DynamicParameters dynamic = new DynamicParameters();
             dynamic.Add("@Name", publisher.Name, System.Data.DbType.String);
@@ -81,25 +66,22 @@ namespace BookstoreAPI.Controllers
             else throw new Exception("Failed to insert publisher into DB");
         }
 
-
-
+        
         [Authorize(Roles = "EDITOR, ADMIN")]
         [AllowAnonymous]
         [HttpPatch("updatePublisher")]
         public IActionResult UpdatePublisher([FromBody] Publisher publisher)
         {
             string sqlGetNamePublisher = @"SELECT name FROM book_schema.publishers WHERE publishers.Id = @Id";
-
-
-            string sqlUpdatePublisher = $@"UPDATE book_schema.Publishers SET Name=@Name WHERE Publishers.Id=@Id";
+            
+            string sqlUpdatePublisher = PublisherRequest.UpdatePublisher;
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@Name", publisher.Name, System.Data.DbType.String);
             parameters.Add("@Id", publisher.Id, System.Data.DbType.Int64);
 
             string? oldName = _dapper.LoadDataSingleWithParameters<string>(sqlGetNamePublisher, parameters);
             _dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters);
-
-
+            
             _fileHelper.RenamePhoto(oldName, publisher.Name, publisher.Id, "publisherPhoto");
 
             return Ok();
@@ -133,14 +115,14 @@ namespace BookstoreAPI.Controllers
         public IActionResult DeletePublisher(int id)
         {
             string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.publishers WHERE id={id}");
-            string sqlDeletePublisher = $@"DELETE FROM book_schema.Publishers WHERE id={id}";
+            string sqlDeletePublisher = PublisherRequest.DeletePublisher(id);
 
             if (_dapper.ExecuteSql(sqlDeletePublisher))
             {
                 _fileHelper.DeletePhoto(name, id, "publisherPhoto");
                 return Ok();
             }
-            else return StatusCode(400, "Publisher not fount for deleting");
+            return StatusCode(400, "Publisher not fount for deleting");
         }
     }
 }

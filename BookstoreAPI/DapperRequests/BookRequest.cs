@@ -19,12 +19,22 @@ public class BookRequest
             INNER JOIN book_schema.Authors ON book_schema.BookGenerallyInfo.authorId = book_schema.Authors.Id
             INNER JOIN book_schema.Publishers ON BookDetailInfo.publisherId = book_schema.Publishers.Id
             WHERE book_schema.BookGenerallyInfo.id =@Id;";
+
+    public static readonly string GetSomeBooks = "SELECT * FROM book_schema.bookgenerallyInfo WHERE BookGenerallyInfo.id = ANY (@BooksId)";
     
     
     public static readonly string GetOrderedBooks = @"SELECT BookGenerallyInfo.*, Authors.Name AS authorName
             FROM book_schema.BookGenerallyInfo 
             LEFT JOIN book_schema.Authors ON Authors.id = BookGenerallyInfo.authorId
             WHERE BookGenerallyInfo.id = ANY (@BooksId)";
+    
+    
+    public static string GetBooksByPublisherId(int id) => $@"SELECT
+                BookGenerallyInfo.*
+            FROM book_schema.BookGenerallyInfo
+            JOIN book_schema.BookDetailInfo ON BookDetailInfo.bookId = BookGenerallyInfo.Id
+            WHERE book_schema.BookDetailInfo.publisherId = {id};"; 
+    
 
     public static readonly string GetAllBooks = @"SELECT BookGenerallyInfo.*, Authors.Name AS authorName 
             FROM book_schema.BookGenerallyInfo 

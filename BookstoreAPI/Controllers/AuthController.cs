@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using BookstoreAPI.DapperRequests;
 using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
@@ -32,7 +33,7 @@ public class AuthController : ControllerBase
     [HttpGet("getAllUsers")]
     public IEnumerable<User> GeAllUsers()
     {
-        return _dapper.LoadData<User>("SELECT * FROM book_schema.Users");
+        return _dapper.LoadData<User>(UserRequest.GetAllUsers);
     }
 
 
@@ -40,7 +41,7 @@ public class AuthController : ControllerBase
     [HttpGet("getUser/{id}")]
     public User? GetUser(int id)
     {
-        return _dapper.LoadDataSingle<User>($"SELECT * FROM book_schema.Users WHERE id={id}");
+        return _dapper.LoadDataSingle<User>(UserRequest.GetUserById(id));
     }
 
 
@@ -48,16 +49,7 @@ public class AuthController : ControllerBase
     [HttpGet("getUserByToken")]
     public IActionResult GetUserByToken()
     {
-        int userId;
-        if (int.TryParse(User.FindFirst("userId")?.Value, out userId))
-        {
-            var sqlGetUser = @"SELECT * FROM book_schema.users where users.id = @Id";
-            var parameters = new DynamicParameters();
-            parameters.Add("@Id", userId, DbType.Int32);
-
-            return Ok(_dapper.LoadDataSingleWithParameters<User>(sqlGetUser, parameters));
-        }
-
+        if (int.TryParse(User.FindFirst("userId")?.Value, out var userId)) return Ok(_dapper.LoadDataSingle<User>(UserRequest.GetUserById(userId)));
         return StatusCode(401, "Incorrect token");
     }
 
@@ -66,8 +58,7 @@ public class AuthController : ControllerBase
     [HttpPost("registerUser")]
     public IActionResult RegisterUser([FromBody] UserRegisterDTO userRegister)
     {
-        var isUserNameExist =
-            _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.Users WHERE email='{userRegister.Email}'");
+        var isUserNameExist = _dapper.LoadDataSingle<string>(UserRequest.GetUserByEmail(userRegister.Email));
 
         if (isUserNameExist.IsNullOrEmpty())
         {
@@ -83,8 +74,7 @@ public class AuthController : ControllerBase
     [HttpPost("registerWorker")]
     public IActionResult RegisterWorker([FromBody] UserRegisterByEmailRoleDTO userEmailRole)
     {
-        var isUserNameExist =
-            _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.Users WHERE email='{userEmailRole.Email}'");
+        var isUserNameExist = _dapper.LoadDataSingle<string>(UserRequest.GetUserByEmail(userEmailRole.Email));
         if (isUserNameExist.IsNullOrEmpty())
         {
             var password = _authHelper.GenerateRandomPassword();
@@ -104,7 +94,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] UserLoginDTO userLogin)
     {
-        var user = _dapper.LoadDataSingle<User>(@$"SELECT * FROM book_schema.Users WHERE email='{userLogin.Email}'");
+        var user = _dapper.LoadDataSingle<User>(UserRequest.GetUserByEmail(userLogin.Email));
 
         if (user != null)
         {
@@ -142,7 +132,7 @@ public class AuthController : ControllerBase
     [HttpDelete("deleteUser/{id}")]
     public IActionResult DeleteUser(int id)
     {
-        _dapper.ExecuteSql(@$"DELETE FROM book_schema.users WHERE id={id}");
+        _dapper.ExecuteSql(UserRequest.DeleteUser(id));
         return Ok();
     }
 }

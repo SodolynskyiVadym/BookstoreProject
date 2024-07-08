@@ -1,4 +1,5 @@
-﻿using BookstoreAPI.DTO;
+﻿using BookstoreAPI.DapperRequests;
+using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +12,13 @@ namespace BookstoreAPI.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class OrderController : ControllerBase
+    public class PayController : ControllerBase
     {
         private readonly IConfiguration _config;
         private readonly DataContextDapper _dapper;
         private readonly StripeHelper _stripeHelper;
 
-        public OrderController(IConfiguration config)
+        public PayController(IConfiguration config)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _dapper = new DataContextDapper(_config);
@@ -29,7 +30,7 @@ namespace BookstoreAPI.Controllers
         public async Task<IActionResult> CreateOrder(OrderDTO order)
         {
             int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
-            string sqlGetBooks = @"SELECT * FROM book_schema.bookgenerallyInfo WHERE BookGenerallyInfo.id = ANY (@BooksId)";
+            string sqlGetBooks = BookRequest.GetSomeBooks;
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@BooksId", order.BooksAndQuantity.Keys.ToArray(), System.Data.DbType.Object);
             IEnumerable<BookGenerallyInfo> books = _dapper.LoadDataWithParameters<BookGenerallyInfo>(sqlGetBooks, parameters);
@@ -57,7 +58,7 @@ namespace BookstoreAPI.Controllers
             var phoneNumber = session.Metadata["PhoneNumber"];
             int userId = int.Parse(session.Metadata["UserId"]);
 
-            string sqlCreateOrder = "CALL book_schema.spOrder_Upsert(@BooksId, @OrderedQuantity, @Destination, @PhoneNumber, @UserId)";
+            string sqlCreateOrder = PayRequest.CreatePayment;
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@BooksId", idQuantity.Keys.ToArray(), System.Data.DbType.Object);
             parameters.Add("@OrderedQuantity", idQuantity.Values.ToArray(), System.Data.DbType.Object);
@@ -66,9 +67,7 @@ namespace BookstoreAPI.Controllers
             parameters.Add("@PhoneNumber", phoneNumber, System.Data.DbType.String);
             
             _dapper.ExecuteSqlWithParameters(sqlCreateOrder, parameters);
-            
             return Redirect(_config.GetSection("Urls:Client").Value);
         }
-        
     }
 }

@@ -9,6 +9,7 @@ CREATE OR REPLACE PROCEDURE book_schema.spBook_Upsert(
     IN InputAvailableQuantity INTEGER,
     IN InputPrice INTEGER,
     IN InputDiscount INTEGER,
+    IN InputGenres VARCHAR ARRAY,
     IN InputBookId INTEGER = -1
 )
 LANGUAGE plpgsql
@@ -48,31 +49,51 @@ BEGIN
             InputDescription,
             InputPublisherId
         );
+        
+        FOR i IN 1..array_length(InputGenres, 1) LOOP
+            INSERT INTO book_schema.Genres (
+                BookId,
+                Genre
+            ) VALUES (
+                OutputBookId,
+                InputGenres[i]
+            );
+        END LOOP;
     ELSE
-        IF InputBookId IS NOT NULL THEN
-            UPDATE book_schema.BookGenerallyInfo
-            SET 
-                Name = InputName,
-                AuthorId = InputAuthorId,
-                AvailableQuantity = InputAvailableQuantity,
-                Price = InputPrice,
-                Discount = InputDiscount
-            WHERE Id = InputBookId;
+        UPDATE book_schema.BookGenerallyInfo
+        SET 
+            Name = InputName,
+            AuthorId = InputAuthorId,
+            AvailableQuantity = InputAvailableQuantity,
+            Price = InputPrice,
+            Discount = InputDiscount
+        WHERE Id = InputBookId;
 
-            UPDATE book_schema.BookDetailInfo
-            SET 
-                NumberPages = InputNumberPages,
-                BookLanguage = InputBookLanguage,
-                YearPublication = InputYearPublication,
-                Description = InputDescription,
-                PublisherId = InputPublisherId
-            WHERE BookId = InputBookId;
-        ELSE
-            RAISE EXCEPTION 'Book not found';
-        END IF;
+        UPDATE book_schema.BookDetailInfo
+        SET 
+            NumberPages = InputNumberPages,
+            BookLanguage = InputBookLanguage,
+            YearPublication = InputYearPublication,
+            Description = InputDescription,
+            PublisherId = InputPublisherId
+        WHERE BookId = InputBookId;
+            
+            IF array_length(InputGenres, 1) > 0 THEN
+            DELETE FROM book_schema.Genres WHERE BookId = InputBookId;
+                
+            FOR i IN 1..array_length(InputGenres, 1) LOOP
+                INSERT INTO book_schema.Genres (
+                    BookId,
+                    Genre
+                ) VALUES (
+                     InputBookId,
+                    InputGenres[i]
+                );
+            END LOOP;
+            END IF;
     END IF;
 END;
 $$;
 
 
--- DROP PROCEDURE book_schema.spBook_Upsert
+DROP PROCEDURE book_schema.spBook_Upsert

@@ -1,4 +1,5 @@
-﻿using BookstoreAPI.DTO;
+﻿using BookstoreAPI.DapperRequests;
+using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
 using Dapper;
@@ -25,20 +26,14 @@ public class ReviewController : ControllerBase
     [HttpGet("getReviews/{id}")]
     public IEnumerable<ReviewDTO> GetBookReviews(int id)
     {
-        string sqlGetReviews = $@"SELECT reviews.*, Users.name AS userName 
-            FROM book_schema.Reviews 
-            LEFT JOIN book_schema.Users ON Reviews.userId = Users.id
-            WHERE bookId = @Id";
-        var parameters = new DynamicParameters();
-        parameters.Add("@Id", id, System.Data.DbType.Int64);
-        return _dapper.LoadDataWithParameters<ReviewDTO>(sqlGetReviews, parameters);
+        return _dapper.LoadData<ReviewDTO>(ReviewRequest.GetBookReviews(id));
     }
 
     [HttpGet("getUserReview/{bookId}")]
     public Review? GetUserReview(int bookId)
     {
         int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
-        string sqlGetReview = $@"SELECT * FROM book_schema.Reviews WHERE bookId = @BookId AND userId = @UserId";
+        string sqlGetReview = ReviewRequest.GetUserReview;
         
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@BookId", bookId, System.Data.DbType.Int64);
@@ -51,7 +46,7 @@ public class ReviewController : ControllerBase
     public IActionResult CreateReview(ReviewCreateDTO reviewCreate)
     {
         int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
-        string sqlAddReview = $@"INSERT INTO book_schema.Reviews (bookId, userId, description, mark) VALUES (@BookId, @UserId, @Description, @Mark)";
+        string sqlAddReview = ReviewRequest.CreateReview;
         var parameters = new DynamicParameters();
         parameters.Add("@BookId", reviewCreate.BookId, System.Data.DbType.Int64);
         parameters.Add("@UserId", userId, System.Data.DbType.Int64);
@@ -72,7 +67,7 @@ public class ReviewController : ControllerBase
             return StatusCode(400, "You are not the owner of this review");
         }
 
-        string sqlUpdateReview = @"UPDATE book_schema.Reviews SET description = @Description, mark = @Mark WHERE id = @Id";
+        string sqlUpdateReview = ReviewRequest.UpdateReview;
         var parameters = new DynamicParameters();
         parameters.Add("@Id", review.Id, System.Data.DbType.Int64);
         parameters.Add("@Description", review.Description, System.Data.DbType.String);
@@ -85,10 +80,8 @@ public class ReviewController : ControllerBase
     [HttpDelete("deleteReview/{id}")]
     public IActionResult DeleteReview(int id)
     {
-        string sqlDeleteReview = $@"DELETE FROM book_schema.Reviews WHERE id = @Id";
-        var parameters = new DynamicParameters();
-        parameters.Add("@Id", id, System.Data.DbType.Int64);
-        _dapper.ExecuteSqlWithParameters(sqlDeleteReview, parameters);
+        string sqlDeleteReview = ReviewRequest.DeleteReview(id);
+        _dapper.ExecuteSql(sqlDeleteReview);
         return Ok();
     }
 }

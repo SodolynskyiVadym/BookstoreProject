@@ -34,3 +34,5 @@ BEGIN
     END IF;
 END;
 $$;
+
+DROP PROCEDURE book_schema.spUser_Upsert;
