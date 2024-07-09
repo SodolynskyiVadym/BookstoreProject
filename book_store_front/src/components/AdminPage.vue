@@ -28,8 +28,7 @@
 </template> 
 
 <script>
-import * as listURL from "@/js/listUrl";
-
+import * as authAPI from '@/js/API/authAPI';
 
 export default {
     data(){
@@ -56,8 +55,8 @@ export default {
 
         async deleteUser(id){
             const token = localStorage.getItem("token");
-            await listURL.deleteUser(id, token);
-            this.users = this.users = await listURL.getAllUsers();
+            await authAPI.deleteUser(id, token);
+            this.users = this.users = await authAPI.getAllUsers();
         },
 
 
@@ -69,9 +68,9 @@ export default {
             }
             const token = localStorage.getItem("token");
 
-            await listURL.postRegistrationWorker(data, token);
+            await authAPI.postRegistrationEmployeer(data, token);
 
-            this.users = this.users = await listURL.getAllUsers();
+            this.users = this.users = await authAPI.getAllUsers();
             this.email = "";
             this.role = "EDITOR";
 
@@ -79,7 +78,7 @@ export default {
     },
 
     async mounted(){
-        this.users = await listURL.getAllUsers();
+        this.users = await authAPI.getAllUsers();
     }
 }
 </script>

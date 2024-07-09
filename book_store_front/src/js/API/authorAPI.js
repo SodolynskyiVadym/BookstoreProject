@@ -15,6 +15,15 @@ export async function getAuthor(id) {
 }
 
 
+export async function getAuthorBooks(id) {
+    try {
+        return await axios.get(mainUrl + "/author/getAuthorBooks/" + id).then(res => res.data);
+    } catch (error) {
+        console.error("Error fetching author's books:", error);
+        await router.push("/error");
+    }
+}
+
 
 export async function getAllAuthors() {
     try {

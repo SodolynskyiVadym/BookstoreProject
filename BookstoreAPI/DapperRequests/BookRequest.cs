@@ -5,7 +5,7 @@ public class BookRequest
     public static readonly string GetBooksByNameAndAuthor = "SELECT id FROM book_schema.bookgenerallyinfo where authorId=@AuthorId and name=@Name";
         
         
-    public static readonly string GetInfoBook = @"SELECT
+    public static string GetInfoBook(int id) => $@"SELECT
                 BookGenerallyInfo.*,
                 BookDetailInfo.booklanguage,
                 BookDetailInfo.numberpages,
@@ -18,7 +18,9 @@ public class BookRequest
             INNER JOIN book_schema.BookDetailInfo ON book_schema.BookGenerallyInfo.id = book_schema.BookDetailInfo.BookId
             INNER JOIN book_schema.Authors ON book_schema.BookGenerallyInfo.authorId = book_schema.Authors.Id
             INNER JOIN book_schema.Publishers ON BookDetailInfo.publisherId = book_schema.Publishers.Id
-            WHERE book_schema.BookGenerallyInfo.id =@Id;";
+            WHERE book_schema.BookGenerallyInfo.id ={id};";
+    
+    public static string GetBookGenres(int id) => $@"SELECT Genre WHERE book_schema.Genres.bookId = {id};";
 
     public static readonly string GetSomeBooks = "SELECT * FROM book_schema.bookgenerallyInfo WHERE BookGenerallyInfo.id = ANY (@BooksId)";
     
@@ -49,9 +51,11 @@ public class BookRequest
             @PublisherId::INTEGER,            
             @Name::VARCHAR,        
             @AuthorId::INTEGER,               
-            @AvailableQuantity::INTEGER,      
+            @AvailableQuantity::INTEGER,  
+            @ImageUrl::VARCHAR,    
             @Price::INTEGER,                  
-            @Discount::INTEGER                                        
+            @Discount::INTEGER,
+            @InputGenres::VARCHAR[]                                        
             );";
     
     

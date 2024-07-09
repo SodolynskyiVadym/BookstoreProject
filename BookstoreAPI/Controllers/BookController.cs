@@ -31,12 +31,13 @@ public class BookController : ControllerBase
     [HttpGet("getBook/{id}")]
     public BookDTO? GetBookInfo(int id)
     {
-        string sqlGetInfoBook = BookRequest.GetInfoBook;
+        string sqlGetInfoBook = BookRequest.GetInfoBook(id);
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@Id", id, System.Data.DbType.Int64);
 
-        BookDTO? book = _dapper.LoadDataSingleWithParameters<BookDTO>(sqlGetInfoBook, parameters);
+        BookDTO? book = _dapper.LoadDataSingle<BookDTO>(sqlGetInfoBook);
+        if(book != null) book.Genres = _dapper.LoadDataSingle<string[]>(BookRequest.GetBookGenres(id));
         return book;
     }
 
@@ -90,36 +91,12 @@ public class BookController : ControllerBase
         parameters.Add("@Name", book.Name, System.Data.DbType.String);
         parameters.Add("@AuthorId", book.AuthorId, System.Data.DbType.Int64);
         parameters.Add("@AvailableQuantity", book.AvailableQuantity, System.Data.DbType.Int64);
+        parameters.Add("@ImageUrl", book.ImageUrl, System.Data.DbType.String);
         parameters.Add("@Price", book.Price, System.Data.DbType.Int64);
         parameters.Add("@Discount", book.Discount, System.Data.DbType.Int64);
+        parameters.Add("@InputGenres", book.Discount, System.Data.DbType.Object);
 
         _dapper.ExecuteSqlWithParameters(sqlCreateBook, parameters);
-        return Ok();
-    }
-
-
-    [Authorize(Roles = "EDITOR, ADMIN")]
-    [HttpPost("createImageBook")]
-    public async Task<IActionResult> UploadImageBook()
-    {
-        string? authorId = Request.Form["authorId"];
-        string? name = Request.Form["name"];
-
-
-        DynamicParameters parameters = new DynamicParameters();
-        parameters.Add("@AuthorId", int.Parse(authorId), System.Data.DbType.Int64);
-        parameters.Add("@Name", name, System.Data.DbType.String);
-
-        int? id = _dapper.LoadDataSingleWithParameters<int>(BookRequest.GetBooksByNameAndAuthor, parameters);
-        if (id == null) return StatusCode(400, "Book doesn't exist");
-
-        var file = Request.Form.Files[0];
-        var filePath = Path.Combine(@"../book_store_front/src/assets/bookPhoto/", $"{name.ToLower().Replace(" ", "")}{id}.jpg");
-
-        using (var stream = new FileStream(filePath, FileMode.Create))
-        {
-            await file.CopyToAsync(stream);
-        }
         return Ok();
     }
 
@@ -145,8 +122,10 @@ public class BookController : ControllerBase
         parameters.Add("@Name", book.Name, System.Data.DbType.String);
         parameters.Add("@AuthorId", book.AuthorId, System.Data.DbType.Int64);
         parameters.Add("@AvailableQuantity", book.AvailableQuantity, System.Data.DbType.Int64);
+        parameters.Add("@ImageUrl", book.ImageUrl, System.Data.DbType.String);
         parameters.Add("@Price", book.Price, System.Data.DbType.Int64);
         parameters.Add("@Discount", book.Discount, System.Data.DbType.Int64);
+        parameters.Add("@InputGenres", book.Discount, System.Data.DbType.Object);
         parameters.Add("@Id", book.Id, System.Data.DbType.Int64);
 
         _dapper.ExecuteSqlWithParameters(sqlUpdateBook, parameters);

@@ -51,7 +51,7 @@ export default {
                 password: this.password,
                 confirmPassword: this.confirmPassword
             }
-            await authAPI.postRegistration(data);
+            await authAPI.postRegistrationUser(data);
 
             this.$router.push('/');
         }

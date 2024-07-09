@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
 import * as authAPI from "@/js/API/authAPI";
 
 export default {

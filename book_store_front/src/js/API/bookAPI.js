@@ -25,27 +25,6 @@ export async function getSomeBook(arrayBooks) {
 }
 
 
-export async function getAuthorBooks(id) {
-    try {
-        return await axios.get(mainUrl + "/author/getAuthorBooks/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching author's books:", error);
-        await router.push("/error");
-    }
-}
-
-
-
-export async function getPublisherBooks(id) {
-    try {
-        return await axios.get(mainUrl + "/publisher/getPublisherBooks/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching publisher's books:", error);
-        await router.push("/error");
-    }
-}
-
-
 export async function getBooks() {
     try {
         return await axios.get(mainUrl + "/getAllBooks").then(res => res.data);

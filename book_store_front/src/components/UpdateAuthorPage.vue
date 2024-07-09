@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
 import * as authorAPI from "@/js/API/authorAPI";
 import * as dateHelper from "@/js/dateHelper";
 

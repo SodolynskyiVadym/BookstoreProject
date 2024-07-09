@@ -6,9 +6,9 @@ public class BookGenerallyInfo
     public string Name { get; set; }
     public int? AuthorId { get; set; }
     public int AvailableQuantity { get; set; }
+    public string ImageUrl { get; set; }
     public int Price { get; set; }
     public int Discount { get; set; }
-    public int Likes { get; set; }
 
     public BookGenerallyInfo()
     {

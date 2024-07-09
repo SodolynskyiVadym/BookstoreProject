@@ -15,7 +15,8 @@
         public int AvailableQuantity { get; set; }
         public int Price { get; set; }
         public int Discount { get; set; }
-
+        public string ImageUrl { get; set; }
+        public string[]? Genres { get; set; }
 
 
         public BookDTO()

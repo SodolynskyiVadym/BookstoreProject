@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import * as listURL from "@/js/listUrl";
+import * as authAPI from "@/js/API/authAPI";
 
 const routes = [
     {
@@ -136,7 +136,7 @@ router.beforeEach(async (to, from, next) => {
     if (to.meta.requiresAuth) {
         const token = localStorage.getItem('token');
         if (token) {
-            const userData = await listURL.getUserByToken(token);
+            const userData = await authAPI.getUserByToken(token);
             const role = userData.role;
 
             if (to.meta.roles.includes(role)) {

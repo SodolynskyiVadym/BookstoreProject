@@ -47,7 +47,19 @@ export async function patchUpdateUser(data, token) {
     }
 }
 
-export async function postRegistrationWorker(data, token) {
+
+export async function postLogin(data) {
+    try {
+        return await axios.post(mainUrl + "/login", data).then(res => res.data);
+    } catch (error) {
+        console.error("Error logging in:", error);
+        await router.push("/error");
+    }
+}
+
+
+
+export async function postRegistrationEmployeer(data, token) {
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -58,6 +70,15 @@ export async function postRegistrationWorker(data, token) {
         return await axios.post(mainUrl + "/registerWorker", data, config).then(res => res.data);
     } catch (error) {
         console.error("Error registering worker:", error);
+        await router.push("/error");
+    }
+}
+
+export async function postRegistrationUser(data) {
+    try {
+        return await axios.post(mainUrl + "/registerUser", data,).then(res => res.data);
+    } catch (error) {
+        console.error("Error registering user:", error);
         await router.push("/error");
     }
 }

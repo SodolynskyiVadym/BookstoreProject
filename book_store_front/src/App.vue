@@ -37,7 +37,8 @@
 
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as authAPI from "@/js/API/authAPI";
+import * as bookAPI from "@/js/API/bookAPI";
 import * as orderMaker from "@/js/orderMaker"
 
 export default {
@@ -66,7 +67,7 @@ export default {
       if(!this.isShowOrder){
         const orderedBooksId = await orderMaker.getOrderedBooksArray();
         const arrayBookQuantity = await orderMaker.getOrderBookIdQuantity();
-        this.orderedBooks = await listURL.getSomeBook(orderedBooksId);
+        this.orderedBooks = await bookAPI.getSomeBook(orderedBooksId);
         for(let book of this.orderedBooks){
           book.quantityOrdered = arrayBookQuantity[book.id];
         }
@@ -145,7 +146,7 @@ export default {
   async mounted(){
     const token = localStorage.getItem("token");
     if(token){
-      this.user = await listURL.getUserByToken(token);
+      this.user = await authAPI.getUserByToken(token);
 
       if(this.user.role) this.isUser = true;
 

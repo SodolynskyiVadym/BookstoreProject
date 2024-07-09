@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
 import * as publisherAPI from "@/js/API/publisherAPI";
 
 export default {
