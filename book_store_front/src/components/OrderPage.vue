@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as bookAPI from "@/js/API/bookAPI";
 import * as orderMaker from "@/js/orderMaker";
 import {buyBooks} from "@/js/stripe";
 
@@ -102,7 +102,7 @@ export default {
     async mounted() {
       const orderedBooksId = await orderMaker.getOrderedBooksArray();
       const arrayBookQuantity = await orderMaker.getOrderBookIdQuantity();
-      this.orderedBooks = await listURL.getSomeBook(orderedBooksId);
+      this.orderedBooks = await bookAPI.getSomeBook(orderedBooksId);
       console.log(this.orderedBooks)
       for (let book of this.orderedBooks) {
         book.quantityOrdered = arrayBookQuantity[book.id];

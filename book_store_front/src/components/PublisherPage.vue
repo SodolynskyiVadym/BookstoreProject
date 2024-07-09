@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import * as listUrl from "@/js/listUrl";
+import * as publisherAPI from '@/js/API/publisherAPI';
 
 
 export default {
@@ -45,7 +45,7 @@ export default {
     },
 
     async mounted(){
-        const data = await listUrl.getPublisherBooks(this.$route.params.id);
+        const data = await publisherAPI.getPublisherBooks(this.$route.params.id);
         this.publisher = data.publisher;
         this.books = data.books;
         this.loaded = true;

@@ -22,6 +22,7 @@ CREATE TABLE book_schema.BookGenerallyInfo (
     Id SERIAL PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     AuthorId INTEGER,
+    ImageUrl VARCHAR(255) NOT NULL,
     AvailableQuantity INTEGER NOT NULL,
     Price INTEGER NOT NULL,
     Discount INTEGER NOT NULL
@@ -97,11 +98,17 @@ ALTER TABLE book_schema.reviews ADD CONSTRAINT review_book_gen FOREIGN KEY (book
 ALTER TABLE book_schema.reviews ADD CONSTRAINT review_unique UNIQUE (UserId, BookId);
 
 
-DROP TABLE book_schema.Authors;
-DROP TABLE book_schema.Users;
-DROP TABLE book_schema.Reviews;
-DROP TABLE book_schema.Publishers;
-DROP TABLE book_schema.BookGenerallyInfo;
-DROP TABLE book_schema.BookDetailInfo;
+
 DROP TABLE book_schema.OrderedBooks;
+DROP TABLE book_schema.Genres;
+DROP TABLE book_schema.Reviews;
+DROP TABLE book_schema.BookDetailInfo;
+DROP TABLE book_schema.BookGenerallyInfo;
+DROP TABLE book_schema.Authors;
+DROP TABLE book_schema.Publishers;
 DROP TABLE book_schema.Payments;
+DROP TABLE book_schema.Users;
+
+
+
+

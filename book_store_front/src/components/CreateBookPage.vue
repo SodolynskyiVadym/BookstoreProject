@@ -33,7 +33,9 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as bookAPI from "@/js/API/bookAPI";
+import * as authorAPI from "@/js/API/authorAPI";
+import * as publisherAPI from "@/js/API/publisherAPI";
 import * as dateHelper from "@/js/dateHelper";
 
 export default {
@@ -97,7 +99,7 @@ export default {
       };
 
       const token = localStorage.getItem("token");
-      await listURL.postCreateBook(data, token);
+      await bookAPI.postCreateBook(data, token);
 
       const file = this.$refs.fileInput.files[0];
       const formData = new FormData();
@@ -105,7 +107,7 @@ export default {
       formData.append('authorId', this.authorId);
       formData.append('name', this.name);
 
-      await listURL.postCreateBookImage(formData, token);
+      await bookAPI.postCreateBookImage(formData, token);
 
       this.$refs.fileInput.value = ''
       this.isActive = false;
@@ -123,8 +125,8 @@ export default {
   },
 
   async mounted() {
-    this.publishers = await listURL.getAllPublishers();
-    this.authors = await listURL.getAllAuthors();
+    this.publishers = await publisherAPI.getAllPublishers();
+    this.authors = await authorAPI.getAllAuthors();
   }
 }
 </script>

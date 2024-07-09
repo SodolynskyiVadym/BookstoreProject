@@ -10,8 +10,7 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
-
+import * as authAPI from "@/js/API/authAPI";
 
 export default {
     data(){
@@ -37,7 +36,7 @@ export default {
                 email: this.email,
                 password: this.password
             }
-            const data = await listURL.postLogin(dataLogin);
+            const data = await authAPI.postLogin(dataLogin);
             const token = data.token
             localStorage.setItem("token", token)
 

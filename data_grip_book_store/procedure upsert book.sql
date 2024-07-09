@@ -5,6 +5,7 @@ CREATE OR REPLACE PROCEDURE book_schema.spBook_Upsert(
     IN InputDescription TEXT,
     IN InputPublisherId INTEGER,
     IN InputName VARCHAR(255),
+    IN InputImageUrl VARCHAR(255),
     IN InputAuthorId INTEGER,
     IN InputAvailableQuantity INTEGER,
     IN InputPrice INTEGER,
@@ -23,12 +24,14 @@ BEGIN
             Name,
             AuthorId,
             AvailableQuantity,
+            imageurl,
             Price,
             Discount
         ) VALUES (
             InputName,
             InputAuthorId,
             InputAvailableQuantity,
+            InputImageUrl,
             InputPrice,
             InputDiscount
         )

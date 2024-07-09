@@ -23,7 +23,7 @@
   
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as bookAPI from "@/js/API/bookAPI";
 import * as orderMaker from "@/js/orderMaker"
 
 export default {
@@ -46,7 +46,7 @@ export default {
   },
 
   async mounted() {
-    this.books = await listURL.getBooks();
+    this.books = await bookAPI.getBooks();
     var indexesOrderedBooks = await orderMaker.getOrderedBooksArray();
     
     for(var book of this.books){

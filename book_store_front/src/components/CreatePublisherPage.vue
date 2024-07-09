@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import * as listUrl from "@/js/listUrl";
+import * as publisherAPI from "@/js/API/publisherAPI";
 export default {
   data(){
     return{
@@ -32,14 +32,14 @@ export default {
           name: this.name
         };
 
-        await listUrl.postCreatePublisher(data, token);
+        await publisherAPI.postCreatePublisher(data, token);
 
         const file = this.$refs.fileInput.files[0];
         const formData = new FormData();
         formData.append('file', file);
         formData.append('name', this.name);
 
-        await listUrl.postCreatePublisherImage(formData, token);
+        await publisherAPI.postCreatePublisherImage(formData, token);
 
         this.$refs.fileInput.value = ''
         this.name = "";

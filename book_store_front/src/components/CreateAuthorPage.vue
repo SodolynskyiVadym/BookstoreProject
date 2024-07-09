@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as authorAPI from "@/js/API/authorAPI";
 import * as dateHelper from "@/js/dateHelper";
 
 export default {
@@ -57,7 +57,7 @@ export default {
           birthYear: dateBirth,
           deathYear: dateDeath
         }
-        await listURL.postCreateAuthor(data, token);
+        await authorAPI.postCreateAuthor(data, token);
 
         const file = this.$refs.fileInput.files[0];
         const formData = new FormData();
@@ -65,7 +65,7 @@ export default {
         formData.append('biography', this.biography);
         formData.append('name', this.name);
 
-        await listURL.postCreateAuthorImage(formData, token);
+        await authorAPI.postCreateAuthorImage(formData, token);
 
         this.$refs.fileInput.value = ''
         this.name = "";

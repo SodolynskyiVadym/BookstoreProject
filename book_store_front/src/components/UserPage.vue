@@ -12,6 +12,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import * as authAPI from "@/js/API/authAPI";
 
 export default {
   data(){
@@ -32,7 +33,7 @@ export default {
        const token = localStorage.getItem("token");
        if(token){
         this.isActive = false;
-        await listURL.patchUpdateUser(data, token);
+        await authAPI.patchUpdateUser(data, token);
         this.currentName = this.user.name;
        }
     },
@@ -47,7 +48,7 @@ export default {
   async mounted(){
     const token = localStorage.getItem("token");
     if(token){
-        this.user = await listURL.getUserByToken(token);
+        this.user = await authAPI.getUserByToken(token);
         this.user.passsword = "";
         this.currentName = this.user.name;
         this.loaded = true;

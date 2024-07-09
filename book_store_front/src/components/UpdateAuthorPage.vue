@@ -19,6 +19,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
+import * as authorAPI from "@/js/API/authorAPI";
 import * as dateHelper from "@/js/dateHelper";
 
 export default {
@@ -55,12 +56,12 @@ export default {
             birthYear: dateBirth,
             deathYear: dateDeath
           }
-          await listURL.patchUpdateAuthor(data);
+          await authorAPI.patchUpdateAuthor(data);
       }
   },
 
   async mounted(){
-    this.author = await listURL.getAuthor(this.$route.params.id);
+    this.author = await authorAPI.getAuthor(this.$route.params.id);
     if(this.author.deathYear){
       this.author.deathYear = dateHelper.formatDate(this.author.deathYear);
       this.isKnownDeath = true;

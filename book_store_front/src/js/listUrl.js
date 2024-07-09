@@ -5,135 +5,31 @@ const mainUrl = "http://localhost:5224";
 
 
 
-export async function getUserByToken(token) {
-    const config = {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    };
 
-    try {
-        return await axios.get(mainUrl + "/auth/getUserByToken", config).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching user by token:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getBooks() {
-    try {
-        return await axios.get(mainUrl + "/book/getAllBooks").then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching books:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getReviews(id) {
-    try {
-        return await axios.get(mainUrl + "/review/getReviews/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching reviews:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getPublisher(id) {
-    try {
-        return await axios.get(mainUrl + "/publisher/getPublisher/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching publisher:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getReviewUserBook(bookId, token) {
-    const config = {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    };
 
-    try {
-        return await axios.get(mainUrl + "/review/GetUserReview/" + bookId, config).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching review for user and book:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getBook(id) {
-    try {
-        return await axios.get(mainUrl + "/book/getBook/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching book:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getSomeBook(arrayBooks) {
-    const strBooksId = arrayBooks.join(",");
-    try {
-        return await axios.get(mainUrl + "/book/getSomeBooks?ids=" + strBooksId);
-    } catch (error) {
-        console.error("Error fetching some books:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getAuthorBooks(id) {
-    try {
-        return await axios.get(mainUrl + "/author/getAuthorBooks/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching author's books:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getPublisherBooks(id) {
-    try {
-        return await axios.get(mainUrl + "/publisher/getPublisherBooks/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching publisher's books:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getAuthor(id) {
-    try {
-        return await axios.get(mainUrl + "/author/getAuthor/" + id).then(res => res.data);
-    } catch (error) {
-        console.error("Error fetching author:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getAllAuthors() {
-    try {
-        return await axios.get(mainUrl + "/author/getAllAuthors");
-    } catch (error) {
-        console.error("Error fetching all authors:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getAllPublishers() {
-    try {
-        return await axios.get(mainUrl + "/publisher/getAllPublishers");
-    } catch (error) {
-        console.error("Error fetching all publishers:", error);
-        await router.push("/error");
-    }
-}
 
-export async function getAllUsers() {
-    try {
-        return await axios.get(mainUrl + "/auth/getAllUsers");
-    } catch (error) {
-        console.error("Error fetching all users:", error);
-        await router.push("/error");
-    }
-}
+
+
+
+
+
+
+
+
+
+
+
 
 export async function postCreateBook(data, token) {
     const config = {

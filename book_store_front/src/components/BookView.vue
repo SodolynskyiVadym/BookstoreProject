@@ -88,7 +88,9 @@
 
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as reviewAPI from "@/js/API/reviewAPI";
+import * as BookAPI from "@/js/API/bookAPI";
+import * as authAPI from "@/js/API/authAPI";
 import * as orderMaker from "@/js/orderMaker";
 import * as dateHelper from "@/js/dateHelper";
 
@@ -141,8 +143,8 @@ export default {
         description: this.userReview.description
       }
       const token = localStorage.getItem("token");
-      await listURL.postCreateReview(data, token);
-      this.reviews = await listURL.getReviews(this.$route.params.id);
+      await reviewAPI.postCreateReview(data, token);
+      this.reviews = await reviewAPI.getReviews(this.$route.params.id);
       this.isUserReview = true;
     },
 
@@ -155,8 +157,8 @@ export default {
         description: this.userReview.description
       }
       const token = localStorage.getItem("token");
-      await listURL.patchUpdateReview(data, token);
-      this.reviews = await listURL.getReviews(this.$route.params.id);
+      await reviewAPI.patchUpdateReview(data, token);
+      this.reviews = await reviewAPI.getReviews(this.$route.params.id);
     },
 
     async changeQuantityOrder() {
@@ -175,20 +177,20 @@ export default {
   },
 
   async mounted() {
-    this.book = await listURL.getBook(this.$route.params.id);
-    this.reviews = await listURL.getReviews(this.$route.params.id);
+    this.book = await BookAPI.getBook(this.$route.params.id);
+    this.reviews = await reviewAPI.getReviews(this.$route.params.id);
     for(let review of this.reviews){
       console.log(review)
     }
     const token = localStorage.getItem("token");
     if (token) {
-      const review = await listURL.getReviewUserBook(this.$route.params.id, token);
+      const review = await reviewAPI.getReviewUserBook(this.$route.params.id, token);
       if (review){
         this.userReview = review;
         this.isUserReview = true;
       }
 
-      const user = await listURL.getUserByToken(token);
+      const user = await authAPI.getUserByToken(token);
       if (user.role) {
         this.isUser = true;
       }

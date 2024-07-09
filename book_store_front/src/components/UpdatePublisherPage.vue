@@ -10,7 +10,7 @@
 
 <script>
 import * as listURL from "@/js/listUrl";
-
+import * as publisherAPI from "@/js/API/publisherAPI";
 
 export default {
   data() {
@@ -36,12 +36,12 @@ export default {
         id: this.$route.params.id,
         name: this.publisher.name,
       }
-      await listURL.patchUpdatePublisher(data);
+      await publisherAPI.patchUpdatePublisher(data);
     }
   },
 
   async mounted() {
-    this.publisher = await listURL.getPublisher(this.$route.params.id);
+    this.publisher = await publisherAPI.getPublisher(this.$route.params.id);
 
     console.log(this.publisher)
 

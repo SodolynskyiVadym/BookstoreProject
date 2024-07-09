@@ -43,7 +43,9 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as bookAPI from "@/js/API/bookAPI";
+import * as publisherAPI from "@/js/API/publisherAPI";
+import * as authorAPI from "@/js/API/authorAPI";
 import * as dateHelper from "@/js/dateHelper";
 
 export default {
@@ -96,14 +98,14 @@ export default {
         discount: this.book.discount,
       };
 
-      await listURL.patchUpdateBook(data);
+      await bookAPI.patchUpdateBook(data);
     }
   },
 
   async mounted() {
-    this.publishers = await listURL.getAllPublishers();
-    this.authors = await listURL.getAllAuthors();
-    this.book = await listURL.getBook(this.$route.params.id);
+    this.publishers = await publisherAPI.getAllPublishers();
+    this.authors = await authorAPI.getAllAuthors();
+    this.book = await bookAPI.getBook(this.$route.params.id);
 
     this.book.yearPublication = dateHelper.formatDate(this.book.yearPublication);
     this.authorName = this.authors.find(author => author.id === this.book.authorId).name;

@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import * as listURL from "@/js/listUrl";
+import * as authAPI from "@/js/API/authAPI";
 
 
 export default {
@@ -51,7 +51,7 @@ export default {
                 password: this.password,
                 confirmPassword: this.confirmPassword
             }
-            await listURL.postRegistration(data);
+            await authAPI.postRegistration(data);
 
             this.$router.push('/');
         }
