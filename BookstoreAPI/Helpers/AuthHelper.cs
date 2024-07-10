@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using BookstoreAPI.DapperRequests;
 
 namespace BookstoreAPI.Helpers
 {
@@ -71,7 +72,7 @@ namespace BookstoreAPI.Helpers
 
 
 
-        public void RegisterUser(UserRegisterDTO userRegistration, string userRole)
+        public bool RegisterUser(UserRegisterDto userRegistration)
         {
             byte[] passwordSalt = new byte[128 / 8];
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
@@ -82,57 +83,40 @@ namespace BookstoreAPI.Helpers
             byte[] passwordHash = GetPasswordHash(userRegistration.Password, passwordSalt);
 
             string sqlAddAuth = @"CALL book_schema.spUser_Upsert(
-                @Name::VARCHAR,
                 @PasswordHash::BYTEA,
                 @PasswordSalt::BYTEA,
                 @Role::VARCHAR,
                 @Email::VARCHAR)";
 
             DynamicParameters parameters = new DynamicParameters();
-
-            parameters.Add("@Name", userRegistration.Name, DbType.String);
-            parameters.Add("@Role", userRole, DbType.String);
+            
+            parameters.Add("@Role", userRegistration.Role, DbType.String);
             parameters.Add("@Email", userRegistration.Email, DbType.String);
             parameters.Add("@PasswordHash", passwordHash, DbType.Binary);
             parameters.Add("@PasswordSalt", passwordSalt, DbType.Binary);
 
-            _dapper.ExecuteSqlWithParameters(sqlAddAuth, parameters);
+            return _dapper.ExecuteSqlWithParameters(sqlAddAuth, parameters);
         }
 
 
-        public bool UpdateUser(int userID, UserUpdateDTO userUpdate)
+        public bool UpdatePassword(int id, string password)
         {
-            string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.users WHERE id = {userID}");
-            if (name.IsNullOrEmpty()) return false;
+            byte[] passwordSalt = new byte[128 / 8];
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+            {
+                rng.GetNonZeroBytes(passwordSalt);
+            }
 
-            userUpdate.Name = userUpdate.Name ?? name;
+            byte[] passwordHash = GetPasswordHash(password, passwordSalt);
+
+            string sqlAddAuth = UserRequest.UpdateUser(id);
 
             DynamicParameters parameters = new DynamicParameters();
-            parameters.Add("@Id", userID, DbType.Int32);
-            parameters.Add("@Name", userUpdate.Name, DbType.String);
+            
+            parameters.Add("@PasswordHash", passwordHash, DbType.Binary);
+            parameters.Add("@PasswordSalt", passwordSalt, DbType.Binary);
 
-            if (userUpdate.Password.IsNullOrEmpty())
-            {
-                _dapper.ExecuteSqlWithParameters(@"UPDATE book_schema.Users SET Name=@Name WHERE Id=@Id", parameters);
-            }
-            else
-            {
-                byte[] passwordSalt = new byte[128 / 8];
-                using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
-                {
-                    rng.GetNonZeroBytes(passwordSalt);
-                }
-
-                byte[] passwordHash = GetPasswordHash(userUpdate.Password, passwordSalt);
-
-                string sqlUpdateUser = @"UPDATE book_schema.Users SET Name=@Name, PasswordHash=@PasswordHash, PasswordSalt=@PasswordSalt WHERE Id=@Id";
-
-                parameters.Add("@PasswordHash", passwordHash, DbType.Binary);
-                parameters.Add("@PasswordSalt", passwordSalt, DbType.Binary);
-
-                _dapper.ExecuteSqlWithParameters(sqlUpdateUser, parameters);
-            }
-            return true;
+            return _dapper.ExecuteSqlWithParameters(sqlAddAuth, parameters);
         }
 
 

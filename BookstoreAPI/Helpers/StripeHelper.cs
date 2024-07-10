@@ -12,7 +12,7 @@ public class StripeHelper
         _config = config;
     }
     
-    public async Task<string> CheckOut(IEnumerable<BookGenerallyInfo> books, OrderDTO order, int userId)
+    public async Task<string> CheckOut(IEnumerable<BookGenerallyInfo> books, OrderDto order, int userId)
     {
         string? serverUrl = _config.GetSection("Urls:Server").Value;
         string? clientUrl = _config.GetSection("Urls:Client").Value;

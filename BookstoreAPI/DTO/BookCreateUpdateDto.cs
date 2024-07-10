@@ -1,6 +1,6 @@
 ﻿namespace BookstoreAPI.DTO
 {
-    public class BookDTO
+    public class BookCreateUpdateDto
     {
         public int Id { get; set; }
         public int NumberPages { get; set; }
@@ -8,18 +8,16 @@
         public DateTime YearPublication { get; set; }
         public string Description { get; set; }
         public int PublisherId { get; set; }
-        public string PublisherName { get; set; }
         public string Name { get; set; }
         public int AuthorId { get; set; }
-        public string AuthorName { get; set; }
         public int AvailableQuantity { get; set; }
+        public string ImageUrl { get; set; }
         public int Price { get; set; }
         public int Discount { get; set; }
-        public string ImageUrl { get; set; }
-        public string[]? Genres { get; set; }
 
 
-        public BookDTO()
+
+        public BookCreateUpdateDto()
         {
         }
     }

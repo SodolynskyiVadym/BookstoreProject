@@ -1,6 +1,6 @@
 ﻿namespace BookstoreAPI.DTO;
 
-public class ReviewUpdateDTO
+public class ReviewUpdateDto
 {
     public int Id { get; set; }
     public string Description { get; set; }

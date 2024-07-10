@@ -29,14 +29,14 @@ public class BookController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("getBook/{id}")]
-    public BookDTO? GetBookInfo(int id)
+    public BookDto? GetBookInfo(int id)
     {
         string sqlGetInfoBook = BookRequest.GetInfoBook(id);
 
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@Id", id, System.Data.DbType.Int64);
 
-        BookDTO? book = _dapper.LoadDataSingle<BookDTO>(sqlGetInfoBook);
+        BookDto? book = _dapper.LoadDataSingle<BookDto>(sqlGetInfoBook);
         if(book != null) book.Genres = _dapper.LoadDataSingle<string[]>(BookRequest.GetBookGenres(id));
         return book;
     }
@@ -44,7 +44,7 @@ public class BookController : ControllerBase
     
     [AllowAnonymous]
     [HttpGet("getSomeBooks")]
-    public IEnumerable<BookOrderDTO> GetOrderedBooks()
+    public IEnumerable<BookOrderDto> GetOrderedBooks()
     {
         string sqlGetOrderedBooks = BookRequest.GetOrderedBooks;
 
@@ -63,22 +63,22 @@ public class BookController : ControllerBase
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@BooksId", booksId.ToArray(), System.Data.DbType.Object);
 
-        return _dapper.LoadDataWithParameters<BookOrderDTO>(sqlGetOrderedBooks, parameters);
+        return _dapper.LoadDataWithParameters<BookOrderDto>(sqlGetOrderedBooks, parameters);
     }
 
 
 
     [AllowAnonymous]
     [HttpGet("getAllBooks")]
-    public IEnumerable<BookOrderDTO> GetAllBooks()
+    public IEnumerable<BookOrderDto> GetAllBooks()
     {
-        return _dapper.LoadData<BookOrderDTO>(BookRequest.GetAllBooks);
+        return _dapper.LoadData<BookOrderDto>(BookRequest.GetAllBooks);
     }
 
 
     [Authorize(Roles = "EDITOR, ADMIN")]
     [HttpPost("createBook")]
-    public IActionResult CreateBook([FromBody] BookCreateUpdateDTO book)
+    public IActionResult CreateBook([FromBody] BookCreateUpdateDto book)
     {
         string sqlCreateBook = BookRequest.CreateBook;
 
@@ -105,7 +105,7 @@ public class BookController : ControllerBase
     [Authorize(Roles = "EDITOR, ADMIN")]
     [AllowAnonymous]
     [HttpPatch("updateBook")]
-    public IActionResult UpdateBook([FromBody] BookCreateUpdateDTO book)
+    public IActionResult UpdateBook([FromBody] BookCreateUpdateDto book)
     {
         string sqlGetOldName = $@"SELECT name FROM book_schema.bookGenerallyInfo WHERE id={book.Id}";
         string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldName);

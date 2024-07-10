@@ -24,9 +24,9 @@ public class ReviewController : ControllerBase
     
     [AllowAnonymous]
     [HttpGet("getReviews/{id}")]
-    public IEnumerable<ReviewDTO> GetBookReviews(int id)
+    public IEnumerable<ReviewDto> GetBookReviews(int id)
     {
-        return _dapper.LoadData<ReviewDTO>(ReviewRequest.GetBookReviews(id));
+        return _dapper.LoadData<ReviewDto>(ReviewRequest.GetBookReviews(id));
     }
 
     [HttpGet("getUserReview/{bookId}")]
@@ -43,7 +43,7 @@ public class ReviewController : ControllerBase
     
     
     [HttpPost("createReview")]
-    public IActionResult CreateReview(ReviewCreateDTO reviewCreate)
+    public IActionResult CreateReview(ReviewCreateDto reviewCreate)
     {
         int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
         string sqlAddReview = ReviewRequest.CreateReview;
@@ -58,7 +58,7 @@ public class ReviewController : ControllerBase
     
     
     [HttpPatch("updateReview")]
-    public IActionResult UpdateReview(ReviewUpdateDTO review)
+    public IActionResult UpdateReview(ReviewUpdateDto review)
     {
         int userIdOwner = _dapper.LoadDataSingle<int>($"SELECT userId FROM book_schema.Reviews WHERE id = {review.Id}");
         int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;

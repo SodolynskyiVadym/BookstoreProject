@@ -27,7 +27,7 @@ namespace BookstoreAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("makeOrder")]
-        public async Task<IActionResult> CreateOrder(OrderDTO order)
+        public async Task<IActionResult> CreateOrder(OrderDto order)
         {
             int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
             string sqlGetBooks = BookRequest.GetSomeBooks;

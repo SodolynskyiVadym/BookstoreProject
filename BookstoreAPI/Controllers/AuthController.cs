@@ -1,14 +1,11 @@
-﻿using System.Data;
-using BookstoreAPI.DapperRequests;
+﻿using BookstoreAPI.DapperRequests;
 using BookstoreAPI.DTO;
 using BookstoreAPI.Helpers;
 using BookstoreAPI.Models;
 using BookstoreAPI.Settings;
-using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace BookstoreAPI.Controllers;
 
@@ -56,32 +53,31 @@ public class AuthController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("registerUser")]
-    public IActionResult RegisterUser([FromBody] UserRegisterDTO userRegister)
+    public IActionResult RegisterUser([FromBody] UserRegisterDto userRegister)
     {
-        var isUserNameExist = _dapper.LoadDataSingle<string>(UserRequest.GetUserByEmail(userRegister.Email));
+        var isUserNameExist = _dapper.LoadDataSingle<User>(UserRequest.GetUserByEmail(userRegister.Email));
 
-        if (isUserNameExist.IsNullOrEmpty())
+        if (isUserNameExist == null)
         {
-            _authHelper.RegisterUser(userRegister, "USER");
+            userRegister.Role = "USER";
+            _authHelper.RegisterUser(userRegister);
             return Ok();
         }
-
         return StatusCode(400, "User already exist or incorrect password");
     }
 
 
     [Authorize(Roles = "ADMIN")]
-    [HttpPost("registerWorker")]
-    public IActionResult RegisterWorker([FromBody] UserRegisterByEmailRoleDTO userEmailRole)
+    [HttpPost("registerEditorAdmin")]
+    public IActionResult RegisterWorker([FromBody] UserRegisterDto userRegister)
     {
-        var isUserNameExist = _dapper.LoadDataSingle<string>(UserRequest.GetUserByEmail(userEmailRole.Email));
-        if (isUserNameExist.IsNullOrEmpty())
+        if (userRegister.Role != "ADMIN" || userRegister.Role != "EDITOR") return StatusCode(400, "Incorrect role");
+        var userEmail = _dapper.LoadDataSingle<User>(UserRequest.GetUserByEmail(userRegister.Email));
+        if (userEmail == null)
         {
             var password = _authHelper.GenerateRandomPassword();
-
-            var userRegister = new UserRegisterDTO(userEmailRole.Role, userEmailRole.Email, password);
-            _authHelper.RegisterUser(userRegister, userEmailRole.Role);
-            _mailHelper.SendPassword(userEmailRole.Email, password, userEmailRole.Role);
+            _authHelper.RegisterUser(userRegister);
+            _mailHelper.SendPassword(userRegister.Email, password, userRegister.Role);
 
             return Ok();
         }
@@ -92,8 +88,11 @@ public class AuthController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost("login")]
-    public IActionResult Login([FromBody] UserLoginDTO userLogin)
+    public IActionResult Login([FromBody] UserLoginDto userLogin)
     {
+        Console.WriteLine("Code work login");
+        Console.WriteLine(userLogin.Password);
+        Console.WriteLine(userLogin.Email);
         var user = _dapper.LoadDataSingle<User>(UserRequest.GetUserByEmail(userLogin.Email));
 
         if (user != null)
@@ -111,19 +110,14 @@ public class AuthController : ControllerBase
 
 
     [Authorize]
-    [HttpPatch("updateUser")]
-    public IActionResult UpdateUser(UserUpdateDTO userUpdate)
+    [HttpPatch("updatePassword")]
+    public IActionResult UpdateUser(UserUpdateDto userUpdate)
     {
-        if (!userUpdate.Password.IsNullOrEmpty() && userUpdate.Password.Length < 8)
-            return StatusCode(400, "Password must be greater than 8 symbols");
-
-        int userId;
-        if (int.TryParse(User.FindFirst("userId")?.Value, out userId))
+        if (userUpdate.Password.Length < 8) return StatusCode(400, "Password must be greater than 8 symbols");
+        if (int.TryParse(User.FindFirst("userId")?.Value, out var userId))
         {
-            if (_authHelper.UpdateUser(userId, userUpdate)) return Ok();
-            return StatusCode(500, "User was not updated");
+            if (_authHelper.UpdatePassword(userId, userUpdate.Password)) return Ok();
         }
-
         return StatusCode(400, "User was not found");
     }
 
