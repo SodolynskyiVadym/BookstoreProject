@@ -12,8 +12,8 @@ public class AuthorRequest
         WHERE Authors.id = @Id";
 
     public static readonly string CreateAuthor = @"
-        INSERT INTO book_schema.Authors(Name, Biography, BirthYear, DeathYear) 
-        VALUES (@Name, @Biography, @BirthYear, @DeathYear)";
+        INSERT INTO book_schema.Authors(Name, Biography, BirthYear, DeathYear, ImageUrl) 
+        VALUES (@Name, @Biography, @BirthYear, @DeathYear, @ImageUrl)";
 
     public static readonly string UpdateAuthor = "UPDATE book_schema.Authors SET name=@Name, biography=@Biography, birthYear=@BirthYear, deathYear=@DeathYear WHERE Id=@Id";
 

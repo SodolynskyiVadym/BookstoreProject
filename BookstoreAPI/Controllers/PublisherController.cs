@@ -61,9 +61,10 @@ namespace BookstoreAPI.Controllers
 
             DynamicParameters dynamic = new DynamicParameters();
             dynamic.Add("@Name", publisher.Name, System.Data.DbType.String);
+            dynamic.Add("@ImageUrl", publisher.ImageUrl, System.Data.DbType.String);
 
             if (_dapper.ExecuteSqlWithParameters(sqlCreatePublisher, dynamic)) return Ok();
-            else throw new Exception("Failed to insert publisher into DB");
+            return StatusCode(400, "Publisher was now created");
         }
 
         

@@ -58,11 +58,9 @@ public class BookController : ControllerBase
 
             for (int i = 0; i < idStrings.Length; i++) if (int.TryParse(idStrings[i], out int id)) booksId[i] = id;
         }
-
-
+        
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@BooksId", booksId.ToArray(), System.Data.DbType.Object);
-
         return _dapper.LoadDataWithParameters<BookOrderDto>(sqlGetOrderedBooks, parameters);
     }
 
@@ -94,7 +92,7 @@ public class BookController : ControllerBase
         parameters.Add("@ImageUrl", book.ImageUrl, System.Data.DbType.String);
         parameters.Add("@Price", book.Price, System.Data.DbType.Int64);
         parameters.Add("@Discount", book.Discount, System.Data.DbType.Int64);
-        parameters.Add("@InputGenres", book.Discount, System.Data.DbType.Object);
+        parameters.Add("@Genres", book.Genres, System.Data.DbType.Object);
 
         _dapper.ExecuteSqlWithParameters(sqlCreateBook, parameters);
         return Ok();

@@ -1,5 +1,4 @@
 CREATE OR REPLACE PROCEDURE book_schema.spUser_Upsert(
-    IN InputName VARCHAR,
     IN InputPasswordHash bytea,
     IN InputPasswordSalt bytea,
     IN InputRole VARCHAR = NULL,
@@ -12,13 +11,11 @@ BEGIN
     IF NOT EXISTS (SELECT * FROM book_schema.Users WHERE id = InputUserId) THEN
 
         INSERT INTO book_schema.Users (
-            Name,
             Role,
             Email,
             PasswordHash,
             PasswordSalt
         ) VALUES (
-            InputName,
             InputRole,
             InputEmail,
             InputPasswordHash,
@@ -27,7 +24,6 @@ BEGIN
     ELSE
         UPDATE book_schema.Users
         SET 
-            Name = InputName,
             PasswordHash = InputPasswordHash,
             PasswordSalt = InputPasswordSalt
         WHERE Id = InputUserId;

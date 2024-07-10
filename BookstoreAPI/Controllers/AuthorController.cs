@@ -67,6 +67,7 @@ namespace BookstoreAPI.Controllers
             parameters.Add("@Biography", author.Biography, System.Data.DbType.String);
             parameters.Add("@BirthYear", author.BirthYear, System.Data.DbType.Date);
             parameters.Add("@DeathYear", author.DeathYear, System.Data.DbType.Date);
+            parameters.Add("@ImageUrl", author.ImageUrl, System.Data.DbType.String);
             
             if (_dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters)) return Ok();
             return StatusCode(400, "Failed to insert author into DB");

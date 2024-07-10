@@ -7,6 +7,7 @@
         public string? Biography { get; set; }
         public DateTime? BirthYear { get; set; }
         public DateTime? DeathYear { get; set;}
+        public string? ImageUrl { get; set; }
 
         public Author()
         {

@@ -71,17 +71,15 @@ public class AuthController : ControllerBase
     [HttpPost("registerEditorAdmin")]
     public IActionResult RegisterWorker([FromBody] UserRegisterDto userRegister)
     {
-        if (userRegister.Role != "ADMIN" || userRegister.Role != "EDITOR") return StatusCode(400, "Incorrect role");
+        if (userRegister.Role != "ADMIN" && userRegister.Role != "EDITOR") return StatusCode(400, "Incorrect role");
         var userEmail = _dapper.LoadDataSingle<User>(UserRequest.GetUserByEmail(userRegister.Email));
         if (userEmail == null)
         {
-            var password = _authHelper.GenerateRandomPassword();
+            userRegister.Password = _authHelper.GenerateRandomPassword();
             _authHelper.RegisterUser(userRegister);
-            _mailHelper.SendPassword(userRegister.Email, password, userRegister.Role);
-
+            _mailHelper.SendPassword(userRegister.Email, userRegister.Password, userRegister.Role);
             return Ok();
         }
-
         return StatusCode(400, "User already exist");
     }
 
@@ -90,18 +88,15 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] UserLoginDto userLogin)
     {
-        Console.WriteLine("Code work login");
-        Console.WriteLine(userLogin.Password);
-        Console.WriteLine(userLogin.Email);
+        Console.WriteLine(userLogin.Email + " " + userLogin.Password);
         var user = _dapper.LoadDataSingle<User>(UserRequest.GetUserByEmail(userLogin.Email));
 
         if (user != null)
         {
             var passwordHash = _authHelper.GetPasswordHash(userLogin.Password, user.PasswordSalt);
 
-            for (var index = 0; index < passwordHash.Length; index++)
-                if (passwordHash[index] != user.PasswordHash[index])
-                    return StatusCode(401, "Incorrect password!");
+            for (var index = 0; index < passwordHash.Length; index++) 
+                if (passwordHash[index] != user.PasswordHash[index]) return StatusCode(400, "Incorrect password!");
             return Ok(new Dictionary<string, string> { { "token", _authHelper.CreateToken(user.Id, user.Role) } });
         }
 

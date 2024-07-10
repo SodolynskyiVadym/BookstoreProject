@@ -5,7 +5,8 @@
         <label key="password">Password</label><br>
         <input type="password" v-model="password" id="password" placeholder="Password" @change="checkIsActive"><br>
 
-        <button @click="login" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Login</button>
+        <button @click="login" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }"
+            :disabled="!isActive">Login</button>
     </div>
 </template>
 
@@ -13,8 +14,8 @@
 import * as authAPI from "@/js/API/authAPI";
 
 export default {
-    data(){
-        return{
+    data() {
+        return {
             email: "",
             password: "",
             isActive: false
@@ -22,28 +23,30 @@ export default {
     },
 
     methods: {
-        async checkIsActive(){
-            if(this.email && this.password){
+        async checkIsActive() {
+            if (this.email && this.password) {
                 this.isActive = true;
-            }else{
+            } else {
                 this.isActive = false;
             }
         },
 
 
-        async login(){
+        async login() {
             const dataLogin = {
                 email: this.email,
                 password: this.password
             }
-            const data = await authAPI.postLogin(dataLogin);
-            const token = data.token
-            localStorage.setItem("token", token)
+            const data = await authAPI.login(dataLogin);
+            if (data && data.token) {
+                const token = data.token
+                localStorage.setItem("token", token)
+                this.$router.push('/');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 10);
+            }
 
-            this.$router.push('/');
-            setTimeout(() => {
-                window.location.reload();
-            }, 10);
         }
     }
 }

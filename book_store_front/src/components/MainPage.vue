@@ -2,7 +2,7 @@
   <div class="book-section">
     <div v-for="book in books" :key="book.id" class="book">
       <a @click="enterBookPage(book.id)">
-        <img class="img-book" :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
+        <img class="img-book" :src="book.imageUrl">
         <div class="book-name">{{ book.name }}</div>
         <p v-if="book.discount > 0 && book.discount <= 100">
             <span class="full-price">{{ book.price }} UAH</span>
@@ -50,7 +50,10 @@ export default {
     var indexesOrderedBooks = await orderMaker.getOrderedBooksArray();
     
     for(var book of this.books){
+      console.log(book);
+      console.log(book.imageUrl);
       if(indexesOrderedBooks.includes(book.id)) {
+
         book.isOrdered = true;
       }
     }

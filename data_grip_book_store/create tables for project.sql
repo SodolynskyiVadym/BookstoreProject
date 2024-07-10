@@ -1,6 +1,7 @@
 CREATE TABLE book_schema.Authors (
     Id SERIAL PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
+    ImageUrl VARCHAR(255),
     Biography TEXT,
     BirthYear DATE,
     DeathYear DATE
@@ -38,7 +39,8 @@ CREATE TABLE book_schema.Genres (
 
 CREATE TABLE book_schema.Publishers (
     Id SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL
+    Name VARCHAR(255) NOT NULL,
+    ImageUrl VARCHAR(255)
 );
 
 
@@ -53,7 +55,6 @@ CREATE TABLE book_schema.Reviews (
 
 CREATE TABLE book_schema.Users (
     Id SERIAL PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
     Role VARCHAR(255) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     PasswordHash BYTEA NOT NULL,

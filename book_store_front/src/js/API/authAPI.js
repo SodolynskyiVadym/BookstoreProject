@@ -31,7 +31,6 @@ export async function getAllUsers() {
 }
 
 
-// Додати в authAPI.js
 export async function patchUpdateUser(data, token) {
     const config = {
         headers: {
@@ -48,7 +47,7 @@ export async function patchUpdateUser(data, token) {
 }
 
 
-export async function postLogin(data) {
+export async function login(data) {
     try {
         return await axios.post(mainUrl + "/login", data).then(res => res.data);
     } catch (error) {

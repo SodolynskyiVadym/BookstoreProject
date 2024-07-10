@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>404</h1>
-    <h2>Page not found</h2>
+  <div style="text-align: center; padding-top: 80px">
+    <h1>Error page</h1>
+    <h2>Some error happened</h2>
   </div>
 </template>

@@ -3,8 +3,7 @@
 public class BookRequest
 { 
     public static readonly string GetBooksByNameAndAuthor = "SELECT id FROM book_schema.bookgenerallyinfo where authorId=@AuthorId and name=@Name";
-        
-        
+    
     public static string GetInfoBook(int id) => $@"SELECT
                 BookGenerallyInfo.*,
                 BookDetailInfo.booklanguage,
@@ -49,13 +48,13 @@ public class BookRequest
             @YearPublication::DATE,
             @Description::TEXT,    
             @PublisherId::INTEGER,            
-            @Name::VARCHAR,        
+            @Name::VARCHAR,       
+            @ImageUrl::VARCHAR,     
             @AuthorId::INTEGER,               
             @AvailableQuantity::INTEGER,  
-            @ImageUrl::VARCHAR,    
             @Price::INTEGER,                  
             @Discount::INTEGER,
-            @InputGenres::VARCHAR[]                                        
+            @Genres::VARCHAR[] 
             );";
     
     

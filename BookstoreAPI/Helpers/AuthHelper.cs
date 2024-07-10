@@ -74,19 +74,13 @@ namespace BookstoreAPI.Helpers
 
         public bool RegisterUser(UserRegisterDto userRegistration)
         {
+            if(userRegistration.Password == null) return false;
             byte[] passwordSalt = new byte[128 / 8];
-            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
-            {
-                rng.GetNonZeroBytes(passwordSalt);
-            }
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create()) rng.GetNonZeroBytes(passwordSalt);
 
             byte[] passwordHash = GetPasswordHash(userRegistration.Password, passwordSalt);
 
-            string sqlAddAuth = @"CALL book_schema.spUser_Upsert(
-                @PasswordHash::BYTEA,
-                @PasswordSalt::BYTEA,
-                @Role::VARCHAR,
-                @Email::VARCHAR)";
+            string sqlAddAuth = UserRequest.CreateUser;
 
             DynamicParameters parameters = new DynamicParameters();
             

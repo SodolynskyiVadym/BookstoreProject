@@ -14,9 +14,9 @@
         public string ImageUrl { get; set; }
         public int Price { get; set; }
         public int Discount { get; set; }
-
-
-
+        
+        public IEnumerable<string> Genres { get; set; }
+        
         public BookCreateUpdateDto()
         {
         }
