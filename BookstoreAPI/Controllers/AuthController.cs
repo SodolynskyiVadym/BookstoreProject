@@ -88,7 +88,6 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login([FromBody] UserLoginDto userLogin)
     {
-        Console.WriteLine(userLogin.Email + " " + userLogin.Password);
         var user = _dapper.LoadDataSingle<User>(UserRequest.GetUserByEmail(userLogin.Email));
 
         if (user != null)

@@ -37,6 +37,20 @@
     <label key="description">Description</label><br>
     <textarea v-model="book.description" id="description" placeholder="Description" @change="checkIsActiveButton"></textarea><br>
 
+    <label key="photo">Photo</label>
+    <input type="text" v-model="book.imageUrl" @change="checkIsActiveButton"><br>
+
+    <label key="genres">Genres</label><br>
+    <div v-for="(genre, index) in book.genres" :key="index">
+      <input type="search" list="genres" v-model="book.genres[index]"><br>
+      <datalist id="genres">
+        <option v-for="choosedGenre in genresList" :key="choosedGenre" :value="choosedGenre">{{ choosedGenre }}</option>
+      </datalist>
+      <button @click="removeGenre(index)" style="background-color: red; height: auto;" class="main-button">Remove genre</button>
+    </div><br>
+
+    <button @click="addGenre" style="background-color: green;" class="main-button">Add genre</button><br>
+
     <button @click="updateBook" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Update</button>
   </div>
 
@@ -47,6 +61,7 @@ import * as bookAPI from "@/js/API/bookAPI";
 import * as publisherAPI from "@/js/API/publisherAPI";
 import * as authorAPI from "@/js/API/authorAPI";
 import * as dateHelper from "@/js/dateHelper";
+import * as genresChoices from "@/js/genres";
 
 export default {
   data() {
@@ -58,7 +73,8 @@ export default {
       authors: [],
       maxDate: dateHelper.formatDate(Date.now()),
       isActive: true,
-      loaded: false
+      loaded: false,
+      genresList: genresChoices.genres
     }
   },
 
@@ -81,6 +97,14 @@ export default {
           && this.book.discount <= 100 && this.book.availableQuantity >= 0;
     },
 
+    async addGenre() {
+      this.book.genres.push("");
+    },
+
+    async removeGenre(index) {
+      this.book.genres.splice(index, 1);
+    },
+
 
     async updateBook() {
 
@@ -96,6 +120,8 @@ export default {
         availableQuantity: this.book.availableQuantity,
         price: this.book.price,
         discount: this.book.discount,
+        imageUrl: this.book.imageUrl,
+        genres: this.book.genres
       };
 
       await bookAPI.patchUpdateBook(data);

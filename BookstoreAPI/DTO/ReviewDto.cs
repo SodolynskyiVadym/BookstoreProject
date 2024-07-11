@@ -6,5 +6,5 @@ public class ReviewDto
     public int BookId { get; set; }
     public string Description { get; set; }
     public int Mark { get; set; }
-    public int UserId { get; set; }
+    public string Email { get; set; }
 }

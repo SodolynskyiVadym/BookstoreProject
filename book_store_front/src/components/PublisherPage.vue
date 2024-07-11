@@ -1,12 +1,12 @@
 <template>
     <div v-if="loaded">
         <div style="text-align: center;">
-            <img class="publisher-photo" :src="require(`@/assets/publisherPhoto/${publisher.name.toLowerCase().replace(/\s+/g, '')}${publisher.id}.jpg`)"><br>
+            <img class="publisher-photo" :src="publisher.imageUrl"><br>
 
             <button class="main-button" @click="enterPublisherUpdatePage">Update</button>
 
             <div v-for="book in books" :key="book.id" class="list-book">
-                <img :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)" class="image-order">
+                <img :src="book.imageUrl" class="image-order">
                 <div style="margin-left: 15px; width: 300px;">
                 <div style="margin-top: 20%;">{{ book.name }}</div>
                 </div>

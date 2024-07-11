@@ -37,7 +37,7 @@ public class BookController : ControllerBase
         parameters.Add("@Id", id, System.Data.DbType.Int64);
 
         BookDto? book = _dapper.LoadDataSingle<BookDto>(sqlGetInfoBook);
-        if(book != null) book.Genres = _dapper.LoadDataSingle<string[]>(BookRequest.GetBookGenres(id));
+        if(book != null) book.Genres = _dapper.LoadData<string>(BookRequest.GetBookGenres(id));
         return book;
     }
 
@@ -105,10 +105,6 @@ public class BookController : ControllerBase
     [HttpPatch("updateBook")]
     public IActionResult UpdateBook([FromBody] BookCreateUpdateDto book)
     {
-        string sqlGetOldName = $@"SELECT name FROM book_schema.bookGenerallyInfo WHERE id={book.Id}";
-        string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldName);
-
-
         string sqlUpdateBook = BookRequest.UpdateBook;
 
         DynamicParameters parameters = new DynamicParameters();
@@ -118,19 +114,15 @@ public class BookController : ControllerBase
         parameters.Add("@Description", book.Description, System.Data.DbType.String);
         parameters.Add("@PublisherId", book.PublisherId, System.Data.DbType.Int64);
         parameters.Add("@Name", book.Name, System.Data.DbType.String);
+        parameters.Add("@ImageUrl", book.ImageUrl, System.Data.DbType.String);
         parameters.Add("@AuthorId", book.AuthorId, System.Data.DbType.Int64);
         parameters.Add("@AvailableQuantity", book.AvailableQuantity, System.Data.DbType.Int64);
-        parameters.Add("@ImageUrl", book.ImageUrl, System.Data.DbType.String);
         parameters.Add("@Price", book.Price, System.Data.DbType.Int64);
         parameters.Add("@Discount", book.Discount, System.Data.DbType.Int64);
-        parameters.Add("@InputGenres", book.Discount, System.Data.DbType.Object);
+        parameters.Add("@InputGenres", book.Genres, System.Data.DbType.Object);
         parameters.Add("@Id", book.Id, System.Data.DbType.Int64);
 
         _dapper.ExecuteSqlWithParameters(sqlUpdateBook, parameters);
-
-
-        _fileHelper.RenamePhoto(oldName ?? "", book.Name, book.Id, "bookPhoto");
-
         return Ok();
     }
 

@@ -28,6 +28,7 @@ public class ReviewController : ControllerBase
     {
         return _dapper.LoadData<ReviewDto>(ReviewRequest.GetBookReviews(id));
     }
+    
 
     [HttpGet("getUserReview/{bookId}")]
     public Review? GetUserReview(int bookId)

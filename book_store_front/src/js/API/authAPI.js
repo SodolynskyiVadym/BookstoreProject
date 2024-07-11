@@ -31,7 +31,7 @@ export async function getAllUsers() {
 }
 
 
-export async function patchUpdateUser(data, token) {
+export async function updatePassword(data, token) {
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -39,7 +39,7 @@ export async function patchUpdateUser(data, token) {
     };
 
     try {
-        return await axios.patch(mainUrl + "/updateUser", data, config).then(res => res.data);
+        return await axios.patch(mainUrl + "/updatePassword", data, config).then(res => res.data);
     } catch (error) {
         console.error("Error updating user:", error);
         await router.push("/error");

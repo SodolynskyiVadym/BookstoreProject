@@ -17,7 +17,7 @@ export async function getAuthor(id) {
 
 export async function getAuthorBooks(id) {
     try {
-        return await axios.get(mainUrl + "/author/getAuthorBooks/" + id).then(res => res.data);
+        return await axios.get(mainUrl + "/getAuthorBooks/" + id).then(res => res.data);
     } catch (error) {
         console.error("Error fetching author's books:", error);
         await router.push("/error");
@@ -27,7 +27,7 @@ export async function getAuthorBooks(id) {
 
 export async function getAllAuthors() {
     try {
-        return await axios.get(mainUrl + "/getAllAuthors");
+        return await axios.get(mainUrl + "/getAllAuthors").then(res => res.data);
     } catch (error) {
         console.error("Error fetching all authors:", error);
         await router.push("/error");

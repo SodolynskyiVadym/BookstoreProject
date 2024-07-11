@@ -2,11 +2,9 @@
     <div class="main-section" v-if="loaded">
         <label key="email">Email</label><br>
         <input type="text" id="email" v-model="user.email" readonly><br>
-        <label key="name">Name</label><br>
-        <input type="text" id="name" v-model="user.name" @change="checkIsActive"><br>
         <label key="password">Password</label><br>
-        <input type="password" id="password" v-model="user.password" @change="checkIsActive"><br>
-        <button @click="sendChanges" :class="{ 'main-button-changes': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Change</button>
+        <input type="password" id="password" v-model="user.password" @input="checkIsActive"><br>
+        <button @click="sendChanges" style="width: auto;" :class="{ 'main-button-changes': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Update password</button>
     </div>
 </template>
 
@@ -17,7 +15,6 @@ export default {
   data(){
       return{
           user: null,
-          currentName: "",
           isActive: false,
           loaded: false
       }
@@ -26,21 +23,18 @@ export default {
   methods: {
     async sendChanges(){
       const data = {
-        name: this.user.name,
         password: this.user.password
       }
        const token = localStorage.getItem("token");
        if(token){
         this.isActive = false;
-        await authAPI.patchUpdateUser(data, token);
+        await authAPI.updatePassword(data, token);
         this.currentName = this.user.name;
        }
     },
 
     async checkIsActive(){
-        if(this.user.name && ((this.user.password && this.user.password.length >= 8) 
-        || (!this.user.password && this.currentName != this.user.name))) this.isActive = true;
-        else this.isActive = false;
+        this.isActive = this.user.password.length > 7;
     }
   },
 
@@ -49,7 +43,6 @@ export default {
     if(token){
         this.user = await authAPI.getUserByToken(token);
         this.user.passsword = "";
-        this.currentName = this.user.name;
         this.loaded = true;
     }else this.$router.push("/login");
     

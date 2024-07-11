@@ -44,6 +44,7 @@ namespace BookstoreAPI.Controllers
         [HttpGet("getPublisherBooks/{id}")]
         public IActionResult GetPublisherBooks(int id)
         {
+            Console.WriteLine("Code work");
             string sqlGetPublishersById = PublisherRequest.GetPublisherById(id);
             string sqlGetBooks = BookRequest.GetBooksByPublisherId(id);
 

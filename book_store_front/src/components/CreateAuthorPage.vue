@@ -13,8 +13,8 @@
     <label for="isKnownDeath">Death date</label><br>
     <input type="date" v-model="deathYear" id="deathYear" :disabled="!isKnownDeath" @change="checkIsActive"><br>
 
-    <label>Photo file</label><br>
-    <input type="file" ref="fileInput" accept=".jpg, .jpeg" @change="checkIsActive"><br>
+    <label>Photo</label><br>
+    <input type="text" v-model="imageUrl" @change="checkIsActive"><br>
 
     <button @click="createAuthor" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }"
             :disabled="!isActive">Create
@@ -41,7 +41,7 @@ export default {
 
   methods: {
     async checkIsActive() {
-      this.isActive = this.name && this.biography && (!this.isKnownBirth || this.birthYear !== dateHelper.formatDate(Date.now())) && this.$refs.fileInput.value;
+      this.isActive = this.name && this.biography && (!this.isKnownBirth || this.birthYear !== dateHelper.formatDate(Date.now()));
     },
 
 
@@ -55,23 +55,16 @@ export default {
           name: this.name,
           biography: this.biography,
           birthYear: dateBirth,
-          deathYear: dateDeath
+          deathYear: dateDeath,
+          imageUrl: this.imageUrl
         }
         await authorAPI.postCreateAuthor(data, token);
 
-        const file = this.$refs.fileInput.files[0];
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('biography', this.biography);
-        formData.append('name', this.name);
-
-        await authorAPI.postCreateAuthorImage(formData, token);
-
-        this.$refs.fileInput.value = ''
         this.name = "";
         this.biography = "";
         this.birthYear = dateHelper.formatDate(Date.now());
         this.deathYear = dateHelper.formatDate(Date.now());
+        this.imageUrl = "";
         this.isActive = false;
       }
 

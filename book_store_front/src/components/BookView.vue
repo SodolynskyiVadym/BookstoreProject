@@ -5,8 +5,7 @@
       <div>Book "{{ book.name }}"</div>
     </div>
     <div class="book-info">
-      <img class="img-book"
-           :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)">
+      <img class="img-book" :src="book.imageUrl">
       <div class="book-info-section" style="border-top-left-radius: 15px; border-bottom-left-radius: 15px;">
         <br><br><br>
         <div>Name ----------------</div>

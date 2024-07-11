@@ -13,6 +13,9 @@
     <input class="checkbox-style" type="checkbox" v-model="isKnownDeath" id="isKnownDeath" @change="checkIsActive"><br>
     <input type="date" v-model="author.deathYear" id="deathYear" :disabled="!isKnownDeath" @change="checkIsActive"><br>
 
+    <label>Photo</label><br>
+    <input type="text" v-model="author.imageUrl" @change="checkIsActive"><br>
+
     <button @click="updateAuthor" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Update</button>
   </div>
 </template>
@@ -27,6 +30,7 @@ export default {
           author: null,
           isKnownBirth: false,
           isKnownDeath: false,
+          imageUrl: "",
           isActive: true,
           loaded: false
       }
@@ -34,8 +38,6 @@ export default {
 
   methods: {
       async checkIsActive(){
-        console.log("code work")
-        console.log(this.author.name && this.author.biography && (!this.isKnownBirth || this.author.birthYear !== dateHelper.formatDate(Date.now())));
           if(this.author.name && this.author.biography && (!this.isKnownBirth || this.author.birthYear !== dateHelper.formatDate(Date.now()))){
               this.isActive = true;
           }else{
@@ -53,7 +55,8 @@ export default {
             name: this.author.name,
             biography: this.author.biography,
             birthYear: dateBirth,
-            deathYear: dateDeath
+            deathYear: dateDeath,
+            imageUrl: this.author.imageUrl
           }
           await authorAPI.patchUpdateAuthor(data);
       }

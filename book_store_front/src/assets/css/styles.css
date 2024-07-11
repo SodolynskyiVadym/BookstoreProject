@@ -10,7 +10,7 @@
 
 .main-section input[type="text"], [type="password"],
         input[type="date"], input[type="file"],
-        input[type="number"], select {
+        input[type="number"], input[type="search"], select {
     font-size: x-large;
     width: 650px;
     height: 50px;

@@ -1,13 +1,13 @@
 <template>
     <div v-if="loaded">
         <div style="text-align: center;">
-            <img class="author-photo" :src="require(`@/assets/authorPhoto/${author.name.toLowerCase().replace(/\s+/g, '')}${author.id}.jpg`)">
+            <img class="author-photo" :src="author.imageUrl">
             <div style="margin-top: 30px; font-size: x-large;">{{ author.birthYear }}     ----     {{ author.deathYear }}</div>
             <div class="biography">{{ author.biography }}</div>
             <button class="main-button" @click="enterAuthorUpdatePage">Update</button>
 
             <div v-for="book in books" :key="book.id" class="list-book">
-                <img :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)" class="image-order">
+                <img :src="book.imageUrl" class="image-order">
                 <div style="margin-left: 15px; width: 300px;">
                 <div style="margin-top: 20%;">{{ book.name }}</div>
                 </div>

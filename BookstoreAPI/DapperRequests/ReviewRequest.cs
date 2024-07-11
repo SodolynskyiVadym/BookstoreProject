@@ -2,7 +2,7 @@
 
 public class ReviewRequest
 {
-    public static string GetBookReviews(int id) => $@"SELECT reviews.*, Users.name AS userName 
+    public static string GetBookReviews(int id) => $@"SELECT reviews.*, Users.Email AS userName 
             FROM book_schema.Reviews 
             LEFT JOIN book_schema.Users ON Reviews.userId = Users.id
             WHERE bookId = {id}";

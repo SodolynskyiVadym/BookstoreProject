@@ -19,7 +19,7 @@ public class BookRequest
             INNER JOIN book_schema.Publishers ON BookDetailInfo.publisherId = book_schema.Publishers.Id
             WHERE book_schema.BookGenerallyInfo.id ={id};";
     
-    public static string GetBookGenres(int id) => $@"SELECT Genre WHERE book_schema.Genres.bookId = {id};";
+    public static string GetBookGenres(int id) => $@"SELECT Genre from book_schema.Genres WHERE book_schema.Genres.bookId = {id};";
 
     public static readonly string GetSomeBooks = "SELECT * FROM book_schema.bookgenerallyInfo WHERE BookGenerallyInfo.id = ANY (@BooksId)";
     
@@ -64,11 +64,13 @@ public class BookRequest
             @YearPublication::DATE,
             @Description::TEXT,    
             @PublisherId::INTEGER,            
-            @Name::VARCHAR,        
+            @Name::VARCHAR,    
+            @ImageUrl::VARCHAR,    
             @AuthorId::INTEGER,               
             @AvailableQuantity::INTEGER,      
             @Price::INTEGER,                  
-            @Discount::INTEGER,               
+            @Discount::INTEGER,
+            @InputGenres::VARCHAR[],               
             @Id::INTEGER
             );";
 
