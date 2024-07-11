@@ -80,7 +80,8 @@
     <input id="mark" type="number" v-model="userReview.mark" min="0" max="5" @keydown.prevent><br>
     <label>Review</label><br>
     <textarea id="descriptionReview" v-model="userReview.description"></textarea><br>
-    <button v-if="isUserReview" @click="updateReview" class="main-button" style="margin-bottom: 40px">Update</button>
+    <button v-if="isUserReview" @click="updateReview" style="margin-bottom: 40px" class="main-button">Update</button>
+    <button v-if="isUserReview" @click="deleteReview" style="margin-bottom: 40px" class="main-button" >DELETE</button>
     <button v-else @click="createReview" class="main-button" style="margin-bottom: 40px">Create</button>
   </div>
 </template>
@@ -158,6 +159,14 @@ export default {
       const token = localStorage.getItem("token");
       await reviewAPI.patchUpdateReview(data, token);
       this.reviews = await reviewAPI.getReviews(this.$route.params.id);
+    },
+
+
+    async deleteReview() {
+      const token = localStorage.getItem("token");
+      await reviewAPI.deleteReview(this.$route.params.id, token);
+      this.reviews = await reviewAPI.getReviews(this.$route.params.id);
+      this.isUserReview = false;
     },
 
     async changeQuantityOrder() {

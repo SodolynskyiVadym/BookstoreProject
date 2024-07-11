@@ -15,15 +15,12 @@ namespace BookstoreAPI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly DataContextDapper _dapper;
-        private readonly FileHelper _fileHelper;
         private readonly DataHelper _dataHelper;
-
 
         public AuthorController(IConfiguration config)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _dapper = new DataContextDapper(_config);
-            _fileHelper = new FileHelper();
             _dataHelper = new DataHelper(_dapper);
         }
 
@@ -52,8 +49,7 @@ namespace BookstoreAPI.Controllers
             IEnumerable<BookGenerallyInfo> books = _dataHelper.GetByParameter<BookGenerallyInfo>("bookGenerallyInfo", "authorId", id);
             return Ok(new { Author = author, Books = books });
         }
-
-
+        
 
         [Authorize(Roles = "EDITOR, ADMIN")]
         [AllowAnonymous]
@@ -99,17 +95,12 @@ namespace BookstoreAPI.Controllers
             return Ok();
         }
 
-
-
+        
         [Authorize(Roles = "EDITOR, ADMIN")]
         [AllowAnonymous]
         [HttpPatch("updateAuthor")]
         public IActionResult UpdateAuthor([FromBody] Author author)
         {
-            string sqlGetOldNameAuthor = $@"SELECT name FROM book_schema.authors WHERE id={author.Id}";
-
-            string? oldName = _dapper.LoadDataSingle<string>(sqlGetOldNameAuthor);
-
             string sqlCreateAuthor = AuthorRequest.UpdateAuthor;
 
             DynamicParameters parameters = new DynamicParameters();
@@ -120,26 +111,17 @@ namespace BookstoreAPI.Controllers
             parameters.Add("@Id", author.Id, System.Data.DbType.Int64);
             
             _dapper.ExecuteSqlWithParameters(sqlCreateAuthor, parameters);
-
-            _fileHelper.RenamePhoto(oldName, author.Name, author.Id, "authorPhoto");
             return Ok();
         }
 
-
-
+        
         [Authorize(Roles = "EDITOR, ADMIN")]
         [HttpDelete("deleteAuthor/{id}")]
         public IActionResult DeleteAuthor(int id)
         {
-            string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.authors WHERE id={id}");
             string sqlDeleteAuthor = AuthorRequest.DeleteAuthor(id);
-            if (_dapper.ExecuteSql(sqlDeleteAuthor))
-            {
-                _fileHelper.DeletePhoto(name, id, "authorPhoto");
-                return Ok();
-            }
+            if (_dapper.ExecuteSql(sqlDeleteAuthor)) return Ok();
             return StatusCode(400, "Author not fount for deleting");
         }
-
     }
 }

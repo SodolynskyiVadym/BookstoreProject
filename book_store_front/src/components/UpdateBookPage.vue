@@ -5,7 +5,10 @@
     <input id="name" type="text" v-model="book.name" placeholder="Name" @change="checkIsActiveButton"><br>
 
     <label key="language">Language</label><br>
-    <input id="language" type="text" v-model="book.bookLanguage" placeholder="Language" @change="checkIsActiveButton"><br>
+    <input id="language" type="search" list="languages" v-model="book.bookLanguage" placeholder="Language" @change="checkIsActiveButton"><br>
+    <datalist id="languages">
+      <option v-for="language in languages" :key="language" :value="language">{{ language }}</option>
+    </datalist>
 
     <label key="price">Price</label><br>
     <input id="price" type="number" v-model="book.price" min="0" @change="checkIsActiveButton"><br>
@@ -42,7 +45,7 @@
 
     <label key="genres">Genres</label><br>
     <div v-for="(genre, index) in book.genres" :key="index">
-      <input type="search" list="genres" v-model="book.genres[index]"><br>
+      <input type="search" list="genres" v-model="book.genres[index]" @input="removeGenreFromList(index)"><br>
       <datalist id="genres">
         <option v-for="choosedGenre in genresList" :key="choosedGenre" :value="choosedGenre">{{ choosedGenre }}</option>
       </datalist>
@@ -62,6 +65,7 @@ import * as publisherAPI from "@/js/API/publisherAPI";
 import * as authorAPI from "@/js/API/authorAPI";
 import * as dateHelper from "@/js/dateHelper";
 import * as genresChoices from "@/js/genres";
+import * as languages from "@/js/languages";
 
 export default {
   data() {
@@ -74,7 +78,8 @@ export default {
       maxDate: dateHelper.formatDate(Date.now()),
       isActive: true,
       loaded: false,
-      genresList: genresChoices.genres
+      genresList: genresChoices.genres,
+      languages: languages.languages
     }
   },
 
@@ -101,7 +106,12 @@ export default {
       this.book.genres.push("");
     },
 
+    async removeGenreFromList(index) {
+      this.genresList = this.genresList.filter(genre => this.book.genres[index] != genre);
+    },
+
     async removeGenre(index) {
+      this.genresList.push(this.book.genres[index]);
       this.book.genres.splice(index, 1);
     },
 
@@ -136,6 +146,7 @@ export default {
     this.book.yearPublication = dateHelper.formatDate(this.book.yearPublication);
     this.authorName = this.authors.find(author => author.id === this.book.authorId).name;
     this.publisherName = this.publishers.find(publisher => publisher.id === this.book.publisherId).name;
+    this.genresList = this.genresList.filter(genre => !this.book.genres.includes(genre));
     this.loaded = true;
   }
 }

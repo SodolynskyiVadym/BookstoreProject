@@ -61,3 +61,19 @@ export async function patchUpdateReview(data, token) {
         await router.push("/error");
     }
 }
+
+
+export async function deleteReview(bookId, token) {
+    const config = {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+
+    try {
+        return await axios.delete(mainUrl + "/deleteReview/" + bookId, config).then(res => res.data);
+    } catch (error) {
+        console.error("Error deleting review:", error);
+        await router.push("/error");
+    }
+}

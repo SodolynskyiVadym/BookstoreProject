@@ -13,8 +13,5 @@ public class ReviewRequest
 
     public static readonly string UpdateReview = @"UPDATE book_schema.Reviews SET description = @Description, mark = @Mark WHERE id = @Id";
 
-    public static string DeleteReview(int id)
-    {
-        return $@"DELETE FROM book_schema.Reviews WHERE id={id}";
-    }
+    public static string DeleteReview(int bookId, int userId) => $"DELETE FROM book_schema.Reviews WHERE bookId={bookId} AND userId = {userId}";
 }

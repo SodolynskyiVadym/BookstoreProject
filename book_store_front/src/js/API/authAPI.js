@@ -23,7 +23,7 @@ export async function getUserByToken(token) {
 
 export async function getAllUsers() {
     try {
-        return await axios.get(mainUrl + "/getAllUsers");
+        return await axios.get(mainUrl + "/getAllUsers").then(res => res.data);
     } catch (error) {
         console.error("Error fetching all users:", error);
         await router.push("/error");

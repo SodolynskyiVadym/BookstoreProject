@@ -16,14 +16,11 @@ public class BookController : ControllerBase
 {
     private readonly IConfiguration _config;
     private readonly DataContextDapper _dapper;
-    private readonly FileHelper _fileHelper;
-
 
     public BookController(IConfiguration config)
     {
         _config = config ?? throw new ArgumentNullException(nameof(config));
         _dapper = new DataContextDapper(_config);
-        _fileHelper = new FileHelper();
     }
 
 
@@ -131,13 +128,8 @@ public class BookController : ControllerBase
     [HttpDelete("deleteBook/{id}")]
     public IActionResult DeleteBook(int id)
     {
-        string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.bookgenerallyinfo WHERE id={id}");
         string sqlDeleteBook = BookRequest.DeleteBook(id);
-        if (_dapper.ExecuteSql(sqlDeleteBook))
-        {
-            _fileHelper.DeletePhoto(name, id, "bookPhoto");
-            return Ok();
-        }
-        return StatusCode(400, "Book not fount for deleting");
+        if (_dapper.ExecuteSql(sqlDeleteBook)) return Ok();
+        return StatusCode(400, "Book wasn't deleted");
     }
 }

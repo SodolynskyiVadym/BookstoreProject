@@ -2,8 +2,8 @@
   <div class="main-section">
     <label key="name">Name</label><br>
     <input type="text" id="name" v-model="name" @change="checkButtonActive" placeholder="Name"><br>
-    <label key="file">Photo file</label><br>
-    <input id="file" type="file" ref="fileInput" accept=".jpg, .jpeg" @change="checkButtonActive"><br>
+    <label key="file">Photo</label><br>
+    <input type="text" v-model="imageUrl" @change="checkButtonActive"><br>
     <button @click="createPublisher" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }" :disabled="!isActive">Create</button><br>
   </div>
 </template>
@@ -14,6 +14,7 @@ export default {
   data(){
     return{
       name: "",
+      imageUrl: "",
       isActive: false
     }
   },
@@ -21,7 +22,7 @@ export default {
 
   methods: {
     async checkButtonActive(){
-      this.isActive = this.name && this.$refs.fileInput.value;
+      this.isActive = this.name && this.imageUrl;
     },
 
     async createPublisher() {
@@ -29,23 +30,14 @@ export default {
       const token = localStorage.getItem("token")
       if (token){
         const data = {
-          name: this.name
+          name: this.name,
+          imageUrl: this.imageUrl
         };
 
         await publisherAPI.postCreatePublisher(data, token);
-
-        const file = this.$refs.fileInput.files[0];
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('name', this.name);
-
-        await publisherAPI.postCreatePublisherImage(formData, token);
-
-        this.$refs.fileInput.value = ''
         this.name = "";
+        this.imageUrl = "";
       }
-
-
     }
   }
 }

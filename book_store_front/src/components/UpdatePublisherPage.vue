@@ -2,6 +2,9 @@
   <div class="main-section" v-if="loaded">
     <label key="name">Name</label><br>
     <input type="text" v-model="publisher.name" id="name" placeholder="Name" @change="checkIsActive"><br>
+
+    <label key="photo">Photo</label><br>
+    <input type="text" v-model="publisher.imageUrl" @change="checkIsActive"><br>
     <button @click="updatePublisher" :class="{ 'main-button': isActive, 'main-button-disabled': !isActive }"
             :disabled="!isActive">Update
     </button>
@@ -22,11 +25,7 @@ export default {
 
   methods: {
     async checkIsActive() {
-      if (this.publisher.name) {
-        this.isActive = true;
-      } else {
-        this.isActive = false;
-      }
+      this.isActive = this.publisher.name && this.publisher.imageUrl;
     },
 
 
@@ -41,9 +40,6 @@ export default {
 
   async mounted() {
     this.publisher = await publisherAPI.getPublisher(this.$route.params.id);
-
-    console.log(this.publisher)
-
     if (this.publisher) this.loaded = true;
   }
 }

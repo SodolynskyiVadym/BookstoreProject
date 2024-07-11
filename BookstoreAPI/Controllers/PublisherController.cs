@@ -14,14 +14,12 @@ namespace BookstoreAPI.Controllers
     {
         private readonly IConfiguration _config;
         private readonly DataContextDapper _dapper;
-        private readonly FileHelper _fileHelper;
 
 
         public PublisherController(IConfiguration config)
         {
             _config = config ?? throw new ArgumentNullException(nameof(config));
             _dapper = new DataContextDapper(_config);
-            _fileHelper = new FileHelper();
         }
 
         [AllowAnonymous]
@@ -44,7 +42,6 @@ namespace BookstoreAPI.Controllers
         [HttpGet("getPublisherBooks/{id}")]
         public IActionResult GetPublisherBooks(int id)
         {
-            Console.WriteLine("Code work");
             string sqlGetPublishersById = PublisherRequest.GetPublisherById(id);
             string sqlGetBooks = BookRequest.GetBooksByPublisherId(id);
 
@@ -74,18 +71,12 @@ namespace BookstoreAPI.Controllers
         [HttpPatch("updatePublisher")]
         public IActionResult UpdatePublisher([FromBody] Publisher publisher)
         {
-            string sqlGetNamePublisher = @"SELECT name FROM book_schema.publishers WHERE publishers.Id = @Id";
-            
             string sqlUpdatePublisher = PublisherRequest.UpdatePublisher;
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@Name", publisher.Name, System.Data.DbType.String);
             parameters.Add("@Id", publisher.Id, System.Data.DbType.Int64);
-
-            string? oldName = _dapper.LoadDataSingleWithParameters<string>(sqlGetNamePublisher, parameters);
-            _dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters);
             
-            _fileHelper.RenamePhoto(oldName, publisher.Name, publisher.Id, "publisherPhoto");
-
+            _dapper.ExecuteSqlWithParameters(sqlUpdatePublisher, parameters);
             return Ok();
         }
 
@@ -116,14 +107,8 @@ namespace BookstoreAPI.Controllers
         [HttpDelete("deletePublisher/{id}")]
         public IActionResult DeletePublisher(int id)
         {
-            string? name = _dapper.LoadDataSingle<string>($"SELECT name FROM book_schema.publishers WHERE id={id}");
             string sqlDeletePublisher = PublisherRequest.DeletePublisher(id);
-
-            if (_dapper.ExecuteSql(sqlDeletePublisher))
-            {
-                _fileHelper.DeletePhoto(name, id, "publisherPhoto");
-                return Ok();
-            }
+            if (_dapper.ExecuteSql(sqlDeletePublisher)) return Ok();
             return StatusCode(400, "Publisher not fount for deleting");
         }
     }

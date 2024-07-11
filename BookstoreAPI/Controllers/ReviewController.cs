@@ -78,10 +78,10 @@ public class ReviewController : ControllerBase
     }
     
     
-    [HttpDelete("deleteReview/{id}")]
-    public IActionResult DeleteReview(int id)
+    [HttpDelete("deleteReview/{bookId}")]
+    public IActionResult DeleteReview(int bookId)
     {
-        string sqlDeleteReview = ReviewRequest.DeleteReview(id);
+        string sqlDeleteReview = ReviewRequest.DeleteReview(bookId, int.TryParse(User.FindFirst("userId")?.Value, out int userId) ? userId : 0);
         _dapper.ExecuteSql(sqlDeleteReview);
         return Ok();
     }

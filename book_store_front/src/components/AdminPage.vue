@@ -12,14 +12,12 @@
     <table class="users-section">
         <thead>
             <tr style="font-size: x-large; background-color: antiquewhite;">
-                <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th style="padding-left: 200px; padding-right: 200px">Action</th>
             </tr>
         </thead>
             <tr v-for="user in users" :key="user.id" class="user">
-                <td style="width: 200px;">{{ user.name }}</td>
                 <td style="width: 350px;">{{ user.email }}</td>
                 <td style="width: 130px;">{{ user.role }}</td>
                 <td style="padding-left: 200px; padding-right: 200px"><button @click="deleteUser(user.id)">DELETE</button></td>
@@ -79,6 +77,7 @@ export default {
 
     async mounted(){
         this.users = await authAPI.getAllUsers();
+        console.log(this.users);
     }
 }
 </script>

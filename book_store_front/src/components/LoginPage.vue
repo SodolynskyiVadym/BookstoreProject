@@ -45,6 +45,8 @@ export default {
                 setTimeout(() => {
                     window.location.reload();
                 }, 10);
+            }else{
+                alert("Invalid email or password")
             }
 
         }

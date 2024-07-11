@@ -35,13 +35,14 @@ export default {
       deathYear: dateHelper.formatDate(Date.now()),
       isKnownBirth: false,
       isKnownDeath: false,
+      imageUrl: "",
       isActive: false
     }
   },
 
   methods: {
     async checkIsActive() {
-      this.isActive = this.name && this.biography && (!this.isKnownBirth || this.birthYear !== dateHelper.formatDate(Date.now()));
+      this.isActive = this.name && this.biography && (!this.isKnownBirth || this.birthYear !== dateHelper.formatDate(Date.now())) && this.imageUrl.length < 255;
     },
 
 

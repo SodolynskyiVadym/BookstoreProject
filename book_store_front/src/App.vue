@@ -1,6 +1,6 @@
 <template>
     <header class="header">
-        <img :src="require(`@/assets/logo.png`)" >
+        <img :src="require(`@/assets/logo.png`)" style="cursor: pointer;" @click="$router.push('/')">
         <div style="margin-right: 20px;">
             <img :src="require(`@/assets/basket.png`)" class="icons-header" style="padding-right: 30px;" @click="showOrder">
             <img :src="require(`@/assets/home.png`)" v-if="isUser" class="icons-header" style="margin-right: 20px;" @click="enterUserPage">
@@ -17,7 +17,7 @@
     <div class="my-order" v-if="isShowOrder">
       <p class="order-inscription">Your order</p>
       <div v-for="book in orderedBooks" :key="book.id" class="orderBook">
-        <img :src="require(`@/assets/bookPhoto/${book.name.toLowerCase().replace(/\s+/g, '')}${book.id}.jpg`)" class="image-order">
+        <img :src="book.imageUrl" class="image-order">
         <div style="margin-left: 15px; width: 300px;">
           <div style="padding-bottom: 20px;">{{ book.name }}</div>
           <div style="align-self: self-end;">{{ book.authorName }}</div>
