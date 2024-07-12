@@ -63,8 +63,8 @@ export default {
       }
     },
 
-    enterAuthorPage(authorId) {
-      this.$router.push(`/author/${authorId}`);
+    async enterBookPage(id) {
+      this.$router.push(`/bookView/${id}`);
     },
 
     async buyBook(book) {

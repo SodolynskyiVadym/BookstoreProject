@@ -66,7 +66,7 @@ export default {
             }
             const token = localStorage.getItem("token");
 
-            await authAPI.postRegistrationEmployeer(data, token);
+            await authAPI.registrationEmployeer(data, token);
 
             this.users = this.users = await authAPI.getAllUsers();
             this.email = "";

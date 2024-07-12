@@ -57,7 +57,7 @@ export async function login(data) {
 
 
 
-export async function postRegistrationEmployeer(data, token) {
+export async function registrationEmployeer(data, token) {
     const config = {
         headers: {
             'Authorization': `Bearer ${token}`
@@ -65,7 +65,7 @@ export async function postRegistrationEmployeer(data, token) {
     };
 
     try {
-        return await axios.post(mainUrl + "/registerWorker", data, config).then(res => res.data);
+        return await axios.post(mainUrl + "/registerEditorAdmin", data, config).then(res => res.data);
     } catch (error) {
         console.error("Error registering worker:", error);
         await router.push("/error");
