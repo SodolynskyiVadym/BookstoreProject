@@ -19,7 +19,7 @@ public class StripeHelper
         
         var options = new SessionCreateOptions
         {
-            SuccessUrl = $"{serverUrl}/order/success/{{CHECKOUT_SESSION_ID}}",
+            SuccessUrl = $"{serverUrl}/pay/success/{{CHECKOUT_SESSION_ID}}",
             CancelUrl = $"{clientUrl}/clearOrder",
             PaymentMethodTypes = ["card"],
             Metadata = new Dictionary<string, string>

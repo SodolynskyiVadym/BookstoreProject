@@ -67,7 +67,11 @@ export default {
       if(!this.isShowOrder){
         const orderedBooksId = await orderMaker.getOrderedBooksArray();
         const arrayBookQuantity = await orderMaker.getOrderBookIdQuantity();
+        
+        console.log(orderedBooksId);
+        console.log(arrayBookQuantity);
         this.orderedBooks = await bookAPI.getSomeBook(orderedBooksId);
+        console.log(this.orderedBooks);
         for(let book of this.orderedBooks){
           book.quantityOrdered = arrayBookQuantity[book.id];
         }

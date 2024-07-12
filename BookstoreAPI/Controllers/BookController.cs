@@ -34,14 +34,26 @@ public class BookController : ControllerBase
         parameters.Add("@Id", id, System.Data.DbType.Int64);
 
         BookDto? book = _dapper.LoadDataSingle<BookDto>(sqlGetInfoBook);
-        if(book != null) book.Genres = _dapper.LoadData<string>(BookRequest.GetBookGenres(id));
         return book;
     }
 
     
     [AllowAnonymous]
+    [HttpGet("getBooksByGenre")]
+    public IEnumerable<BookMainInfoDto> GetBookByGenre(IEnumerable<string> genres)
+    {
+        genres = genres.Select(g => g.ToUpper());
+        
+        string sqlGetBookByGenre = BookRequest.GetBookByGenre;
+        DynamicParameters parameters = new DynamicParameters();
+        parameters.Add("@Genres", genres.ToArray(), System.Data.DbType.Object);
+        return _dapper.LoadDataWithParameters<BookMainInfoDto>(sqlGetBookByGenre, parameters);
+    }
+
+    
+    [AllowAnonymous]
     [HttpGet("getSomeBooks")]
-    public IEnumerable<BookOrderDto> GetOrderedBooks()
+    public IEnumerable<BookMainInfoDto> GetOrderedBooks()
     {
         string sqlGetOrderedBooks = BookRequest.GetOrderedBooks;
 
@@ -58,16 +70,16 @@ public class BookController : ControllerBase
         
         DynamicParameters parameters = new DynamicParameters();
         parameters.Add("@BooksId", booksId.ToArray(), System.Data.DbType.Object);
-        return _dapper.LoadDataWithParameters<BookOrderDto>(sqlGetOrderedBooks, parameters);
+        return _dapper.LoadDataWithParameters<BookMainInfoDto>(sqlGetOrderedBooks, parameters);
     }
 
 
 
     [AllowAnonymous]
     [HttpGet("getAllBooks")]
-    public IEnumerable<BookOrderDto> GetAllBooks()
+    public IEnumerable<BookMainInfoDto> GetAllBooks()
     {
-        return _dapper.LoadData<BookOrderDto>(BookRequest.GetAllBooks);
+        return _dapper.LoadData<BookMainInfoDto>(BookRequest.GetAllBooks);
     }
 
 

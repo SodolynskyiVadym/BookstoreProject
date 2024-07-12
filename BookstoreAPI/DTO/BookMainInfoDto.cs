@@ -1,6 +1,6 @@
 ﻿namespace BookstoreAPI.DTO
 {
-    public class BookOrderDto
+    public class BookMainInfoDto
     {
         public int Id { get; set; }
         public string Name { get; set; }

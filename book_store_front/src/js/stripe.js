@@ -16,7 +16,7 @@ export const buyBooks = async (order, token) => {
             'Authorization': `Bearer ${token}`
         }
     }
-    const id  = await axios.post(`http://localhost:5224/order/makeOrder`, order, config).then(res => res.data);
+    const id  = await axios.post(`http://localhost:5224/pay/makeOrder`, order, config).then(res => res.data);
 
     const stripe = await stripePromise;
 

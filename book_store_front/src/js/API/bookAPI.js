@@ -17,7 +17,7 @@ export async function getBook(id) {
 export async function getSomeBook(arrayBooks) {
     const strBooksId = arrayBooks.join(",");
     try {
-        return await axios.get(mainUrl + "/getSomeBooks?ids=" + strBooksId);
+        return await axios.get(mainUrl + "/getSomeBooks?ids=" + strBooksId).then(res => res.data);
     } catch (error) {
         console.error("Error fetching some books:", error);
         await router.push("/error");

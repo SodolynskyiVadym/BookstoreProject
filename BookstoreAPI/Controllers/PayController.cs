@@ -25,18 +25,19 @@ namespace BookstoreAPI.Controllers
             _stripeHelper = new StripeHelper(_config);
         }
 
+        
         [AllowAnonymous]
         [HttpPost("makeOrder")]
         public async Task<IActionResult> CreateOrder(OrderDto order)
         {
             int userId = int.TryParse(User.FindFirst("userId")?.Value, out userId) ? userId : 0;
             string sqlGetBooks = BookRequest.GetSomeBooks;
+            
             DynamicParameters parameters = new DynamicParameters();
             parameters.Add("@BooksId", order.BooksAndQuantity.Keys.ToArray(), System.Data.DbType.Object);
             IEnumerable<BookGenerallyInfo> books = _dapper.LoadDataWithParameters<BookGenerallyInfo>(sqlGetBooks, parameters);
 
             foreach (BookGenerallyInfo book in books) if (book.AvailableQuantity < order.BooksAndQuantity[book.Id]) throw new Exception("Not enough books in stock");
-            
             string id = await _stripeHelper.CheckOut(books, order, userId);
             
             return Ok(id);
@@ -65,9 +66,10 @@ namespace BookstoreAPI.Controllers
             parameters.Add("@UserId", userId, System.Data.DbType.Int32);
             parameters.Add("@Destination", destination, System.Data.DbType.String);
             parameters.Add("@PhoneNumber", phoneNumber, System.Data.DbType.String);
-            
             _dapper.ExecuteSqlWithParameters(sqlCreateOrder, parameters);
-            return Redirect(_config.GetSection("Urls:Client").Value);
+            
+            string clientUrl = _config.GetSection("Urls:Client").Value ?? throw new InvalidOperationException();
+            return Redirect($"{clientUrl}/clearOrder");
         }
     }
 }

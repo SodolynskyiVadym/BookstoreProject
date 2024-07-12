@@ -51,8 +51,7 @@ export async function login(data) {
     try {
         return await axios.post(mainUrl + "/login", data).then(res => res.data);
     } catch (error) {
-        console.error("Error logging in:", error);
-        await router.push("/error");
+        return { token: null}
     }
 }
 
