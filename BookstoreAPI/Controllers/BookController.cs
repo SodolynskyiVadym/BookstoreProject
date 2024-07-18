@@ -39,7 +39,7 @@ public class BookController : ControllerBase
 
     
     [AllowAnonymous]
-    [HttpGet("getBooksByGenre")]
+    [HttpPost("getBooksByGenre")]
     public IEnumerable<BookMainInfoDto> GetBookByGenre(IEnumerable<string> genres)
     {
         genres = genres.Select(g => g.ToUpper());

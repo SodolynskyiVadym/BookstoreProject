@@ -1,12 +1,26 @@
 <template>
   <div style="padding-top: 100px; text-align: center">
-    <input placeholder="Searth the book or author..." type="search" list="book-author" name="text" class="search-input" v-model="inputValue">
+    <input placeholder="Searth the book or author..." type="search" list="book-author" name="text" class="search-input"
+      v-model="inputValue">
     <datalist id="book-author">
       <option v-for="book in books" :key="book.id" :value="book.name"></option>
       <option v-for="author in authors" :key="author.id" :value="author.name"></option>
     </datalist><br>
     <a class="btn" @click="enterSearchedPage">Find</a>
   </div>
+
+  <div class="chooseGenre" style="text-align: center;">
+    <div v-for="genre in genres" :key="genre.id">
+      <input type="checkbox" :id="genre" :value="genre" v-model="selectedGenres">
+      <label :for="genre">{{ genre }}</label>
+    </div><br>
+  </div>
+
+  <div style="text-align: center;">
+    <button @click="searchBooks" class="btn">Search Books</button>
+  </div>
+
+
 
 
   <div class="book-section">
@@ -28,7 +42,8 @@
           your backet</button>
       </div>
       <div v-else>
-        <button style="background-color: gray; width: auto; cursor: auto;" class="button-buy" disabled>Not available</button>
+        <button style="background-color: gray; width: auto; cursor: auto;" class="button-buy" disabled>Not
+          available</button>
       </div>
     </div>
   </div>
@@ -38,7 +53,8 @@
 <script>
 import * as bookAPI from "@/js/API/bookAPI";
 import * as authorAPI from "@/js/API/authorAPI";
-import * as orderMaker from "@/js/orderMaker"
+import * as orderMaker from "@/js/orderMaker";
+import * as genres from "@/js/genres";
 
 export default {
   data() {
@@ -46,21 +62,29 @@ export default {
       books: [],
       authors: [],
       inputValue: "",
-      showModal: false
+      showModal: false,
+      genres: genres.genres,
+      selectedGenres: []
     };
   },
 
   methods: {
     enterSearchedPage() {
       const book = this.books.find(b => b.name === this.inputValue);
-      if(book) {
+      if (book) {
         this.$router.push(`/bookView/${book.id}`);
       }
-      
+
       const author = this.authors.find(a => a.name === this.inputValue);
-      if(author) {
+      if (author) {
         this.$router.push(`/author/${author.id}`);
       }
+    },
+
+    async searchBooks() {
+      console.log(this.selectedGenres);
+      const data = await bookAPI.getBooksByGenres(this.selectedGenres);
+      this.books = data;
     },
 
     async enterBookPage(id) {

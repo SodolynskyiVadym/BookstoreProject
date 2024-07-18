@@ -19,8 +19,7 @@ export async function getSomeBook(arrayBooks) {
     try {
         return await axios.get(mainUrl + "/getSomeBooks?ids=" + strBooksId).then(res => res.data);
     } catch (error) {
-        console.error("Error fetching some books:", error);
-        await router.push("/error");
+        return [];
     }
 }
 
@@ -29,8 +28,16 @@ export async function getBooks() {
     try {
         return await axios.get(mainUrl + "/getAllBooks").then(res => res.data);
     } catch (error) {
-        console.error("Error fetching books:", error);
-        await router.push("/error");
+        return [];
+    }
+}
+
+
+export async function getBooksByGenres(genres) {
+    try {
+        return await axios.post(mainUrl + "/getBooksByGenre", genres).then(res => res.data);
+    } catch (error) {
+        return [];
     }
 }
 
