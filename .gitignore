@@ -5,7 +5,6 @@ node_modules
 **/authorPhoto/*
 **/publisherPhoto/*
 book_stripe_icon.jpg
-**/config.env
 
 
 # local env files
@@ -271,4 +270,3 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
-/BookstoreAPI/appsettings.json
