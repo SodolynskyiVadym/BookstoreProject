@@ -3,9 +3,9 @@ import axios from "axios";
 
 
 let stripePromise;
-
+const public_key = process.env.STRIPE_PUBLIC_KEY;
 const initializeStripe = async () => {
-    stripePromise = await loadStripe("pk_test_51OIGBKKfdlsNCGTnyxFs1IzyDJ1Wfe4TKOpDgeDyyubqHixilJu2an4WBdktNWgAUqfPMV6fw8eLNjf6QumdqC9X00g6whFvLS");
+    stripePromise = await loadStripe(public_key);
 }
 
 initializeStripe();

@@ -5,6 +5,7 @@ node_modules
 **/authorPhoto/*
 **/publisherPhoto/*
 book_stripe_icon.jpg
+**/config.env
 
 
 # local env files
