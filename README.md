@@ -21,11 +21,11 @@ git clone https://github.com/SodolynskyiVadym/BookstoreProject.git
 
 - Enter your data in file appsettings.json and config.env
 
-File [appsettings.json](TravelAgencyAPI/appsettings.json)
+File [appsettings.json](BookstoreAPI/appsettings.json)
 > - TokenKey
 > - Stripe(private key)
 > - DefaultConnection
 
-File [config.env](travel_agency_front/config.env)
+File [config.env](book_store_front/config.env)
 > - STRIPE_PUBLIC_KEY
 <br>
